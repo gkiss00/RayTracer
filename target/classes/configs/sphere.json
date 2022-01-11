@@ -1,0 +1,8 @@
+{
+  "objects": [
+    {
+      "type": "Sphere",
+      "radius": 30
+    }
+  ]
+}
