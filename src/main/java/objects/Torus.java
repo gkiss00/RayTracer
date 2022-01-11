@@ -50,12 +50,31 @@ public class Torus extends BaseObject{
         double b = localRay.getVY();
         double c = localRay.getVZ();
 
-        double t0 = Math.pow(x0 * x0 + y0 * y0 + z0 * z0 + R * R - r * r, 2) - (4 * R * R * (x0 * x0 + y0 * y0));
-        double t2 = Math.pow(2 * x0 * a + 2 * y0 * b + 2 * z0 * c, 2) - (4 * R * R * (a * a + b * b));
-        double t1 = -(4 * R * R * (2 * a * x0 + 2 * b * y0));
-        double t4 = Math.pow(a * a + b * b + c * c, 2);
+        double x02 = x0 * x0;
+        double y02 = y0 * y0;
+        double z02 = z0 * z0;
+        double a2 = a * a;
+        double b2 = b * b;
+        double c2 = c * c;
+        double R2 = R * R;
+        double r2 = r * r;
 
-        List<Double> solutions = Solver.solve(t4, 0, t2, t1, t0);
+        double alpha = x02 + y02 + z02 + R2 - r2; // t0
+        double beta = 2 * x0 * a + 2 * y0 * b + 2 * z0 * c; // t1
+        double gama = a2 + b2 + c2; // t2
+
+        double t0 = (x02 + y02 + z02 - (r2 + R2)) * (x02 + y02 + z02 - (r2 + R2)) - 4*R2*(r2 - y02);
+        double t1 = 4 * (x02 + y02 + z02 - (r2 + R2)) * (x0*a + y0*b + z0*c) + 8*R2*y0*b;
+        double t2 = 2 * (a2 + b2 + c2) * (x02 + y02 + z02 - (r2 + R2)) + 4*(x0*a + y0*b + z0*c)* (x0*a + y0*b + z0*c) + 4*R2*b2;
+        double t3 = 4 * (a2 + b2 + c2) * (x0*a + y0*b + z0*c);
+        double t4 = gama * gama;
+
+//        double t0 = Math.pow(x0 * x0 + y0 * y0 + z0 * z0 + R * R - r * r, 2) - (4 * R * R * (x0 * x0 + y0 * y0));
+//        double t2 = Math.pow(2 * x0 * a + 2 * y0 * b + 2 * z0 * c, 2) - (4 * R * R * (a * a + b * b));
+//        double t1 = -(4 * R * R * (2 * a * x0 + 2 * b * y0));
+//        double t4 = Math.pow(a * a + b * b + c * c, 2);
+
+        List<Double> solutions = Solver.solve(t4, t3, t2, t1, t0);
         if(solutions.size() != 0)
             System.out.println(solutions.size() + " " +  ray.getVector());
         for (int i = 0; i < solutions.size(); ++i) {

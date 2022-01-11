@@ -25,7 +25,7 @@ public class RayTracer {
     private static final Color ambientLight = new Color(1, 1, 1, 1);
     private static int height = 900;
     private static int width = 900;
-    private static int antiAliasing = 5;
+    private static int antiAliasing = 1;
 
     private static Camera cam;
     private static List<BaseObject> objects = new ArrayList<>();
@@ -274,9 +274,9 @@ public class RayTracer {
         }
         try {
             ImageIO.write(buffer, "PNG", image);
-            Random rand = new Random();
-            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + ".png");
-            ImageIO.write(buffer, "PNG", savedImage);
+//            Random rand = new Random();
+//            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + " " + rand.nextInt(Integer.MAX_VALUE) + ".png");
+//            ImageIO.write(buffer, "PNG", savedImage);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -285,7 +285,7 @@ public class RayTracer {
     public static void main(String[] args) {
         // setup();
         //System.out.println(ProcessHandle.current().pid());
-        cam = SceneMaker.getSimpleCubeFractal(objects, lights);
+        cam = SceneMaker.getSimpleTorus(objects, lights);
         //Scanner scan = new Scanner(System.in);
         //scan.next();
         cam.update(height, width);

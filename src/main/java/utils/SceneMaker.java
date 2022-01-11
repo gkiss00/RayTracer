@@ -147,6 +147,17 @@ public class SceneMaker {
         return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleTorus(List<BaseObject> objects, List<Light> lights) {
+        Torus torus1 = new Torus(20, 5, new Color(0, 0, 1, 1));
+        torus1.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, -30);
+        objects.add(torus1);
+
+//        Light light = new Light(new Point3D(-100, 0, 0));
+//        lights.add(light);
+
+        return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getSimpleCubeFractal(List<BaseObject> objects, List<Light> lights) {
         CubeFractal cubeFractal = new CubeFractal(5, 90);
         cubeFractal.updateMatrices(0, -40, 45, 1, 1, 1, 0, 0, 0);
