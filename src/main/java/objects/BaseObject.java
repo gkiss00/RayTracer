@@ -44,6 +44,16 @@ public abstract class BaseObject {
         }
     }
 
+    protected void initMissingColors(int nbColor) {
+        while (colors.size() < nbColor) {
+            colors.add(new Color());
+        }
+    }
+
+    protected void clearColors(){
+        colors.clear();
+    }
+
     public double getReflectionRatio() {
         return this.reflectionRatio;
     }

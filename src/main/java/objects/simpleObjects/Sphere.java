@@ -1,4 +1,4 @@
-package objects;
+package objects.simpleObjects;
 
 import enums.MatrixTransformEnum;
 import enums.PatternTypeEnum;
@@ -6,6 +6,7 @@ import math.Line3D;
 import math.Point3D;
 import math.Solver;
 import math.Vector3D;
+import objects.BaseObject;
 import utils.Color;
 import utils.Intersection;
 
@@ -90,7 +91,6 @@ public class Sphere extends BaseObject {
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
         return colors.get(((int)(angle / lineRadian)) % 2);
-
     }
 
     private Color getColorFromHorizontalLined(Point3D localIntersection) {

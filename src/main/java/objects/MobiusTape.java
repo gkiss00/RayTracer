@@ -57,43 +57,44 @@ public class MobiusTape extends BaseObject{
         double b = localRay.getVY();
         double c = localRay.getVZ();
 
-        double t3 = a * a * b +
-                c * c * b +
-                b * b * b -
-                2 * a * a * c -
-                2 * b * b * c;
+        double a2 = a * a;
+        double b2 = b * b;
+        double c2 = c * c;
+        double x02 = x0 * x0;
+        double y02 = y0 * y0;
+        double z02 = z0 * z0;
+        double R = radius;
+        double R2 = radius * radius;
 
-        double t2 = a * a * y0 +
-                2 * a * x0 * b +
-                c * c * y0 +
-                2 * c * z0 * b +
-                3 * y0 * b * b -
-                2 * a * a * z0 -
-                2 * 2 * a * x0 * c -
-                2 * b * b * z0 -
-                2 * 2 * b * y0 * c -
-                2 * radius * a * b;
+        /*double t3 = b * b * b +
+                a2 * b +
+                c2 * b -
+                2 * (a2 * c + b2 * c);
 
-        double t1 = x0 * x0 * b +
-                2 * x0 * a * y0 +
-                z0 * z0 * b +
+        double t2 = 3 * b2 * y0 +
+                a2 * y0 +
+                2 * a * b * x0 +
+                c2 * y0 +
+                2 * c * b * z0 -
+                2 * (a2 * z0 + 2 * a * c * x0 + b2 * z0 + 2 * b * c * y0 + R * a * b);
+
+        double t1 = 3 * b * y02 +
+                2 * a * x0 * y0 +
+                b * x02 +
                 2 * c * z0 * y0 +
-                3 * y0 * y0 * b -
-                2 * x0 * x0 * c -
-                2 * 2 * a * x0 * z0 -
-                2 * y0 * y0 * c -
-                2 * 2 * b * y0 * z0 -
-                2 * radius * x0 * b -
-                2 * radius * a * y0 -
-                radius * radius * b;
+                b * z02 -
+                2 * (2 * a * x0 * z0 + c * x02 + 2 * b * y0 * z0 + c * y02 + R * a * z0 + R * c * x0) -
+                R2 * b;
 
-        double t0 = x0 * x0 * y0 +
-                z0 * z0 * y0 +
-                y0 * y0 * y0 -
-                2 * x0 * x0 * x0 -
-                2 * y0 * y0 * y0 -
-                2 * radius * x0 * y0 -
-                radius * radius * b;
+        double t0 = x02 * y0 +
+                z02 * y0 -
+                2 * (x02 * z0 + y02 * z0 + R * x0 * z0) -
+                R2 * y0;*/
+
+        double t3 = b * b * b + a2*b - 2*a2*c - 2*b2*c + b*c2;
+        double t2 = 3*y0*b2 + 2*x0*a*b + a2*y0 - 4*x0*a*c - 2*a2*z0 -4*y0*b*c - 2*b2*z0 + y0*c2 + 2*b*z0*c - 2*a*c;
+        double t1 = 3*y02*b + x02*b + 2*x0*y0*a -2*x02*c - 4*x0*a*z0 - 2*y02*c - 4*y0*b*z0 + 2*y0*z0*c + b*z02 - 2*x0*c - 2*a*z0 - b;
+        double t0 = y0 * y0 * y0 + x02*y0 - 2*x02*z0 - 2*y02*z0 + y0*z02 - 2*x0*z0 - y0;
 
         List<Double> solutions = Solver.solve(t3, t2, t1, t0);
         for (int i = 0; i < solutions.size(); ++i) {
@@ -103,31 +104,32 @@ public class MobiusTape extends BaseObject{
                         localRay.getPY() + localRay.getVY() * solutions.get(i),
                         localRay.getPZ() + localRay.getVZ() * solutions.get(i)
                 );
-                Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), localIntersection.getZ());
-                Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                Vector3D tmp = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
+                tmp.normalize();
+                Point3D test = new Point3D(tmp.getX(), tmp.getY(), 0);
+                if(Point3D.distanceBetween(test, localIntersection) < .1){
+                //if(Point3D.distanceBetween(new Point3D(0, 0, 0), localIntersection) < 1 && Point3D.distanceBetween(new Point3D(0, 0, 0), localIntersection) > 0.0 &&
+                //        Math.abs(localIntersection.getZ()) < 0.3) {
+                //if(localIntersection.getZ() < 0.3 && localIntersection.getZ() > -0.3) {
+                    Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
+                    Vector3D localNormal = getTan(localIntersection);
+                    if(Vector3D.angleBetween(localRay.getVector(), localNormal) < 90)
+                        localNormal.inverse();
+                    Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
+                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                }
             }
         }
     }
 
-    private Point3D findRealPoint(Point3D localIntersection) {
-        double distFromCenter = localIntersection.getDistanceFromOrigin();
-        int sign = distFromCenter < radius ? -1 : 1;
-        double hypotenuse = distFromCenter;
-        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
-        if(localIntersection.getX() < 0)
-            angle = 360.0 - angle;
-        double rotationAngle = angle / 2;
-        double newZ = Math.sin(Math.toRadians(rotationAngle)) * distFromCenter;
-        double newY = newZ / Math.tan(Math.toRadians(rotationAngle));
-        double newX = Math.tan(Math.toRadians(angle)) * newY;
+    private Vector3D getTan(Point3D localIntersection){
+        double x = localIntersection.getX();
+        double y = localIntersection.getY();
+        double z = localIntersection.getZ();
 
-        Point3D res = new Point3D(localIntersection.getX(), localIntersection.getY(), newZ);
-        System.out.println(localIntersection);
-        System.out.println(hypotenuse);
-        System.out.println(angle + " " + Math.tan(Math.toRadians(angle)));
-        System.out.println(res);
-        return res;
+        double fx = 2 * x * y - 2 * z - 4 * x * z;
+        double fy = x * x + z * z + 3 * y * y - 1 - 4 * y * z;
+        double fz = 2 * z * y - 2 * x - 2 * x * x - 2 * y * y;
+        return new Vector3D(fx, fy, fz);
     }
 }

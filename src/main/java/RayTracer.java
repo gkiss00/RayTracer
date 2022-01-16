@@ -3,6 +3,7 @@ import enums.PatternTypeEnum;
 import lights.Light;
 import math.Line3D;
 import math.Point3D;
+import math.Solver;
 import math.Vector3D;
 import objects.*;
 import utils.Color;
@@ -30,115 +31,6 @@ public class RayTracer {
     private static Camera cam;
     private static List<BaseObject> objects = new ArrayList<>();
     private static List<Light> lights = new ArrayList<>();
-
-    private static void setup() {
-        cam = new Camera(new Point3D(-400, 0, 120), new Vector3D(1, 0, -0.25), new Vector3D(0, 0, 1), 90);
-        cam.update(height, width);
-
-//        // Spheres
-        Sphere sphere1 = new Sphere(40, PatternTypeEnum.GRID, new Color(0, 0, 0), new Color(1, 1, 0));
-        sphere1.updateMatrices(0, 45, 0, 1, 1, 1, 500, -150, 100);
-        Sphere sphere2 = new Sphere(40, PatternTypeEnum.GRADIENT, new Color(0, 1, 0), new Color(0, 0, 1), new Color(1, 0, 0));
-        sphere2.updateMatrices(0, 0, 0, 1, 1, 1, 500, 0, 100);
-        Sphere sphere3 = new Sphere(40, new Color(0, 0, 1));
-        sphere3.updateMatrices(0, 0, 0, 1, 1, 2, 500, 150, 100);
-        objects.add(sphere1);
-        objects.add(sphere2);
-        objects.add(sphere3);
-
-//        Sphere sphere4 = new Sphere(50, PatternTypeEnum.UNIFORM, new Color(1, 0, 0));
-//        sphere4.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-//        objects.add(sphere4);
-
-        // Plane
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 200, 0, -20);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
-
-//        Random rand = new Random();
-//        for (int i = 0; i < 5; ++i) {
-//            Sphere sp = new Sphere(10);
-//            sp.updateMatrices(0, 0, 0, 1, 1, 1, rand.nextInt(800) - 400, rand.nextInt(800) - 400, 50);
-//            if(rand.nextInt(10) == 1)
-//                sp.setReflectionRatio(.9);
-//            objects.add(sp);
-//        }
-
-//        Sphere sp = new Sphere(50, new Color(0.5, 0.5, 0.5));
-//        sp.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 80);
-//        sp.setReflectionRatio(0.9);
-//        objects.add(sp);
-
-//        // Cylinder
-        Cylinder cylinder1 = new Cylinder(30, PatternTypeEnum.UNIFORM, new Color(1, 0, 0), new Color(0, 0, 0));
-        cylinder1.updateMatrices(45, 0, 0, 1, 1, 1, 650, -75, 0);
-        cylinder1.setReflectionRatio(0.8);
-        Cylinder cylinder2 = new Cylinder(30, PatternTypeEnum.HORIZONTAL_LINED, new Color(0.75, 1, 0.2), new Color(0.28, .34, 0.58));
-        cylinder2.updateMatrices(90, 0, 0, 1, 1, 1, 650, 75, 50);
-        objects.add(cylinder1);
-        objects.add(cylinder2);
-//
-//        // Cone
-        Cone cone1 = new Cone(30, PatternTypeEnum.HORIZONTAL_LINED, new Color(0.5, 0, 0.7, 0.5), new Color(0.7, 0.2, 0.6, 0.4));
-        cone1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        cone1.setReflectionRatio(0.5);
-        objects.add(cone1);
-//
-//        //Disk
-        Disk disk1 = new Disk(20, 60, PatternTypeEnum.GRID, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
-        disk1.updateMatrices(0, 0, 0, 1, 1, 1, -50, 0, 0);
-        disk1.setNormal();
-        objects.add(disk1);
-
-        // Square
-        Square square1 = new Square(70, PatternTypeEnum.GRADIENT, new Color(0.5, 0.5, 0.5), new Color(0.2, 0.5, 0.1, 0));
-        square1.updateMatrices(90, 0, 0, 1, 1, 1, -120, 70, -20);
-        square1.setNormal();
-        square1.setReflectionRatio(0);
-        objects.add(square1);
-
-        //QuadraticSurface
-//        QuadraticSurface quadraticSurface1 = new QuadraticSurface(1.0 / 9, -1.0 / 16, 0, 0, 0, 0, 0, 0, -1.0 / 9, 0, new Color(1, 0, 0));
-//        quadraticSurface1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-//        quadraticSurface1.setReflectionRatio(0.5);
-//        objects.add(quadraticSurface1);
-
-        // Torus
-//        Torus torus1 = new Torus(100, 30, new Color(0, 0, 1, 1));
-//        torus1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 30);
-//        objects.add(torus1);
-
-        //MobiusTape
-//        MobiusTape mobiusTape = new MobiusTape(1, 50, new Color(1, 0, 0));
-//        mobiusTape.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-//        objects.add(mobiusTape);
-
-        //Cubic Surface
-//        CubicSurface cubicSurface1 = new CubicSurface(new Color(1, 0, 0));
-//        cubicSurface1.setX3(16);
-//        cubicSurface1.setY3(16);
-//        cubicSurface1.setZ3(1);
-//        cubicSurface1.setX2Y(-48);
-//        cubicSurface1.setX2Z(24);
-//        cubicSurface1.setY2X(-48);
-//        cubicSurface1.setY2Z(24);
-//        cubicSurface1.setXYZ(1);
-//        cubicSurface1.setX2(1.0 / 9);
-//        cubicSurface1.setY2(-1.0 / 16);
-//        cubicSurface1.setZ2(-1);
-//        cubicSurface1.setXZ(10);
-//        cubicSurface1.setYZ(10);
-//        cubicSurface1.setZ(-1.0 / 9);
-//        cubicSurface1.setK(-1);
-//        cubicSurface1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-//        cubicSurface1.setReflectionRatio(0.5);
-//        objects.add(cubicSurface1);
-
-//        Light light1 = new Light(new Point3D(-300, 0, 100), new Color(1, 1, 1));
-//        lights.add(light1);
-    }
 
     private static void sortIntersections(List<Intersection> intersections) {
         int size = intersections.size();
@@ -283,11 +175,8 @@ public class RayTracer {
     }
 
     public static void main(String[] args) {
-        // setup();
         //System.out.println(ProcessHandle.current().pid());
-        cam = SceneMaker.getSimpleTorus(objects, lights);
-        //Scanner scan = new Scanner(System.in);
-        //scan.next();
+        cam = SceneMaker.getSimpleMobiusTape(objects, lights);
         cam.update(height, width);
         long start = System.nanoTime();
         run();

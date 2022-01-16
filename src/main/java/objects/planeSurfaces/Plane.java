@@ -1,10 +1,11 @@
-package objects;
+package objects.planeSurfaces;
 
 import enums.MatrixTransformEnum;
 import enums.PatternTypeEnum;
 import math.Line3D;
 import math.Point3D;
 import math.Vector3D;
+import objects.BaseObject;
 import utils.Color;
 import utils.Intersection;
 
@@ -13,7 +14,7 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.util.List;
 
-public class Plane extends BaseObject{
+public class Plane extends BaseObject {
     private Raster image;
     private double textureWidth = 20;
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);

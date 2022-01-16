@@ -1,4 +1,4 @@
-package objects;
+package objects.simpleObjects;
 
 import enums.MatrixTransformEnum;
 import enums.PatternTypeEnum;
@@ -6,6 +6,7 @@ import math.Line3D;
 import math.Point3D;
 import math.Solver;
 import math.Vector3D;
+import objects.BaseObject;
 import utils.Color;
 import utils.Intersection;
 
@@ -14,7 +15,7 @@ import java.awt.image.Raster;
 import java.io.File;
 import java.util.List;
 
-public class Cylinder extends BaseObject{
+public class Cylinder extends BaseObject {
     private double radius;
     private Raster image;
 

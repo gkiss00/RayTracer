@@ -1,16 +1,17 @@
-package objects;
+package objects.planeSurfaces;
 
 import enums.MatrixTransformEnum;
 import enums.PatternTypeEnum;
 import math.Line3D;
 import math.Point3D;
 import math.Vector3D;
+import objects.BaseObject;
 import utils.Color;
 import utils.Intersection;
 
 import java.util.List;
 
-public class Square extends BaseObject{
+public class Square extends BaseObject {
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
     private Vector3D realNormal;
     private double size;

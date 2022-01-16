@@ -6,7 +6,7 @@ import enums.MatrixTransformEnum;
 import math.Line3D;
 import math.Point3D;
 import math.Vector3D;
-import objects.Cube;
+import objects.simpleObjects.Cube;
 import utils.Color;
 import utils.Intersection;
 

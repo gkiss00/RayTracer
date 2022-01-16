@@ -1,16 +1,17 @@
-package objects;
+package objects.planeSurfaces;
 
 import enums.MatrixTransformEnum;
 import enums.PatternTypeEnum;
 import math.Line3D;
 import math.Point3D;
 import math.Vector3D;
+import objects.BaseObject;
 import utils.Color;
 import utils.Intersection;
 
 import java.util.List;
 
-public class Disk extends BaseObject{
+public class Disk extends BaseObject {
     private static final Point3D localOrigin = new Point3D(0, 0, 0);
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
     private double internalRadius;

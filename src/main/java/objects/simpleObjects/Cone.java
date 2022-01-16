@@ -1,4 +1,4 @@
-package objects;
+package objects.simpleObjects;
 
 import enums.MatrixTransformEnum;
 import enums.PatternTypeEnum;
@@ -6,12 +6,13 @@ import math.Line3D;
 import math.Point3D;
 import math.Solver;
 import math.Vector3D;
+import objects.BaseObject;
 import utils.Color;
 import utils.Intersection;
 
 import java.util.List;
 
-public class Cone extends BaseObject{
+public class Cone extends BaseObject {
     private double angle;
 
     public Cone(double angle) {

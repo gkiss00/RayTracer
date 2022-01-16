@@ -134,6 +134,7 @@ public class CubicSurface extends BaseObject{
                 T;
 
         List<Double> solutions = Solver.solve(t3, t2, t1, t0);
+        System.out.println(solutions.size());
         for (int i = 0; i < solutions.size(); ++i) {
             if (solutions.get(i) > EPSILON) {
                 Point3D localIntersection = new Point3D(
