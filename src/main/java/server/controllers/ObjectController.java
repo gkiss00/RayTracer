@@ -9,9 +9,13 @@ import java.util.List;
 
 @RestController()
 public class ObjectController {
-    private List<Object> objects = new ArrayList<>();
+    private static List<Object> objects = new ArrayList<>();
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    public static List<Object> getObjects() {
+        return objects;
+    }
+
+    @CrossOrigin
     @GetMapping(value = "/objects", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Object> getAll() {
         return objects;

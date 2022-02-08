@@ -19,6 +19,7 @@ public class RayTracerServer {
         SpringApplication.run(RayTracerServer.class, args);
     }
 
+    @CrossOrigin
     @GetMapping(
             value = "/image",
             produces = MediaType.IMAGE_PNG_VALUE
@@ -36,5 +37,27 @@ public class RayTracerServer {
         }
         byte [] data = new byte[0];
         return data;
+    }
+
+    @CrossOrigin
+    @GetMapping(
+            value = "/images"
+    )
+    @ResponseBody
+    public byte[][] getImages() {
+        byte[][] res = new byte[3][];
+        try {
+            for (int i = 0; i < 3; ++i) {
+                BufferedImage bImage = ImageIO.read(new File("Image.png"));
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ImageIO.write(bImage, "png", bos );
+                byte [] data = bos.toByteArray();
+                res[i] = data;
+            }
+            return res;
+        } catch(Exception e) {
+
+        }
+        return res;
     }
 }

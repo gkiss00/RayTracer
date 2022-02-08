@@ -5,8 +5,13 @@ import server.model.Config;
 
 @RestController()
 public class ConfigController {
-    private Config config = new Config();
+    private static Config config = new Config();
 
+    public static Config getConfiguration() {
+        return config;
+    }
+
+    @CrossOrigin
     @GetMapping("/config")
     public Config getConfig() {
         return config;
@@ -22,6 +27,7 @@ public class ConfigController {
     }
      */
 
+    @CrossOrigin
     @PostMapping("/config")
     public Config setConfig(@RequestBody Config config) {
         this.config = config;
