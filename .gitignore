@@ -1,4 +1,4 @@
 .DS_Store
 ./target/*
 
-./src/main/resources/server.emailSender/properties
+**/*.properties
