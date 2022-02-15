@@ -31,9 +31,14 @@ public class CameraController {
     @CrossOrigin
     @GetMapping("/camera/{id}")
     public Camera getOne(@PathVariable Integer id) {
-        if(id < 0 || id >= cameras.size())
-            return null;
-        return cameras.get(id);
+        Camera cam = null;
+        for (int i = 0; i < cameras.size(); ++i) {
+            if (cameras.get(i).getId() == id) {
+                cam = cameras.get(i);
+                break;
+            }
+        }
+        return cam;
     }
 
         /*
@@ -78,13 +83,13 @@ public class CameraController {
     @PostMapping("/camera/{id}/update")
     public Camera updateCamera(
             @PathVariable Integer id,
-            @RequestBody CameraDTO camera
+            @RequestBody CameraDTO cameraDTO
     ) {
         Camera cam = null;
         for (int i = 0; i < cameras.size(); ++i) {
             if (cameras.get(i).getId() == id) {
                 cam = cameras.get(i);
-                cam.update(camera);
+                cam.update(cameraDTO);
                 break;
             }
         }

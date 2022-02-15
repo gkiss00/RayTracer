@@ -4,28 +4,39 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import server.model.Config;
+import rayTracer.RayTracer;
+import server.controllers.CameraController;
+import server.controllers.ConfigController;
+import server.controllers.ObjectController;
+import server.utils.Converter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+
 @SpringBootApplication()
 @RestController()
 public class RayTracerServer {
-    private Config config = new Config();
     public static void main(String[]args) {
         SpringApplication.run(RayTracerServer.class, args);
     }
 
+    /*
+        Create the image can take several minutes
+     */
     @CrossOrigin
     @GetMapping(
-            value = "/image",
+            value = "/run",
             produces = MediaType.IMAGE_PNG_VALUE
     )
-    @ResponseBody
-    public byte[] getImage() {
+    public byte[] run() {
+        RayTracer.run(
+                ConfigController.getConfiguration(),
+                Converter.getObjects(ObjectController.getObjects()),
+                Converter.getCameras(CameraController.getCameras())
+        );
         try {
             BufferedImage bImage = ImageIO.read(new File("Image.png"));
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -37,27 +48,5 @@ public class RayTracerServer {
         }
         byte [] data = new byte[0];
         return data;
-    }
-
-    @CrossOrigin
-    @GetMapping(
-            value = "/images"
-    )
-    @ResponseBody
-    public byte[][] getImages() {
-        byte[][] res = new byte[3][];
-        try {
-            for (int i = 0; i < 3; ++i) {
-                BufferedImage bImage = ImageIO.read(new File("Image.png"));
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                ImageIO.write(bImage, "png", bos );
-                byte [] data = bos.toByteArray();
-                res[i] = data;
-            }
-            return res;
-        } catch(Exception e) {
-
-        }
-        return res;
     }
 }

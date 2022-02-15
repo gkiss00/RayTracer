@@ -1,5 +1,6 @@
 package server.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import server.model.enums.ObjectTypeEnum;
 import server.model.math.Point3D;
 
@@ -7,18 +8,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Object {
+    @JsonIgnore
+    private static int _id = 0;
+    private int id;
     private ObjectTypeEnum type;
     private List<Double> values;
     private Point3D coordinates;
     private Point3D scaling;
     private Point3D rotation;
+    private String[] colors;
 
     public Object() {
+        this.id = ++_id;
         this.type = ObjectTypeEnum.SPHERE;
         this.values = new ArrayList<>();
         this.coordinates = new Point3D(0, 0, 0);
         this.scaling = new Point3D(1, 1, 1);
         this.rotation = new Point3D(0, 0, 0);
+        this.colors = new String[0];
+    }
+
+    public Object(ObjectDTO objectDTO) {
+        this.id = ++_id;
+        this.type = objectDTO.getType();
+        this.values = new ArrayList<>(objectDTO.getValues());
+        this.coordinates = new Point3D(objectDTO.getCoordinates());
+        this.scaling = new Point3D(objectDTO.getScaling());
+        this.rotation = new Point3D(objectDTO.getRotation());
+        System.arraycopy(objectDTO.getColors(), 0, this.colors,0, objectDTO.getColors().length);
     }
 
     public ObjectTypeEnum getType() {
@@ -41,11 +58,20 @@ public class Object {
         return rotation;
     }
 
-    public void update(Object o) {
-        this.type = o.type;
-        this.values = o.values;
-        this.coordinates = o.coordinates;
-        this.scaling = o.scaling;
-        this.rotation = o.rotation;
+    public String[] getColors() {
+        return colors;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void update(ObjectDTO objectDTO) {
+        this.type = objectDTO.getType();
+        this.values = new ArrayList<>(objectDTO.getValues());
+        this.coordinates = new Point3D(objectDTO.getCoordinates());
+        this.scaling = new Point3D(objectDTO.getScaling());
+        this.rotation = new Point3D(objectDTO.getRotation());
+        System.arraycopy(objectDTO.getColors(), 0, this.colors,0, objectDTO.getColors().length);
     }
 }

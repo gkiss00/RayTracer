@@ -1,5 +1,6 @@
 package rayTracer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import rayTracer.enums.FilterTypeEnum;
 import rayTracer.lights.Light;
 import rayTracer.math.Line3D;
@@ -11,6 +12,7 @@ import rayTracer.utils.Filter;
 import rayTracer.utils.Intersection;
 import rayTracer.utils.SceneMaker;
 import rayTracer.visual.Camera;
+import server.model.Config;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -20,12 +22,12 @@ import java.util.List;
 
 public class RayTracer {
     private static final double EPSILON = 0.00001;
-    private static final int REFLECTION_MAX = 3;
-    private static final FilterTypeEnum filter = FilterTypeEnum.NONE;
+    private static int REFLECTION_MAX = 3;
+    private static FilterTypeEnum filter = FilterTypeEnum.NONE;
     private static final Color ambientLight = new Color(1, 1, 1, 1);
     private static int height = 900;
     private static int width = 900;
-    private static int antiAliasing = 3;
+    private static int ANTI_ALIASING = 3;
 
     private static Camera cam;
     private static List<BaseObject> objects = new ArrayList<>();
@@ -148,16 +150,16 @@ public class RayTracer {
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 Color pixelColor = new Color(0, 0, 0);
-                for (int h = 0; h < antiAliasing; ++h) {
-                    for (int w = 0; w < antiAliasing; ++w) {
-                        double heightRatio = ((y - (height / 2) + 0.5) / height) + ((1.0 / height / antiAliasing) * h);
-                        double widthRatio = ((x - (width / 2) + 0.5) / width) + ((1.0 / width / antiAliasing) * w);
+                for (int h = 0; h < ANTI_ALIASING; ++h) {
+                    for (int w = 0; w < ANTI_ALIASING; ++w) {
+                        double heightRatio = ((y - (height / 2) + 0.5) / height) + ((1.0 / height / ANTI_ALIASING) * h);
+                        double widthRatio = ((x - (width / 2) + 0.5) / width) + ((1.0 / width / ANTI_ALIASING) * w);
                         Line3D ray = new Line3D(cam.getPointOfVue(), cam.getPoint(heightRatio, widthRatio));
                         ray.normalize();
                         pixelColor.add(getPixelColor(ray, 0));
                     }
                 }
-                pixelColor.divide(antiAliasing * antiAliasing);
+                pixelColor.divide(ANTI_ALIASING * ANTI_ALIASING);
                 Filter.applyFilter(pixelColor, filter);
                 buffer.setRGB(x, y, pixelColor.toInt());
             }
@@ -171,6 +173,28 @@ public class RayTracer {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void run(Config config, List<BaseObject> baseObjects, List<Camera> cameras) {
+        cam = cameras.get(0);
+        objects.clear();
+        objects.addAll(baseObjects);
+        height = config.getHeight();
+        width = config.getWidth();
+        ANTI_ALIASING = config.getAntiAliasing();
+        filter = config.getFinalFilter();
+        REFLECTION_MAX = config.getMaxReflexion();
+
+        cam.update(height, width);
+        try {
+            System.out.println(new ObjectMapper().writeValueAsString(objects));
+        } catch (Exception e) {
+
+        }
+        long start = System.nanoTime();
+        run();
+        long end = System.nanoTime();
+        System.out.println("Time taken: " + (double)((double)(end - start) / 1000000000D));
     }
 
     public static void main(String[] args) {

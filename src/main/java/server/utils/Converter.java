@@ -4,12 +4,54 @@ import rayTracer.objects.BaseObject;
 import rayTracer.objects.planeSurfaces.Plane;
 import rayTracer.objects.simpleObjects.Cylinder;
 import rayTracer.objects.simpleObjects.Sphere;
+import server.model.Camera;
 import server.model.Object;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Converter {
+
+    /* * * * * * * * * * * * * * * * * * * * *
+     *                                       *
+     *                CAMERA                 *
+     *                                       *
+     * * * * * * * * * * * * * * * * * * * * */
+
+    public static List<rayTracer.visual.Camera> getCameras(List<Camera> cameras) {
+        List<rayTracer.visual.Camera> newCameras = new ArrayList<>();
+
+        for (int i = 0; i < cameras.size(); ++i) {
+            newCameras.add(new rayTracer.visual.Camera(
+                    new rayTracer.math.Point3D(
+                            cameras.get(i).getPointOfVue().getX(),
+                            cameras.get(i).getPointOfVue().getY(),
+                            cameras.get(i).getPointOfVue().getZ()
+                    ),
+                    new rayTracer.math.Vector3D(
+                            cameras.get(i).getDirection().getX(),
+                            cameras.get(i).getDirection().getY(),
+                            cameras.get(i).getDirection().getZ()
+                    ),
+                    new rayTracer.math.Vector3D(
+                            cameras.get(i).getUp().getX(),
+                            cameras.get(i).getUp().getY(),
+                            cameras.get(i).getUp().getZ()
+                    ),
+                    cameras.get(i).getAngle()
+            ));
+        }
+
+        return newCameras;
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+     *                                       *
+     *                OBJECT                 *
+     *                                       *
+     * * * * * * * * * * * * * * * * * * * * */
+
     public static List<BaseObject> getObjects(List<Object> objects) {
         List<BaseObject> baseObjects = new ArrayList<>();
 
@@ -22,6 +64,7 @@ public class Converter {
                     baseObjects.add(getPlane(objects.get(i)));
                     break;
                 case CYLINDER:
+                    baseObjects.add(getCylinder(objects.get(i)));
                     break;
             }
         }
