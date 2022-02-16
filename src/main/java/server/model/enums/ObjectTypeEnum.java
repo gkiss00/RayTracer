@@ -4,4 +4,5 @@ public enum ObjectTypeEnum {
     SPHERE,
     PLANE,
     CYLINDER,
+    CUBE,
 }

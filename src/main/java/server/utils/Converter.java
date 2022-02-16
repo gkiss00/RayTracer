@@ -2,6 +2,7 @@ package server.utils;
 
 import rayTracer.objects.BaseObject;
 import rayTracer.objects.planeSurfaces.Plane;
+import rayTracer.objects.simpleObjects.Cube;
 import rayTracer.objects.simpleObjects.Cylinder;
 import rayTracer.objects.simpleObjects.Sphere;
 import server.model.Camera;
@@ -66,6 +67,9 @@ public class Converter {
                 case CYLINDER:
                     baseObjects.add(getCylinder(objects.get(i)));
                     break;
+                case CUBE:
+                    baseObjects.add(getCube(objects.get(i)));
+                    break;
             }
         }
 
@@ -122,5 +126,23 @@ public class Converter {
         );
 
         return cylinder;
+    }
+
+    private static BaseObject getCube(Object obj) {
+        Cube cube = new Cube(obj.getValues().get(0));
+        cube.updateMatrices(
+                obj.getRotation().getX(),
+                obj.getRotation().getY(),
+                obj.getRotation().getZ(),
+                obj.getScaling().getX(),
+                obj.getScaling().getY(),
+                obj.getScaling().getZ(),
+                obj.getCoordinates().getX(),
+                obj.getCoordinates().getY(),
+                obj.getCoordinates().getZ()
+        );
+        cube.setNormals();
+
+        return cube;
     }
 }
