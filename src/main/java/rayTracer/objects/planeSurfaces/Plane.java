@@ -18,7 +18,7 @@ import java.util.List;
 public class Plane extends BaseObject {
     private Raster image;
     private Raster normalMap = null;
-    private double textureWidth = 20;
+    private double textureWidth = 100;
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
     private Vector3D realNormal;
 
@@ -75,8 +75,10 @@ public class Plane extends BaseObject {
         try {
             normalMap = ImageIO.read(normals).getData();
         } catch (Exception e) {
-            System.err.println("Sphere error: can not read normal file, set pattern to UNIFORM");
-            pattern = PatternTypeEnum.UNIFORM;
+            System.err.println("Sphere error: can not read normal file");
+            System.exit(0);
+            normalMap = null;
+            setNormal();
         }
     }
 
@@ -175,8 +177,8 @@ public class Plane extends BaseObject {
     private Vector3D getNormal(Point3D localIntersection) {
         if (normalMap == null)
             return localNormal;
-        int imageHeight = image.getHeight();
-        int imageWidth = image.getWidth();
+        int imageHeight = normalMap.getHeight();
+        int imageWidth = normalMap.getWidth();
         double textureHeight = (double)imageHeight / (double)imageWidth * textureWidth;
         double yRatio = (Math.abs(localIntersection.getY()) % textureWidth) / textureWidth;
         double xRatio = (Math.abs(localIntersection.getX()) % textureHeight) / textureHeight;

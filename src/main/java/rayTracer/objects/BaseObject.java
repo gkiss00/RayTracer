@@ -47,14 +47,18 @@ public abstract class BaseObject {
         }
     }
 
-    protected void initMissingColors(int nbColor) {
+    public void initMissingColors(int nbColor) {
         while (colors.size() < nbColor) {
             colors.add(new Color());
         }
     }
 
-    protected void clearColors(){
+    public void clearColors(){
         colors.clear();
+    }
+
+    public void addColor(Color color) {
+        this.colors.add(new Color(color));
     }
 
     public void addCut(CutTypeEnum cut) {
@@ -91,7 +95,9 @@ public abstract class BaseObject {
         } catch (Exception e) {}
     }
 
-    abstract public void setPattern(PatternTypeEnum pattern);
+    public void setPattern(PatternTypeEnum pattern) {
+        this.pattern = pattern;
+    }
     abstract protected Color getColor(Point3D localIntersection);
     abstract public void hit(Line3D ray, List<Intersection> intersections) throws Exception;
 }

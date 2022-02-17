@@ -100,25 +100,13 @@ public class SceneMaker {
     }
 
     public static Camera getSimplePlane(List<BaseObject> objects, List<Light> lights) {
-        Plane plane = new Plane(new Color(0, 0, 1));
-        plane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -20);
-        plane.setNormalMap("./src/main/resources/textureAndNormal/water.normal.jpg");
-        plane.setTexture("./src/main/resources/textureAndNormal/water.jpg");
+        Plane plane = new Plane(new Color(1, 0, 0));
+        plane.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
         plane.setNormal();
-        plane.setReflectionRatio(0.8);
+        plane.setNormalMap("./src/main/resources/normalMaps/coin.normal.jpg");
         objects.add(plane);
 
-        Sphere moon = new Sphere(20);
-        moon.updateMatrices(0, 0, 0, 1, 1, 1, 100, 0, 100);
-        moon.setTexture("./src/main/resources/textures/planets/moon.jpeg");
-        objects.add(moon);
-
-        Sphere milkyWay = new Sphere(210);
-        milkyWay.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        milkyWay.setTexture("./src/main/resources/textures/planets/milkyWay.jpeg");
-        objects.add(milkyWay);
-
-        lights.add(new Light(new Point3D(0, 0, 0)));
+        lights.add(new Light(new Point3D(-100, 0, 0)));
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
@@ -510,8 +498,16 @@ public class SceneMaker {
     }
 
     public static Camera getMoon(List<BaseObject> objects, List<Light> lights) {
-        Sphere moon = new Sphere(30);
-        moon.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        Plane plane = new Plane(new Color(0, 0, 1));
+        plane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -20);
+        plane.setNormalMap("./src/main/resources/textureAndNormal/water.normal.jpg");
+        plane.setTexture("./src/main/resources/textureAndNormal/water.jpg");
+        plane.setNormal();
+        plane.setReflectionRatio(0.8);
+        objects.add(plane);
+
+        Sphere moon = new Sphere(20);
+        moon.updateMatrices(0, 0, 0, 1, 1, 1, 100, 0, 100);
         moon.setTexture("./src/main/resources/textures/planets/moon.jpeg");
         objects.add(moon);
 
@@ -520,6 +516,7 @@ public class SceneMaker {
         milkyWay.setTexture("./src/main/resources/textures/planets/milkyWay.jpeg");
         objects.add(milkyWay);
 
+        lights.add(new Light(new Point3D(0, 0, 0)));
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 

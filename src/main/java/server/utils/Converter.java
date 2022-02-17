@@ -7,12 +7,24 @@ import rayTracer.objects.simpleObjects.Cylinder;
 import rayTracer.objects.simpleObjects.Sphere;
 import server.model.Camera;
 import server.model.Object;
+import server.model.enums.PatternTypeEnum;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Converter {
+
+    private static Map<server.model.enums.PatternTypeEnum, rayTracer.enums.PatternTypeEnum> patternMap = new HashMap<server.model.enums.PatternTypeEnum, rayTracer.enums.PatternTypeEnum>() {{
+        put(server.model.enums.PatternTypeEnum.UNIFORM, rayTracer.enums.PatternTypeEnum.UNIFORM);
+        put(server.model.enums.PatternTypeEnum.VERTICAL_LINED, rayTracer.enums.PatternTypeEnum.VERTICAL_LINED);
+        put(server.model.enums.PatternTypeEnum.HORIZONTAL_LINED, rayTracer.enums.PatternTypeEnum.HORIZONTAL_LINED);
+        put(server.model.enums.PatternTypeEnum.GRID, rayTracer.enums.PatternTypeEnum.GRID);
+        put(server.model.enums.PatternTypeEnum.GRADIENT, rayTracer.enums.PatternTypeEnum.GRADIENT);
+        put(server.model.enums.PatternTypeEnum.TEXTURE, rayTracer.enums.PatternTypeEnum.TEXTURE);
+    }};
 
     /* * * * * * * * * * * * * * * * * * * * *
      *                                       *
@@ -57,20 +69,27 @@ public class Converter {
         List<BaseObject> baseObjects = new ArrayList<>();
 
         for (int i = 0; i < objects.size(); ++i) {
+            BaseObject tmp = null;
             switch (objects.get(i).getType()) {
                 case SPHERE:
-                    baseObjects.add(getSphere(objects.get(i)));
+                    tmp = getSphere(objects.get(i));
+                    //baseObjects.add(getSphere(objects.get(i)));
                     break;
                 case PLANE:
-                    baseObjects.add(getPlane(objects.get(i)));
+                    tmp = getPlane(objects.get(i));
+                    //baseObjects.add(getPlane(objects.get(i)));
                     break;
                 case CYLINDER:
-                    baseObjects.add(getCylinder(objects.get(i)));
+                    tmp = getCylinder(objects.get(i));
+                    //baseObjects.add(getCylinder(objects.get(i)));
                     break;
                 case CUBE:
-                    baseObjects.add(getCube(objects.get(i)));
+                    tmp = getCube(objects.get(i));
+                    //baseObjects.add(getCube(objects.get(i)));
                     break;
             }
+            setAttributes(tmp, objects.get(i));
+            baseObjects.add(tmp);
         }
 
         return baseObjects;
@@ -144,5 +163,27 @@ public class Converter {
         cube.setNormals();
 
         return cube;
+    }
+
+    private static BaseObject setAttributes(BaseObject baseObject, Object object) {
+
+        // COLORS
+        baseObject.clearColors();
+        for (int i = 0; i < object.getColors().length; ++i) {
+            java.awt.Color tmpColor = java.awt.Color.decode(object.getColors()[i]);
+            System.out.println(tmpColor.toString());
+            baseObject.addColor(new rayTracer.utils.Color((double)tmpColor.getRed() / 255, (double)tmpColor.getGreen() / 255, (double)tmpColor.getBlue() / 255));
+        }
+
+        // PATTERN
+        baseObject.setPattern(patternMap.get(object.getPattern()));
+
+        // FILL MISSING COLORS
+        baseObject.initMissingColors(3);
+
+        // REFLEXION
+        baseObject.setReflectionRatio((double)object.getReflexion() / 100);
+
+        return baseObject;
     }
 }

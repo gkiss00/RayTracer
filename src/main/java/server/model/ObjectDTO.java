@@ -2,6 +2,7 @@ package server.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import server.model.enums.ObjectTypeEnum;
+import server.model.enums.PatternTypeEnum;
 import server.model.math.Point3D;
 
 import java.util.ArrayList;
@@ -13,7 +14,9 @@ public class ObjectDTO {
     private Point3D coordinates;
     private Point3D scaling;
     private Point3D rotation;
+    private PatternTypeEnum pattern;
     private String[] colors;
+    private int reflexion;
 
     public ObjectDTO() {
         this.type = ObjectTypeEnum.SPHERE;
@@ -21,7 +24,9 @@ public class ObjectDTO {
         this.coordinates = new Point3D(0, 0, 0);
         this.scaling = new Point3D(1, 1, 1);
         this.rotation = new Point3D(0, 0, 0);
+        this.pattern = PatternTypeEnum.UNIFORM;
         this.colors = new String[0];
+        this.reflexion = 0;
     }
 
     public ObjectTypeEnum getType() {
@@ -44,7 +49,15 @@ public class ObjectDTO {
         return rotation;
     }
 
+    public PatternTypeEnum getPattern() {
+        return pattern;
+    }
+
     public String[] getColors() {
         return colors;
+    }
+
+    public int getReflexion() {
+        return reflexion;
     }
 }
