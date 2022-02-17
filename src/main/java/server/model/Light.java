@@ -18,8 +18,8 @@ public class Light {
 
     public Light(LightDTO lightDTO) {
         this.id = ++_id;
-        this.point = new Point3D(0, 0, 0);
-        this.color = "#ffffff";
+        this.point = new Point3D(lightDTO.getPoint());
+        this.color = lightDTO.getColor();
     }
 
     public int getId() {

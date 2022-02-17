@@ -80,12 +80,20 @@ public class Converter {
                                     lights.get(i).getPoint().getZ()
                             ),
                             new rayTracer.utils.Color(
-                                    tmpColor.getRed(),
-                                    tmpColor.getGreen(),
-                                    tmpColor.getBlue()
+                                    (double)tmpColor.getRed() / 255,
+                                    (double)tmpColor.getGreen() / 255,
+                                    (double)tmpColor.getBlue() / 255
                             )
                     )
             );
+        }
+
+        for (int i = 0; i < lights.size(); ++i) {
+            System.out.println(lights.get(i).getPoint().getX());
+            System.out.println(lights.get(i).getPoint().getY());
+            System.out.println(lights.get(i).getPoint().getZ());
+            System.out.println(lights.get(i).getColor());
+
         }
 
         return newLights;
