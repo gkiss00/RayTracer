@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import rayTracer.RayTracer;
 import server.controllers.CameraController;
 import server.controllers.ConfigController;
+import server.controllers.LightController;
 import server.controllers.ObjectController;
 import server.utils.Converter;
 
@@ -35,7 +36,8 @@ public class RayTracerServer {
         RayTracer.run(
                 ConfigController.getConfiguration(),
                 Converter.getObjects(ObjectController.getObjects()),
-                Converter.getCameras(CameraController.getCameras())
+                Converter.getCameras(CameraController.getCameras()),
+                Converter.getLights(LightController.getLights())
         );
         try {
             BufferedImage bImage = ImageIO.read(new File("Image.png"));

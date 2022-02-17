@@ -175,19 +175,28 @@ public class RayTracer {
         }
     }
 
-    public static void run(Config config, List<BaseObject> baseObjects, List<Camera> cameras) {
-        cam = cameras.get(0);
-        objects.clear();
-        objects.addAll(baseObjects);
+    public static void run(Config config, List<BaseObject> baseObjects, List<Camera> cameras, List<Light> newLights) {
+        //SET CONFIG
         height = config.getHeight();
         width = config.getWidth();
         ANTI_ALIASING = config.getAntiAliasing();
         filter = config.getFinalFilter();
         REFLECTION_MAX = config.getMaxReflexion();
 
+        // SET CAMERA
+        cam = cameras.get(0);
         cam.update(height, width);
+
+        // SET OBJECTS
+        objects.clear();
+        objects.addAll(baseObjects);
+
+        // SET LIGHTS
+        lights.clear();
+        lights.addAll(newLights);
+
         try {
-            System.out.println(new ObjectMapper().writeValueAsString(objects));
+
         } catch (Exception e) {
 
         }

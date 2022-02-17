@@ -1,11 +1,13 @@
 package server.utils;
 
+import rayTracer.math.Point3D;
 import rayTracer.objects.BaseObject;
 import rayTracer.objects.planeSurfaces.Plane;
 import rayTracer.objects.simpleObjects.Cube;
 import rayTracer.objects.simpleObjects.Cylinder;
 import rayTracer.objects.simpleObjects.Sphere;
 import server.model.Camera;
+import server.model.Light;
 import server.model.Object;
 import server.model.enums.PatternTypeEnum;
 
@@ -57,6 +59,36 @@ public class Converter {
         }
 
         return newCameras;
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+     *                                       *
+     *                LIGHT                  *
+     *                                       *
+     * * * * * * * * * * * * * * * * * * * * */
+
+    public static List<rayTracer.lights.Light> getLights(List<Light> lights) {
+        List<rayTracer.lights.Light> newLights = new ArrayList<>();
+
+        for (int i = 0; i < lights.size(); ++i) {
+            java.awt.Color tmpColor = java.awt.Color.decode(lights.get(i).getColor());
+            newLights.add(
+                    new rayTracer.lights.Light(
+                            new Point3D(
+                                    lights.get(i).getPoint().getX(),
+                                    lights.get(i).getPoint().getY(),
+                                    lights.get(i).getPoint().getZ()
+                            ),
+                            new rayTracer.utils.Color(
+                                    tmpColor.getRed(),
+                                    tmpColor.getGreen(),
+                                    tmpColor.getBlue()
+                            )
+                    )
+            );
+        }
+
+        return newLights;
     }
 
     /* * * * * * * * * * * * * * * * * * * * *
