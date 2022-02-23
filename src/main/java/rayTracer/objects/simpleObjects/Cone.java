@@ -126,7 +126,7 @@ public class Cone extends BaseObject {
                         h = -h;
                     Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), -h);
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }

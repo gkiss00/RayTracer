@@ -11,12 +11,14 @@ import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.util.List;
 
 public class Plane extends BaseObject {
     private Raster image;
+    private BufferedImage bufferedImage;
     private Raster normalMap = null;
     private double textureWidth = 100;
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
@@ -64,8 +66,10 @@ public class Plane extends BaseObject {
         File texture = new File(filePath);
         try {
             image = ImageIO.read(texture).getData();
+            //test = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+            bufferedImage = ImageIO.read(texture);
         } catch (Exception e) {
-            System.err.println("Sphere error: can not read texture file, set pattern to UNIFORM");
+            System.err.println("Plane error: can not read texture file, set pattern to UNIFORM");
             pattern = PatternTypeEnum.UNIFORM;
         }
     }
@@ -75,7 +79,7 @@ public class Plane extends BaseObject {
         try {
             normalMap = ImageIO.read(normals).getData();
         } catch (Exception e) {
-            System.err.println("Sphere error: can not read normal file");
+            System.err.println("Plane error: can not read normal file");
             System.exit(0);
             normalMap = null;
             setNormal();
@@ -131,8 +135,8 @@ public class Plane extends BaseObject {
     }
 
     private Color getColorFromTexture(Point3D localIntersection) {
-        int imageHeight = image.getHeight();
-        int imageWidth = image.getWidth();
+        int imageHeight = bufferedImage.getHeight();
+        int imageWidth = bufferedImage.getWidth();
         double textureHeight = (double)imageHeight / (double)imageWidth * textureWidth;
         double yRatio = (Math.abs(localIntersection.getY()) % textureWidth) / textureWidth;
         double xRatio = (Math.abs(localIntersection.getX()) % textureHeight) / textureHeight;
@@ -144,9 +148,12 @@ public class Plane extends BaseObject {
                 (int)(yRatio * imageWidth) :
                 (int)(imageWidth - (yRatio * imageWidth));
 
-        double[] rgb = new double[3];
-        image.getPixel(x, y, rgb);
-        return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+//        double[] rgb = new double[3];
+//        image.getPixel(x, y, rgb);
+        int rgb = bufferedImage.getRGB(x, y);
+        java.awt.Color color = new java.awt.Color(rgb, true);
+        //return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+        return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
     @Override
@@ -169,7 +176,7 @@ public class Plane extends BaseObject {
                 if (Vector3D.angleBetween(realNormall, ray.getVector()) < 90)
                     realNormall.inverse();
                 realNormall.normalize();
-                intersections.add(new Intersection(realIntersection, realNormall, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                intersections.add(new Intersection(realIntersection, realNormall, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
             }
         }
     }

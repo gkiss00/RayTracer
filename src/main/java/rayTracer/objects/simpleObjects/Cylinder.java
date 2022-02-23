@@ -12,6 +12,7 @@ import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 public class Cylinder extends BaseObject {
     private double radius;
     private Raster image;
+    private BufferedImage bufferedImage;
 
     public Cylinder(double radius) {
         super();
@@ -57,6 +59,7 @@ public class Cylinder extends BaseObject {
         File texture = new File(filePath);
         try {
             image = ImageIO.read(texture).getData();
+            bufferedImage = ImageIO.read(texture);
         } catch (Exception e) {
             System.err.println("Sphere error: can not read texture file, set pattern to UNIFORM");
             pattern = PatternTypeEnum.UNIFORM;
@@ -112,8 +115,8 @@ public class Cylinder extends BaseObject {
     }
 
     private Color getColorFromTexture(Point3D localIntersection) {
-        int imageHeight = image.getHeight();
-        int imageWidth = image.getWidth();
+        int imageHeight = bufferedImage.getHeight();
+        int imageWidth = bufferedImage.getWidth();
         double circumference = 2 * Math.PI * radius;
         double textureHeight = (double)imageHeight / (double)imageWidth * circumference;
         double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
@@ -123,13 +126,16 @@ public class Cylinder extends BaseObject {
 
         double zRatio = (Math.abs(localIntersection.getZ()) % textureHeight) / textureHeight;
 
-        double[] rgb = new double[3];
+        //double[] rgb = new double[3];
         int x = (int)(angle / 360 * imageWidth) >= imageWidth ? imageWidth - 1 : (int)(angle / 360 * imageWidth);
         int y = localIntersection.getZ() >= 0 ?
                 imageHeight - (int)(zRatio * imageHeight) >= imageHeight ? imageHeight - 1: imageHeight - (int)(zRatio * imageHeight) :
                 (int)(zRatio * imageHeight) >= imageHeight ? imageHeight - 1: (int)(zRatio * imageHeight);
-        image.getPixel(x, y, rgb);
-        return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+        //image.getPixel(x, y, rgb);
+        //return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+        int rgb = bufferedImage.getRGB(x, y);
+        java.awt.Color color = new java.awt.Color(rgb, true);
+        return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
     @Override
@@ -159,7 +165,7 @@ public class Cylinder extends BaseObject {
                 if(!Cutter.cut(localIntersection, cuts)) {
                     Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }

@@ -81,7 +81,7 @@ public class MobiusTape extends BaseObject{
                     if (Vector3D.angleBetween(localRay.getVector(), localNormal) < 90)
                         localNormal.inverse();
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }

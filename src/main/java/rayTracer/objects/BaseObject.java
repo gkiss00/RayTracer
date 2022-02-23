@@ -1,5 +1,6 @@
 package rayTracer.objects;
 
+import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.PatternTypeEnum;
 import rayTracer.math.Line3D;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseObject {
+    private  static int _id = 0;
+    protected int id = 0;
     protected final static double EPSILON = 0.0001;
     protected List<Color> colors = new ArrayList<>();
     protected List<CutTypeEnum> cuts = new ArrayList<>();
@@ -21,18 +24,22 @@ public abstract class BaseObject {
     protected int columnValue = 10;
     protected Transform transform;
     protected double reflectionRatio = 0;
+    protected CapacityTypeEnum capacity = CapacityTypeEnum.EMPTY;
 
     public BaseObject() {
+        this.id = ++_id;
         this.colors.add(new Color());
         init();
     }
 
     public BaseObject(Color color) {
+        this.id = ++_id;
         this.colors.add(new Color(color));
         init();
     }
 
     public BaseObject(Color... colors) {
+        this.id = ++_id;
         for (int i = 0; i < colors.length; ++i)
             this.colors.add(new Color(colors[i]));
         init();
@@ -47,18 +54,18 @@ public abstract class BaseObject {
         }
     }
 
-    public void initMissingColors(int nbColor) {
-        while (colors.size() < nbColor) {
-            colors.add(new Color());
-        }
-    }
-
     public void clearColors(){
         colors.clear();
     }
 
     public void addColor(Color color) {
         this.colors.add(new Color(color));
+    }
+
+    public void initMissingColors(int nbColor) {
+        while (colors.size() < nbColor) {
+            colors.add(new Color());
+        }
     }
 
     public void addCut(CutTypeEnum cut) {
@@ -77,6 +84,14 @@ public abstract class BaseObject {
 
     public void setReflectionRatio(double reflectionRatio) {
         this.reflectionRatio = reflectionRatio < 0 ? 0 : reflectionRatio > 1 ? 1 : reflectionRatio;
+    }
+
+    public CapacityTypeEnum getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(CapacityTypeEnum capacity) {
+        this.capacity = capacity;
     }
 
     public void updateMatrices(

@@ -16,6 +16,15 @@ public class Color {
         this.alpha = 1;
     }
 
+    public Color(String rgb) { // #ff0B45
+        java.awt.Color tmp = java.awt.Color.decode(rgb);
+        this.red = (double)tmp.getRed() / 255;
+        this.green = (double)tmp.getGreen() / 255;
+        this.blue = (double)tmp.getBlue() / 255;
+        this.alpha = 1;
+    }
+
+
     public Color(double red, double green, double blue) {
         this.red = red;
         this.green = green;
@@ -104,9 +113,9 @@ public class Color {
 
     public Color reduceOf(double d) {
         return new Color(
-                blue * (1.0 - d),
-                green * (1.0 - d),
                 red * (1.0 - d),
+                green * (1.0 - d),
+                blue * (1.0 - d),
                 alpha
         );
     }
@@ -122,6 +131,8 @@ public class Color {
     }
 
     public static Color alphaBlending(Color color1, Color color2) {
+        if(color1.getAlpha() == 0 && color2.getAlpha() == 0)
+            return new Color(color1);
         double red, green, blue, alpha;
 
         alpha = color1.alpha + (color2.alpha * (1.0 - color1.alpha));

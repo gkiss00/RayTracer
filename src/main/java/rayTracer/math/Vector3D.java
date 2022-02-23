@@ -1,5 +1,7 @@
 package rayTracer.math;
 
+import org.springframework.expression.spel.support.ReflectiveConstructorResolver;
+
 public class Vector3D {
     private double x;
     private double y;
@@ -110,6 +112,31 @@ public class Vector3D {
         Vector3D reflectedRay = new Vector3D(vectorToReflect);
         reflectedRay.sub(newNormal);
         return reflectedRay;
+    }
+
+    /*
+        Snell-Descartes's law: n1 * sin(θ1) = n2 * sin(θ2)
+        where:
+            n1: indice de refraction du premier corps
+            n2: indice de refraction du deuxieme corps
+            θ1: angle entre la normal et le rayon incident
+            θ2: angle entre la normal et le rayon refracte
+     */
+    public static Vector3D refractedRay(Vector3D incident, Vector3D normal, double n1, double n2) {
+        double n = n1 / n2;
+        double cosI = - Vector3D.dotProduct(incident, normal);
+        double sinT2 = n * n * (1.0 - cosI * cosI);
+        if(sinT2 > 1.0){
+            //INVALID
+            return new Vector3D(incident);
+        } else {
+            double cosT = Math.sqrt(1.0 - sinT2);
+            Vector3D incidentTmp = new Vector3D(incident);
+            Vector3D normalTmp = new Vector3D(normal);
+            incidentTmp.times(n);
+            normalTmp.times(n * cosI - cosT);
+            return Vector3D.sum(incidentTmp, normalTmp);
+        }
     }
 
     public static Vector3D sum(Vector3D... vectors) {

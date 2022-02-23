@@ -1,11 +1,13 @@
 package rayTracer.utils;
 
+import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.PatternTypeEnum;
 import rayTracer.lights.Light;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
 import rayTracer.objects.*;
+import rayTracer.objects.composedObjects.ClosedCone;
 import rayTracer.objects.composedObjects.ClosedCylinder;
 import rayTracer.objects.fractals.CubeFractal;
 import rayTracer.objects.planeSurfaces.Disk;
@@ -18,6 +20,348 @@ import rayTracer.visual.Camera;
 import java.util.List;
 
 public class SceneMaker {
+    public static Camera getSimpleSphere(List<BaseObject> objects, List<Light> lights) {
+        Sphere sphere = new Sphere(30);
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(sphere);
+
+        return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimplePlane(List<BaseObject> objects, List<Light> lights) {
+        Plane plane = new Plane(new Color(1, 0, 0));
+        plane.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+        plane.setNormal();
+        plane.setTexture("./src/main/resources/textures/rgba/hexagonGrid.png");
+        //plane.setNormalMap("./src/main/resources/normalMaps/coin.normal.jpg");
+        objects.add(plane);
+
+        Plane background = new Plane(new Color(0, 0, 1));
+        background.updateMatrices(0, 90, 0, 1, 1, 1, 100, 0, 0);
+        background.setNormal();
+        //background.setTexture("./src/main/resources/textures/others/snowFlake.png");
+        //background.setNormalMap("./src/main/resources/normalMaps/coin.normal.jpg");
+        objects.add(background);
+
+        lights.add(new Light(new Point3D(-100, 0, 0)));
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleCylinder(List<BaseObject> objects, List<Light> lights) {
+        Cylinder cylinder = new Cylinder(20);
+        cylinder.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        cylinder.setTexture("./src/main/resources/textures/rgba/hexagonGrid.png");
+        objects.add(cylinder);
+
+        Plane background = new Plane(new Color(0, 0, 1));
+        background.updateMatrices(0, 90, 0, 1, 1, 1, 100, 0, 0);
+        background.setNormal();
+        objects.add(background);
+
+        Plane ground = new Plane(PatternTypeEnum.GRID, new Color(0, 0, 0), new Color(1, 1, 1));
+        ground.updateMatrices(0, 0, 0, 1, 1, 1, 100, 0, -50);
+        ground.setNormal();
+        objects.add(ground);
+
+        lights.add(new Light(new Point3D(-200, 200, 0)));
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleCube(List<BaseObject> objects, List<Light> lights) {
+        Cube cube = new Cube(30, new Color(0.1, 0.1, 1, 0));
+        cube.updateMatrices(0, 90, -45, 1, 1, 1, 0, 0, 0);
+        cube.setNormals();
+        //cube.setReflectionRatio(0.5);
+        cube.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(cube);
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -60);
+        plane1.setNormal();
+        objects.add(plane1);
+
+        Plane plane2 = new Plane(new Color(0.9, 0.1, 0));
+        plane2.updateMatrices(0, 90, 0, 1, 1, 1, 100, 0, 0);
+        plane2.setNormal();
+        objects.add(plane2);
+
+        Light light = new Light(new Point3D(-60, 60, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleDisk(List<BaseObject> objects, List<Light> lights) {
+        Disk disk1 = new Disk(20, 60, PatternTypeEnum.UNIFORM, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
+        disk1.updateMatrices(0, -45, 0, 1, 1, 1, 0, 0, 0);
+        disk1.setNormal();
+        objects.add(disk1);
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
+        plane1.setNormal();
+        plane1.setReflectionRatio(0.9);
+        objects.add(plane1);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleSquare(List<BaseObject> objects, List<Light> lights) {
+        Square square = new Square(120, PatternTypeEnum.UNIFORM, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
+        square.updateMatrices(0, 45, 0, 1, 1, 1, 0, 0, 0);
+        square.setNormal();
+        objects.add(square);
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
+        plane1.setNormal();
+        plane1.setReflectionRatio(0.9);
+        objects.add(plane1);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleTorus(List<BaseObject> objects, List<Light> lights) {
+
+        Plane plane = new Plane(PatternTypeEnum.GRID, new Color(0, 0, 0.3), new Color(1, 1, 1));
+        plane.updateMatrices(0, 90, 45, 1, 1, 1, 0, 0, 0);
+        plane.setNormal();
+        objects.add(plane);
+
+        Plane plane2 = new Plane(PatternTypeEnum.GRID, new Color(0, 0, 0.3), new Color(1, 1, 1));
+        plane2.updateMatrices(0, 90, -45, 1, 1, 1, 0, 0, 0);
+        plane2.setNormal();
+        objects.add(plane2);
+
+        Torus torus1 = new Torus(20, 5, PatternTypeEnum.UNIFORM, new Color(0, 0, 0.01, 0.85));
+        torus1.updateMatrices(0, -30, 0, 1, 1, 1, -100, 0, 0);
+        objects.add(torus1);
+
+        Light light = new Light(new Point3D(-100, 100, 100));
+        //rayTracer.lights.add(light);
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleMobiusTape(List<BaseObject> objects, List<Light> lights) {
+
+        MobiusTape mt = new MobiusTape(5);
+        mt.updateMatrices(0, -30, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(mt);
+
+        Light light = new Light(new Point3D(-100, 100, 100));
+        //lights.add(light);
+
+        //top
+        //return new Camera(new Point3D(0, 0, 3), new Vector3D(0, 0, -1), new Vector3D(1, 0, 0), 90);
+        //left
+        //return new Camera(new Point3D(0, -3, 0), new Vector3D(0, 1, 0), new Vector3D(0, 0, 1), 90);
+        //right
+        //return new Camera(new Point3D(0, 2.5, 0), new Vector3D(0, -1, 0), new Vector3D(0, 0, 1), 90);
+        //front
+        return new Camera(new Point3D(-3, 0, 0.0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+        //back
+        //return new Camera(new Point3D(2.5, 0, 0), new Vector3D(-1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleClosedCylinder(List<BaseObject> objects, List<Light> lights) {
+        ClosedCylinder closedCylinder = new ClosedCylinder(5, 20);
+        closedCylinder.updateMatrices(30, -30, 0, 1, 1, 1, 0, 0, 0);
+        //cubeFractal.addCut(CutTypeEnum.FRONT);
+        closedCylinder.setNormals();
+        //cube.setReflectionRatio(0.5);
+        objects.add(closedCylinder);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-50, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleClosedCone(List<BaseObject> objects, List<Light> lights) {
+        ClosedCone closedCone = new ClosedCone(20, 20);
+        closedCone.updateMatrices(30, -30, 0, 1, 1, 1, 0, 0, 0);
+        //cubeFractal.addCut(CutTypeEnum.FRONT);
+        closedCone.setNormals();
+        //cube.setReflectionRatio(0.5);
+        objects.add(closedCone);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-50, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleCubeFractal(List<BaseObject> objects, List<Light> lights) {
+        CubeFractal cubeFractal = new CubeFractal(1, 90);
+        cubeFractal.updateMatrices(0, -40, 45, 1, 1, 1, 0, 0, 0);
+        cubeFractal.setNormals();
+        //cube.setReflectionRatio(0.5);
+        objects.add(cubeFractal);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleCubicSurface(List<BaseObject> objects, List<Light> lights) {
+        CubicSurface cubicSurface = new CubicSurface();
+        cubicSurface.setX3(0);
+        cubicSurface.setY3(0);
+        cubicSurface.setZ3(0);
+        cubicSurface.setX2Y(0);
+        cubicSurface.setX2Z(0);
+        cubicSurface.setY2X(0);
+        cubicSurface.setY2Z(0);
+        cubicSurface.setZ2X(0);
+        cubicSurface.setZ2Y(0);
+        cubicSurface.setXYZ(0);
+        cubicSurface.setX2(1);
+        cubicSurface.setY2(1);
+        cubicSurface.setZ2(1);
+        cubicSurface.setXY(0);
+        cubicSurface.setXZ(0);
+        cubicSurface.setYZ(0);
+        cubicSurface.setX(0);
+        cubicSurface.setY(0);
+        cubicSurface.setZ(0);
+        cubicSurface.setK(-600);
+        cubicSurface.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(cubicSurface);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleGoursatSurface(List<BaseObject> objects, List<Light> lights) {
+        GoursatSurface goursatSurface = new GoursatSurface(0, 0, -1);
+        goursatSurface.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(goursatSurface);
+
+        Light light = new Light(new Point3D(-1000, 1000, 1000));
+        lights.add(light);
+
+        return new Camera(new Point3D(-2, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleShadow(List<BaseObject> objects, List<Light> lights) {
+        Plane horizontalPlane = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        horizontalPlane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
+        horizontalPlane.setNormal();
+        objects.add(horizontalPlane);
+
+        Plane verticalPlane = new Plane();
+        verticalPlane.updateMatrices(0, -90, 0, 1, 1, 1, 50, 0, 0);
+        verticalPlane.setNormal();
+        objects.add(verticalPlane);
+
+        Sphere sphere = new Sphere(30);
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 30);
+        objects.add(sphere);
+
+        lights.add(new Light(new Point3D(-50, 0, 15)));
+
+        return new Camera(new Point3D(-300, 0, 30), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getMultipleShadow(List<BaseObject> objects, List<Light> lights) {
+        Plane horizontalPlane = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        horizontalPlane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
+        horizontalPlane.setNormal();
+        objects.add(horizontalPlane);
+
+        Plane verticalPlane = new Plane(new Color(0.5, 0.5, 1));
+        verticalPlane.updateMatrices(0, -90, 0, 1, 1, 1, 50, 0, 0);
+        verticalPlane.setNormal();
+        objects.add(verticalPlane);
+
+        Sphere sphere = new Sphere(30, new Color(0, 0,1, 1));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 30);
+        objects.add(sphere);
+
+        lights.add(new Light(new Point3D(-50, 40, 15)));
+        lights.add(new Light(new Point3D(-50, 0, 15)));
+        lights.add(new Light(new Point3D(-50, -40, 15)));
+
+        return new Camera(new Point3D(-300, 0, 30), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getMitigateShadow(List<BaseObject> objects, List<Light> lights) {
+        Plane horizontalPlane = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        horizontalPlane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
+        horizontalPlane.setNormal();
+        objects.add(horizontalPlane);
+
+        Plane verticalPlane = new Plane(new Color(0.5, 0.5, 0.5));
+        verticalPlane.updateMatrices(0, -90, 0, 1, 1, 1, 50, 0, 0);
+        verticalPlane.setNormal();
+        objects.add(verticalPlane);
+
+        Sphere sphere = new Sphere(30, new Color(0, 0,1, 0.5));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, -40, 30);
+        objects.add(sphere);
+
+        Sphere translucentSphere = new Sphere(30, PatternTypeEnum.GRID, new Color(0, 0,1, 0.), new Color(0, 0,1, 1));
+        translucentSphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 40, 30);
+        objects.add(translucentSphere);
+
+        lights.add(new Light(new Point3D(-75, 0, 15)));
+
+        return new Camera(new Point3D(-300, 0, 30), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getRings(List<BaseObject> objects, List<Light> lights) {
+        Cube cube = new Cube(100, new Color(0.6, 0.8, 0.5, 0.1));
+        cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        cube.setNormals();
+        cube.setReflectionRatio(0.75);
+        objects.add(cube);
+
+        Torus torus1 = new Torus(20, 5, PatternTypeEnum.UNIFORM, new Color("#DB7093"));
+        torus1.updateMatrices(0, 110, 0, 1, 1, 1, 0, -10, 0);
+        //torus1.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(torus1);
+
+        Torus torus2 = new Torus(20, 5, PatternTypeEnum.UNIFORM, new Color("#0B0B45"));
+        torus2.updateMatrices(0, 20, 0, 1, 1, 1, 0, 10, 0);
+        //torus2.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(torus2);
+
+        lights.add(new Light(new Point3D(-100, 100, 100)));
+        //lights.add(new Light(new Point3D(-100, -100, -100)));
+        //lights.add(new Light(new Point3D(-100, 0, 0)));
+        //lights.add(new Light(new Point3D(0, 0, 0)));
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getMirrorBox(List<BaseObject> objects, List<Light> lights) {
+        Cube cube = new Cube(100, new Color(120.0 / 255, 120.0 / 255, 120.0 / 255));
+        cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        cube.setNormals();
+        cube.setReflectionRatio(0.9);
+        objects.add(cube);
+
+        Sphere sphere = new Sphere(8, new Color(1, 0, 0));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        sphere.setReflectionRatio(0.75);
+        objects.add(sphere);
+
+        lights.add(new Light(new Point3D(-45, 45, 45)));
+
+        return new Camera(new Point3D(-45, 0, 20), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getPoolTable(List<BaseObject> objects, List<Light> lights) {
         //Table
         double tableSize = 100;
@@ -89,253 +433,6 @@ public class SceneMaker {
 //        rayTracer.objects.add(ball15);
 
         return new Camera(new Point3D(-200, 0, 60), new Vector3D(1, 0, -0.25), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleSphere(List<BaseObject> objects, List<Light> lights) {
-        Sphere sphere = new Sphere(30);
-        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        objects.add(sphere);
-
-        return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimplePlane(List<BaseObject> objects, List<Light> lights) {
-        Plane plane = new Plane(new Color(1, 0, 0));
-        plane.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
-        plane.setNormal();
-        plane.setNormalMap("./src/main/resources/normalMaps/coin.normal.jpg");
-        objects.add(plane);
-
-        lights.add(new Light(new Point3D(-100, 0, 0)));
-        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleCube(List<BaseObject> objects, List<Light> lights) {
-        Cube cube = new Cube(30);
-        cube.updateMatrices(0, -30, 45, 1, 1, 1, 0, 0, 0);
-        cube.setNormals();
-        //cube.setReflectionRatio(0.5);
-        objects.add(cube);
-
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleDisk(List<BaseObject> objects, List<Light> lights) {
-        Disk disk1 = new Disk(20, 60, PatternTypeEnum.UNIFORM, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
-        disk1.updateMatrices(0, -45, 0, 1, 1, 1, 0, 0, 0);
-        disk1.setNormal();
-        objects.add(disk1);
-
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleSquare(List<BaseObject> objects, List<Light> lights) {
-        Square square = new Square(120, PatternTypeEnum.UNIFORM, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
-        square.updateMatrices(0, 45, 0, 1, 1, 1, 0, 0, 0);
-        square.setNormal();
-        objects.add(square);
-
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleTorus(List<BaseObject> objects, List<Light> lights) {
-
-        Plane plane = new Plane(PatternTypeEnum.GRID, new Color(0, 0, 0.3), new Color(1, 1, 1));
-        plane.updateMatrices(0, 90, 45, 1, 1, 1, 0, 0, 0);
-        plane.setNormal();
-        objects.add(plane);
-
-        Plane plane2 = new Plane(PatternTypeEnum.GRID, new Color(0, 0, 0.3), new Color(1, 1, 1));
-        plane2.updateMatrices(0, 90, -45, 1, 1, 1, 0, 0, 0);
-        plane2.setNormal();
-        objects.add(plane2);
-
-        Torus torus1 = new Torus(20, 5, PatternTypeEnum.UNIFORM, new Color(0, 0, 0.01, 0.85));
-        torus1.updateMatrices(0, -30, 0, 1, 1, 1, -100, 0, 0);
-        objects.add(torus1);
-
-        Light light = new Light(new Point3D(-100, 100, 100));
-        //rayTracer.lights.add(light);
-
-        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleMobiusTape(List<BaseObject> objects, List<Light> lights) {
-
-        MobiusTape mt = new MobiusTape(5);
-        mt.updateMatrices(0, -30, 0, 1, 1, 1, 0, 0, 0);
-        objects.add(mt);
-
-        Light light = new Light(new Point3D(-100, 100, 100));
-        lights.add(light);
-
-        //top
-        //return new Camera(new Point3D(0, 0, 3), new Vector3D(0, 0, -1), new Vector3D(1, 0, 0), 90);
-        //left
-        //return new Camera(new Point3D(0, -3, 0), new Vector3D(0, 1, 0), new Vector3D(0, 0, 1), 90);
-        //right
-        //return new Camera(new Point3D(0, 2.5, 0), new Vector3D(0, -1, 0), new Vector3D(0, 0, 1), 90);
-        //front
-        return new Camera(new Point3D(-2, 0, 0.0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-        //back
-        //return new Camera(new Point3D(2.5, 0, 0), new Vector3D(-1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleClosedCylinder(List<BaseObject> objects, List<Light> lights) {
-        ClosedCylinder cubeFractal = new ClosedCylinder(5, 20);
-        cubeFractal.updateMatrices(30, -30, 0, 1, 1, 1, 0, 0, 0);
-        //cubeFractal.addCut(CutTypeEnum.FRONT);
-        cubeFractal.setNormals();
-        //cube.setReflectionRatio(0.5);
-        objects.add(cubeFractal);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-50, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleCubeFractal(List<BaseObject> objects, List<Light> lights) {
-        CubeFractal cubeFractal = new CubeFractal(1, 90);
-        cubeFractal.updateMatrices(0, -40, 45, 1, 1, 1, 0, 0, 0);
-        cubeFractal.setNormals();
-        //cube.setReflectionRatio(0.5);
-        objects.add(cubeFractal);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleCubicSurface(List<BaseObject> objects, List<Light> lights) {
-        CubicSurface cubicSurface = new CubicSurface();
-        cubicSurface.setX3(0);
-        cubicSurface.setY3(0);
-        cubicSurface.setZ3(0);
-        cubicSurface.setX2Y(0);
-        cubicSurface.setX2Z(0);
-        cubicSurface.setY2X(0);
-        cubicSurface.setY2Z(0);
-        cubicSurface.setZ2X(0);
-        cubicSurface.setZ2Y(0);
-        cubicSurface.setXYZ(0);
-        cubicSurface.setX2(1);
-        cubicSurface.setY2(1);
-        cubicSurface.setZ2(1);
-        cubicSurface.setXY(0);
-        cubicSurface.setXZ(0);
-        cubicSurface.setYZ(0);
-        cubicSurface.setX(0);
-        cubicSurface.setY(0);
-        cubicSurface.setZ(0);
-        cubicSurface.setK(-600);
-        cubicSurface.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        objects.add(cubicSurface);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleGoursatSurface(List<BaseObject> objects, List<Light> lights) {
-        GoursatSurface goursatSurface = new GoursatSurface(0, 0, -1);
-        goursatSurface.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        objects.add(goursatSurface);
-
-        Light light = new Light(new Point3D(-1000, 1000, 1000));
-        lights.add(light);
-
-        return new Camera(new Point3D(-2, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getShadows1(List<BaseObject> objects, List<Light> lights) {
-        Plane horizontalPlane = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        horizontalPlane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
-        horizontalPlane.setNormal();
-        objects.add(horizontalPlane);
-
-        Plane verticalPlane = new Plane();
-        verticalPlane.updateMatrices(0, -90, 0, 1, 1, 1, 50, 0, 0);
-        verticalPlane.setNormal();
-        objects.add(verticalPlane);
-
-        Sphere sphere = new Sphere(30);
-        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 30);
-        objects.add(sphere);
-
-//        rayTracer.lights.add(new Light(new Point3D(-50, 40, 15)));
-        lights.add(new Light(new Point3D(-50, 0, 15)));
-//        rayTracer.lights.add(new Light(new Point3D(-50, -40, 15)));
-
-        return new Camera(new Point3D(-300, 0, 30), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getShadows2(List<BaseObject> objects, List<Light> lights) {
-        Plane horizontalPlane = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        horizontalPlane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
-        horizontalPlane.setNormal();
-        objects.add(horizontalPlane);
-
-        Plane verticalPlane = new Plane(new Color(0.5, 0.5, 0.5));
-        verticalPlane.updateMatrices(0, -90, 0, 1, 1, 1, 50, 0, 0);
-        verticalPlane.setNormal();
-        objects.add(verticalPlane);
-
-        Sphere sphere = new Sphere(30, new Color(0, 0,1, 0.5));
-        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 30);
-        objects.add(sphere);
-
-//        rayTracer.lights.add(new Light(new Point3D(-50, 40, 15)));
-        lights.add(new Light(new Point3D(-50, 0, 15)));
-//        rayTracer.lights.add(new Light(new Point3D(-50, -40, 15)));
-
-        return new Camera(new Point3D(-300, 0, 30), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getMirrorBox(List<BaseObject> objects, List<Light> lights) {
-        Cube cube = new Cube(100, new Color(120.0 / 255, 120.0 / 255, 120.0 / 255));
-        cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        cube.setNormals();
-        cube.setReflectionRatio(0.9);
-        objects.add(cube);
-
-        Sphere sphere = new Sphere(8, new Color(1, 0, 0));
-        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        sphere.setReflectionRatio(0.75);
-        objects.add(sphere);
-
-        lights.add(new Light(new Point3D(-45, 45, 45)));
-
-        return new Camera(new Point3D(-45, 0, 20), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getTextureScene(List<BaseObject> objects, List<Light> lights) {

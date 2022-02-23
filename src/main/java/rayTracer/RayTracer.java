@@ -1,6 +1,7 @@
 package rayTracer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.FilterTypeEnum;
 import rayTracer.lights.Light;
 import rayTracer.math.Line3D;
@@ -19,15 +20,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class RayTracer {
     private static final double EPSILON = 0.00001;
-    private static int REFLECTION_MAX = 3;
+    private static int REFLECTION_MAX = 5;
     private static FilterTypeEnum filter = FilterTypeEnum.NONE;
     private static final Color ambientLight = new Color(1, 1, 1, 1);
     private static int height = 900;
     private static int width = 900;
-    private static int ANTI_ALIASING = 1;
+    private static int ANTI_ALIASING = 5;
+    private static double MAX_DIST = 10;
+    private static double SHADOW_DEEPNESS = 0.3;
 
     private static Camera cam;
     private static List<BaseObject> objects = new ArrayList<>();
@@ -74,48 +78,47 @@ public class RayTracer {
     private static Color applyLights(Intersection intersection, Color color) {
         Color tmp = new Color(color);
         for (int i = 0; i < lights.size(); ++i) {
+
+            // COMPUTE THE LIGHT INTERSECTION RAY
             Line3D ray = new Line3D(lights.get(i).getPoint(), intersection.getPointOfIntersection());
             ray.normalize();
-//            Color shadowColor = new Color(rayTracer.lights.get(i).getColor());
-//            shadowColor.setAlpha(0);
             double distanceFromLightToIntersection = Point3D.distanceBetween(intersection.getPointOfIntersection(), ray.getPoint());
+
+            // GET THE NEW INTERSECTIONS
             List<Intersection> intersections = new ArrayList<>();
             getIntersections(ray, intersections);
             sortIntersections(intersections);
-            boolean bright = true;
+
+            // IF LIGHT MET WITH INTERSECTION => BRIGHT FALSE
+            double alpha = 0.0;
             for(int j = 0; j < intersections.size(); ++j) {
-                double distanceFromLightToNewIntersection = Point3D.distanceBetween(intersections.get(j).getPointOfIntersection(), ray.getPoint());
+                Intersection currentIntersection = intersections.get(j);
+                double distanceFromLightToNewIntersection = Point3D.distanceBetween(currentIntersection.getPointOfIntersection(), ray.getPoint());
                 if(distanceFromLightToNewIntersection < distanceFromLightToIntersection - EPSILON) {
-                    // get alpha color
-                    // alpha = alpha blending alpha
-//                    shadowColor = Color.alphaBlending(shadowColor, intersections.get(j).getColor());
-//                    // if alpha = 1 => bright = false => break
-//                    if(shadowColor.getAlpha() >= 1.0 - EPSILON) {
-//                        System.out.println("Break");
-//                        bright = false;
-//                        break;
-//                    }
-                    // get new color (average current color and color)
-                    bright = false;
-                    break;
+                    // OBJECT INTERSECTED IS FULL
+                    if(currentIntersection.getColor().getAlpha() != 1 && currentIntersection.getObject().getCapacity() == CapacityTypeEnum.FULL) {
+                        double dist = Point3D.distanceBetween(currentIntersection.getPointOfIntersection(), intersections.get(j + 1).getPointOfIntersection());
+                        double ratio = Math.min(1, dist / MAX_DIST);
+                        double colorAlpha = currentIntersection.getColor().getAlpha();
+                        double newAlpha = (1 - colorAlpha) * ratio + colorAlpha;
+                        alpha = alpha + newAlpha;
+                        ++i;
+                    } else {
+                        // OBJECT INTERSECTED IS EMPTY
+                        alpha = alpha + (currentIntersection.getColor().getAlpha() * (1.0 - alpha));
+                    }
                 }
             }
-            if(bright) {
+
+            // IF BRIGHT
+            if(alpha == 0) {
                 double angle = Vector3D.angleBetween(ray.getVector(), intersection.getNormal());
                 if (angle >= 90) {
-                    // double intensity = 1.0 - (angle - 90) / 90;
-                    // add reduceOf alpha and change color
-                    //shadowColor.unit();
-//                    if(shadowColor.getAlpha() != 0)
-//                        System.out.println(shadowColor.getAlpha() + " " + shadowColor);
-//                    tmp.add(shadowColor.reduceOf(Math.abs(Math.cos(Math.toRadians(angle - 90))) / 1.1).reduceOf(0.55).reduceOf(1.0 - shadowColor.getAlpha()));
-//                    if(shadowColor.getAlpha() != 0) {
-//                        System.out.println(tmp);
-//                        tmp.unit();
-//                        System.out.println(tmp);
-//                    }
                     tmp.add(lights.get(i).getColor().reduceOf(Math.abs(Math.cos(Math.toRadians(angle - 90))) / 1.1).reduceOf(0.55));
                 }
+            } else {
+                alpha = Math.max(alpha, 1.0);
+                tmp = tmp.reduceOf(SHADOW_DEEPNESS * alpha);
             }
 
         }
@@ -123,20 +126,42 @@ public class RayTracer {
     }
 
     private static Color getPixelColor(Line3D ray, int reflectionDeepness) {
+        // FIND INTERSECTIONS
         List<Intersection> intersections = new ArrayList<>();
         getIntersections(ray, intersections);
         sortIntersections(intersections);
+
+        // COMPUTE COLOR
         Color res = new Color(0, 0, 0, 0);
         int size = intersections.size();
         for(int i = 0; i < size; ++i) {
-            Color tmp = intersections.get(i).getColor();
-            if(intersections.get(i).getReflectionRatio() != 0 && reflectionDeepness < REFLECTION_MAX) {
-                Line3D reflectedRay = new Line3D(intersections.get(i).getPointOfIntersection(), Vector3D.reflectedRay(ray.getVector(), intersections.get(i).getNormal()));
-                tmp = Color.colorReflection(tmp, getPixelColor(reflectedRay, reflectionDeepness + 1), intersections.get(i).getReflectionRatio());
+            Intersection intersection = intersections.get(i);
+            Color tmp = intersection.getColor();
+            // REFLECTION
+            if(intersection.getReflectionRatio() != 0 && reflectionDeepness < REFLECTION_MAX) {
+                Line3D reflectedRay = new Line3D(intersection.getPointOfIntersection(), Vector3D.reflectedRay(ray.getVector(), intersection.getNormal()));
+                tmp = Color.colorReflection(tmp, getPixelColor(reflectedRay, reflectionDeepness + 1), intersection.getReflectionRatio());
             }
-            tmp = applyLights(intersections.get(i), tmp);
-            tmp = applyAmbientLight(intersections.get(i), tmp);
-            res = Color.alphaBlending(res, tmp);
+            // TRANSPARENCY FULL OBJECT
+            if(intersection.getColor().getAlpha() != 1 && intersection.getObject().getCapacity() == CapacityTypeEnum.FULL) {
+                double dist = Point3D.distanceBetween(intersection.getPointOfIntersection(), intersections.get(i + 1).getPointOfIntersection());
+                double ratio = Math.min(1, dist / MAX_DIST);
+                double alpha = (1 - intersection.getColor().getAlpha()) * ratio + intersection.getColor().getAlpha();
+                tmp = new Color(
+                        intersection.getColor().getRed(),
+                        intersection.getColor().getGreen(),
+                        intersection.getColor().getBlue(),
+                        alpha
+                );
+                ++i;
+            }
+            // LIGHTS
+            tmp = applyLights(intersection, tmp);
+            tmp = applyAmbientLight(intersection, tmp);
+            if(res.getAlpha() == 0)
+                res = new Color(tmp);
+            else
+                res = Color.alphaBlending(res, tmp);
             if(res.getAlpha() > 1.0 - EPSILON) {
                 break;
             }
@@ -167,9 +192,9 @@ public class RayTracer {
         }
         try {
             ImageIO.write(buffer, "PNG", image);
-//            Random rand = new Random();
-//            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + " " + rand.nextInt(Integer.MAX_VALUE) + ".png");
-//            ImageIO.write(buffer, "PNG", savedImage);
+            Random rand = new Random();
+            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
+            ImageIO.write(buffer, "PNG", savedImage);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -207,7 +232,8 @@ public class RayTracer {
     }
 
     public static void main(String[] args) {
-        cam = SceneMaker.getSimplePlane(objects, lights);
+        cam = SceneMaker.getSimpleCylinder(objects, lights);
+        //cam = SceneMaker.getMultipleShadow(objects, lights);
         cam.update(height, width);
         long start = System.nanoTime();
         run();

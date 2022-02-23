@@ -184,7 +184,7 @@ public class CubeFractal extends Cube {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                        intersections.add(new Intersection(realIntersection, realUpNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realUpNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
@@ -201,7 +201,7 @@ public class CubeFractal extends Cube {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                        intersections.add(new Intersection(realIntersection, realDownNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realDownNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
@@ -220,7 +220,7 @@ public class CubeFractal extends Cube {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                        intersections.add(new Intersection(realIntersection, realLeftNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realLeftNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
@@ -237,7 +237,7 @@ public class CubeFractal extends Cube {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                        intersections.add(new Intersection(realIntersection, realRightNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realRightNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
@@ -256,7 +256,7 @@ public class CubeFractal extends Cube {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                        intersections.add(new Intersection(realIntersection, realBackNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realBackNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
@@ -273,7 +273,7 @@ public class CubeFractal extends Cube {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                        intersections.add(new Intersection(realIntersection, realFrontNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realFrontNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }

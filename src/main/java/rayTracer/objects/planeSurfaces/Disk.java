@@ -164,7 +164,7 @@ public class Disk extends BaseObject {
                 if (distFromCenter > internalRadius && distFromCenter < externalRadius) {
                     Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                     //Vector3D realNormal = transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }

@@ -116,7 +116,7 @@ public class QuadraticSurface extends BaseObject{
                 Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                 Vector3D localNormal = normalAt(localIntersection);
                 Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                intersections.add(new Intersection(realIntersection, realNormal, colors.get(0), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                intersections.add(new Intersection(realIntersection, realNormal, colors.get(0), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
             }
         }
     }

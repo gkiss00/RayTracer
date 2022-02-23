@@ -114,7 +114,7 @@ public class Square extends BaseObject {
             if(!Cutter.cut(localIntersection, cuts)) {
                 if (localIntersection.getX() >= -size && localIntersection.getX() <= size && localIntersection.getY() >= -size && localIntersection.getY() <= size) {
                     Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }

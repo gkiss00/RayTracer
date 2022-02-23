@@ -80,7 +80,7 @@ public class ClosedCylinder extends BaseObject {
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
                     if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                         realNormal.inverse();
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio));
+                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }
@@ -112,7 +112,7 @@ public class ClosedCylinder extends BaseObject {
                         Vector3D realNormal = realUpNormal;
                         if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                             realNormal = realDownNormal;
-                        intersections.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
@@ -132,7 +132,7 @@ public class ClosedCylinder extends BaseObject {
                         Vector3D realNormal = realDownNormal;
                         if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                             realNormal = realUpNormal;
-                        intersections.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio));
+                        intersections.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
