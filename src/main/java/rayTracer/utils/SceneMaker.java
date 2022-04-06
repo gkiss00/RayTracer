@@ -3,12 +3,15 @@ package rayTracer.utils;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.PatternTypeEnum;
+import rayTracer.enums.PolygonTypeEnum;
+import rayTracer.factories.PolygonFactory;
 import rayTracer.lights.Light;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
 import rayTracer.objects.*;
 import rayTracer.objects.composedObjects.ClosedCone;
 import rayTracer.objects.composedObjects.ClosedCylinder;
+import rayTracer.objects.composedObjects.triangleMade.Polygon;
 import rayTracer.objects.fractals.CubeFractal;
 import rayTracer.objects.planeSurfaces.Disk;
 import rayTracer.objects.planeSurfaces.Plane;
@@ -100,6 +103,44 @@ public class SceneMaker {
 
         Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
         plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
+        plane1.setNormal();
+        plane1.setReflectionRatio(0.9);
+        objects.add(plane1);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleStar(List<BaseObject> objects, List<Light> lights) {
+        Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.STAR, 20, 20, 60, 20);
+        if( star != null) {
+            star.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+            objects.add(star);
+        }
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -80);
+        plane1.setNormal();
+        plane1.setReflectionRatio(0.9);
+        objects.add(plane1);
+
+        Light light = new Light(new Point3D(-100, 0, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleTetrahedron(List<BaseObject> objects, List<Light> lights) {
+        Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.TETRAHEDRON, 60);
+        if( star != null) {
+            star.updateMatrices(0, 0, 180, 1, 1, 1, 0, 0, 0);
+            objects.add(star);
+        }
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -80);
         plane1.setNormal();
         plane1.setReflectionRatio(0.9);
         objects.add(plane1);
