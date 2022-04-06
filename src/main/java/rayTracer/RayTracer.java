@@ -29,7 +29,7 @@ public class RayTracer {
     private static final Color ambientLight = new Color(1, 1, 1, 1);
     private static int height = 900;
     private static int width = 900;
-    private static int ANTI_ALIASING = 5;
+    private static int ANTI_ALIASING = 1;
     private static double MAX_DIST = 10;
     private static double SHADOW_DEEPNESS = 0.3;
 
@@ -232,7 +232,7 @@ public class RayTracer {
     }
 
     public static void main(String[] args) {
-        cam = SceneMaker.getTripleTorus(objects, lights);
+        cam = SceneMaker.getSimpleTetrahedron(objects, lights);
         //cam = SceneMaker.getMultipleShadow(objects, lights);
         cam.update(height, width);
         long start = System.nanoTime();
