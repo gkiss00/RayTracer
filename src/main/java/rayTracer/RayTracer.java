@@ -192,9 +192,9 @@ public class RayTracer {
         }
         try {
             ImageIO.write(buffer, "PNG", image);
-            Random rand = new Random();
+            /*Random rand = new Random();
             File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
-            ImageIO.write(buffer, "PNG", savedImage);
+            ImageIO.write(buffer, "PNG", savedImage);*/
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -232,7 +232,7 @@ public class RayTracer {
     }
 
     public static void main(String[] args) {
-        cam = SceneMaker.getSimpleCylinder(objects, lights);
+        cam = SceneMaker.getTripleTorus(objects, lights);
         //cam = SceneMaker.getMultipleShadow(objects, lights);
         cam.update(height, width);
         long start = System.nanoTime();

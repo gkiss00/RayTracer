@@ -362,6 +362,38 @@ public class SceneMaker {
         return new Camera(new Point3D(-45, 0, 20), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getTripleTorus(List<BaseObject> objects, List<Light> lights) {
+        Square ground = new Square(240, PatternTypeEnum.GRID, new Color(0, 0, 0), new Color(1, 1, 1));
+        ground.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -40);
+        ground.setNormal();
+        ground.setReflectionRatio(0.5);
+        objects.add(ground);
+
+        Torus torus1 = new Torus(25, 4, new Color(1, 1, 0));
+        torus1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        torus1.setReflectionRatio(0.5);
+        objects.add(torus1);
+
+        Torus torus2 = new Torus(25, 4, new Color(1, 0, 1));
+        torus2.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+        torus2.setReflectionRatio(0.5);
+        objects.add(torus2);
+
+        Torus torus3 = new Torus(25, 4, new Color(0, 1, 1));
+        torus3.updateMatrices(0, 90, 90, 1, 1, 1, 0, 0, 0);
+        torus3.setReflectionRatio(0.5);
+        objects.add(torus3);
+
+        Sphere sphere = new Sphere(8, new Color(0, 0, 0.1));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        sphere.setReflectionRatio(0.5);
+        objects.add(sphere);
+
+        lights.add(new Light(new Point3D(-200, 200, 200)));
+
+        return new Camera(new Point3D(-80, 80, 80), new Vector3D(1, -1, -1), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getPoolTable(List<BaseObject> objects, List<Light> lights) {
         //Table
         double tableSize = 100;
