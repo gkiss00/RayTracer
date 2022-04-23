@@ -82,6 +82,15 @@ public class SceneMaker {
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleClosedCone(List<BaseObject> objects, List<Light> lights) {
+        ClosedCone closedCone = new ClosedCone(20, 20);
+        closedCone.updateMatrices(30, -30, 0, 1, 1, 1, 0, 0, 0);
+        closedCone.setNormals();
+        objects.add(closedCone);
+
+        return new Camera(new Point3D(-50, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getSimpleTorus(List<BaseObject> objects, List<Light> lights) {
         Torus torus = new Torus(25,  5);
         torus.updateMatrices(0, 90, -45, 1, 1, 1, 0, 0, 0);
@@ -119,8 +128,9 @@ public class SceneMaker {
      * * * * * * * * * * * * * * * * * * * * */
 
     public static Camera getSimpleSphereWithPattern(List<BaseObject> objects, List<Light> lights) {
-        Sphere sphere = new Sphere(30, PatternTypeEnum.GRADIENT, new Color(), new Color());
+        Sphere sphere = new Sphere(30, PatternTypeEnum.TEXTURE, new Color(), new Color());
         sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        sphere.setTexture("./src/main/resources/textures/rgba/fire.png");
         objects.add(sphere);
 
         return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
@@ -173,11 +183,17 @@ public class SceneMaker {
     public static Camera getSimpleTorusWithPattern(List<BaseObject> objects, List<Light> lights) {
         Torus torus = new Torus(25,  5, PatternTypeEnum.TEXTURE);
         torus.updateMatrices(10, 20, 20, 1, 1, 1, 0, 0, 0);
-        torus.setTexture("./src/main/resources/textures/planets/earthDay.jpeg");
+        torus.setTexture("./src/main/resources/textures/random/numbers.png");
         objects.add(torus);
 
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *              FULL OBJECTS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public static Camera getFullCube(List<BaseObject> objects, List<Light> lights) {
         Cube cube = new Cube(30, new Color(0.1, 0.1, 1, 0));
@@ -294,28 +310,18 @@ public class SceneMaker {
     }
 
     public static Camera getSimpleDiamond(List<BaseObject> objects, List<Light> lights) {
-        Polygon diamond = PolygonFactory.createPolygon(PolygonTypeEnum.DIAMOND, 9, 30, 45, 20, 50);
+        Polygon diamond = PolygonFactory.createPolygon(PolygonTypeEnum.DIAMOND, 9, 40, 75, 35, 75);
         if(diamond != null) {
-            diamond.updateMatrices(-25, -25, 15, 1, 1, 1, 0, 0, 0);
-            diamond.clearColors();
-            diamond.addColor(new Color("#870a24"));
-            //diamond.setCapacity(CapacityTypeEnum.FULL);
+            diamond.updateMatrices(0, -20, 0, 1, 1, 1, 0, 0, 0);
+            diamond.setReflectionRatio(0.5);
             objects.add(diamond);
         }
 
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -80);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.2);
-        objects.add(plane1);
-
-        Plane plane2 = new Plane(new Color(1, 1, 1));
-        plane2.updateMatrices(0, -90, 0, 1, 1, 1, 150, 0, 0);
-        plane2.setNormal();
-        objects.add(plane2);
-
-        Light light = new Light(new Point3D(-100, 100, 0));
-        lights.add(light);
+        Cube cube = new Cube(610, PatternTypeEnum.GRID, new Color(), new Color());
+        cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        cube.setNormals();
+        cube.setReflectionRatio(0.5);
+        objects.add(cube);
 
         return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
@@ -397,20 +403,6 @@ public class SceneMaker {
         closedCylinder.setNormals();
         //cube.setReflectionRatio(0.5);
         objects.add(closedCylinder);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-50, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleClosedCone(List<BaseObject> objects, List<Light> lights) {
-        ClosedCone closedCone = new ClosedCone(20, 20);
-        closedCone.updateMatrices(30, -30, 0, 1, 1, 1, 0, 0, 0);
-        //cubeFractal.addCut(CutTypeEnum.FRONT);
-        closedCone.setNormals();
-        //cube.setReflectionRatio(0.5);
-        objects.add(closedCone);
 
         Light light = new Light(new Point3D(-100, 0, 0));
         lights.add(light);

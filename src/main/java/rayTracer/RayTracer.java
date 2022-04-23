@@ -97,7 +97,7 @@ public class RayTracer {
         System.out.println(width);
         rayTracer.config.Config config = new rayTracer.config.Config();
 
-        cam = SceneMaker.getSimpleMobiusTapePolygon(objects, lights);
+        cam = SceneMaker.getSimpleTorusWithPattern(objects, lights);
         cam.update(config.height, config.width);
 
         config.objects = objects;
