@@ -10,12 +10,16 @@ import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 
 public class Square extends BaseObject {
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
     private Vector3D realNormal;
-    private double size;
+    private final double size;
+    private BufferedImage bufferedImage;
 
     /* * * * * * * * * * * * * * * * * * * * *
 
@@ -63,6 +67,17 @@ public class Square extends BaseObject {
         }
     }
 
+    public void setTexture(String filePath) {
+        pattern = PatternTypeEnum.TEXTURE;
+        File texture = new File(filePath);
+        try {
+            bufferedImage = ImageIO.read(texture);
+        } catch (Exception e) {
+            System.err.println("Square error: can not read texture file, set pattern to UNIFORM");
+            pattern = PatternTypeEnum.UNIFORM;
+        }
+    }
+
     /* * * * * * * * * * * * * * * * * * * * *
 
      *                COLORS                 *
@@ -82,6 +97,8 @@ public class Square extends BaseObject {
                 return getColorFromGrid(localIntersection);
             case GRADIENT:
                 return getColorFromGradient(localIntersection);
+            case TEXTURE:
+                return getColorFromTexture(localIntersection);
         }
         return null;
     }
@@ -114,6 +131,21 @@ public class Square extends BaseObject {
                 colors.get(previousColor).getBlue() + (colors.get(nextColor).getBlue() - colors.get(previousColor).getBlue()) * ratio,
                 colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
         );
+    }
+
+    public Color getColorFromTexture(Point3D localIntersection) {
+        double heightRatio = (localIntersection.getX() + size) / (2 * size);
+        double widthRatio = (localIntersection.getY() + size) / (2 * size);
+
+        int imageHeight = bufferedImage.getHeight();
+        int imageWidth = bufferedImage.getWidth();
+
+        int x = Math.min(imageWidth - 1, (int)(widthRatio * imageWidth));
+        int y = Math.min(imageHeight - 1, imageHeight - (int)(heightRatio * imageHeight));
+
+        int rgb = bufferedImage.getRGB(x, y);
+        java.awt.Color color = new java.awt.Color(rgb, true);
+        return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *

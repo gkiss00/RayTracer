@@ -12,4 +12,6 @@
 
 ![alt text](./images/shadow2.png)
 
+![alt text](./images/shadow3.png)
+
 ![alt text](./images/fullCube.png)

@@ -57,6 +57,15 @@ public class SceneMaker {
         return new Camera(new Point3D(-200, 20, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleSquare(List<BaseObject> objects, List<Light> lights) {
+        Square square = new Square(120);
+        square.updateMatrices(0, -90, 0, 1, 1, 1, 0, 0, 0);
+        square.setNormal();
+        objects.add(square);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getSimpleDisk(List<BaseObject> objects, List<Light> lights) {
         Disk disk = new Disk(20, 60);
         disk.updateMatrices(0, -45, 0, 1, 1, 1, 0, 0, 0);
@@ -72,6 +81,15 @@ public class SceneMaker {
         objects.add(cylinder);
 
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleClosedCylinder(List<BaseObject> objects, List<Light> lights) {
+        ClosedCylinder closedCylinder = new ClosedCylinder(5, 20);
+        closedCylinder.updateMatrices(30, -30, 0, 1, 1, 1, 0, 0, 0);
+        closedCylinder.setNormals();
+        objects.add(closedCylinder);
+
+        return new Camera(new Point3D(-50, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getSimpleCone(List<BaseObject> objects, List<Light> lights) {
@@ -117,6 +135,46 @@ public class SceneMaker {
         }
 
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleStar(List<BaseObject> objects, List<Light> lights) {
+        Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.STAR, 5, 20, 60, 20);
+        if( star != null) {
+            star.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+            objects.add(star);
+        }
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleTetrahedron(List<BaseObject> objects, List<Light> lights) {
+        Polygon tetrahedron = PolygonFactory.createPolygon(PolygonTypeEnum.TETRAHEDRON, 60);
+        if(tetrahedron != null) {
+            tetrahedron.updateMatrices(0, 0, 180, 1, 1, 1, 0, 0, 0);
+            objects.add(tetrahedron);
+        }
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleDiamond(List<BaseObject> objects, List<Light> lights) {
+        Polygon diamond = PolygonFactory.createPolygon(PolygonTypeEnum.DIAMOND, 9, 40, 75, 35, 75);
+        if(diamond != null) {
+            diamond.updateMatrices(0, -20, 0, 1, 1, 1, 0, 0, 0);
+            diamond.setReflectionRatio(0.5);
+            objects.add(diamond);
+        }
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleCubeFractal(List<BaseObject> objects, List<Light> lights) {
+        CubeFractal cubeFractal = new CubeFractal(1, 90);
+        cubeFractal.updateMatrices(0, -40, 45, 1, 1, 1, 0, 0, 0);
+        cubeFractal.setNormals();
+        objects.add(cubeFractal);
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *
@@ -253,30 +311,6 @@ public class SceneMaker {
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getSimpleStar(List<BaseObject> objects, List<Light> lights) {
-        Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.STAR, 5, 20, 60, 20);
-        if( star != null) {
-            star.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
-            objects.add(star);
-        }
-
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -80);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.15);
-        objects.add(plane1);
-
-        Plane plane2 = new Plane(new Color(1, 1, 1));
-        plane2.updateMatrices(0, -90, 0, 1, 1, 1, 150, 0, 0);
-        plane2.setNormal();
-        objects.add(plane2);
-
-        Light light = new Light(new Point3D(-100, 100, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
     public static Camera getSimpleTetrahedronFractal(List<BaseObject> objects, List<Light> lights) {
         Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.TETRAHEDRON_FRACTAL, 60, 4);
         if(star != null) {
@@ -298,60 +332,6 @@ public class SceneMaker {
         objects.add(plane2);
 
         Light light = new Light(new Point3D(-100, 100, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleTetrahedron(List<BaseObject> objects, List<Light> lights) {
-        Polygon tetrahedron = PolygonFactory.createPolygon(PolygonTypeEnum.TETRAHEDRON, 60);
-        if(tetrahedron != null) {
-            tetrahedron.updateMatrices(0, 0, 180, 1, 1, 1, 0, 0, 0);
-            objects.add(tetrahedron);
-        }
-
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -80);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleDiamond(List<BaseObject> objects, List<Light> lights) {
-        Polygon diamond = PolygonFactory.createPolygon(PolygonTypeEnum.DIAMOND, 9, 40, 75, 35, 75);
-        if(diamond != null) {
-            diamond.updateMatrices(0, -20, 0, 1, 1, 1, 0, 0, 0);
-            diamond.setReflectionRatio(0.5);
-            objects.add(diamond);
-        }
-
-        Cube cube = new Cube(610, PatternTypeEnum.GRID, new Color(), new Color());
-        cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        cube.setNormals();
-        cube.setReflectionRatio(0.5);
-        objects.add(cube);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleSquare(List<BaseObject> objects, List<Light> lights) {
-        Square square = new Square(120, PatternTypeEnum.UNIFORM, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
-        square.updateMatrices(0, 45, 0, 1, 1, 1, 0, 0, 0);
-        square.setNormal();
-        objects.add(square);
-
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
         lights.add(light);
 
         return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
@@ -409,33 +389,6 @@ public class SceneMaker {
         //return new Camera(new Point3D(2.5, 0, 0), new Vector3D(-1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getSimpleClosedCylinder(List<BaseObject> objects, List<Light> lights) {
-        ClosedCylinder closedCylinder = new ClosedCylinder(5, 20);
-        closedCylinder.updateMatrices(30, -30, 0, 1, 1, 1, 0, 0, 0);
-        //cubeFractal.addCut(CutTypeEnum.FRONT);
-        closedCylinder.setNormals();
-        //cube.setReflectionRatio(0.5);
-        objects.add(closedCylinder);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-50, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleCubeFractal(List<BaseObject> objects, List<Light> lights) {
-        CubeFractal cubeFractal = new CubeFractal(1, 90);
-        cubeFractal.updateMatrices(0, -40, 45, 1, 1, 1, 0, 0, 0);
-        cubeFractal.setNormals();
-        //cube.setReflectionRatio(0.5);
-        objects.add(cubeFractal);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
     public static Camera getSimpleCubicSurface(List<BaseObject> objects, List<Light> lights) {
         CubicSurface cubicSurface = new CubicSurface();
         cubicSurface.setX3(0);
@@ -465,17 +418,6 @@ public class SceneMaker {
         lights.add(light);
 
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleGoursatSurface(List<BaseObject> objects, List<Light> lights) {
-        GoursatSurface goursatSurface = new GoursatSurface(0, 0, -1);
-        goursatSurface.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        objects.add(goursatSurface);
-
-        Light light = new Light(new Point3D(-1000, 1000, 1000));
-        lights.add(light);
-
-        return new Camera(new Point3D(-2, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *
@@ -548,6 +490,23 @@ public class SceneMaker {
         lights.add(new Light(new Point3D(-75, 0, 15)));
 
         return new Camera(new Point3D(-300, 0, 30), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getProjectedShadow(List<BaseObject> objects, List<Light> lights) {
+        Plane verticalPlane = new Plane();
+        verticalPlane.updateMatrices(0, -90, 0, 1, 1, 1, 250, 0, 0);
+        verticalPlane.setNormal();
+        objects.add(verticalPlane);
+
+        Square square = new Square(150);
+        square.updateMatrices(0, -90, 0, 1, 1, 1, -150, 0, 0);
+        square.setTexture("./src/main/resources/textures/rgba/rgba.png");
+        square.setNormal();
+        objects.add(square);
+
+        lights.add(new Light(new Point3D(-500, 0, 0)));
+
+        return new Camera(new Point3D(-300, 100, 0), new Vector3D(1, -0.30, 0), new Vector3D(0, 0, 1), 90);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *
