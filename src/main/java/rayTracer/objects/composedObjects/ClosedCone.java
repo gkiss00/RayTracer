@@ -18,9 +18,15 @@ public class ClosedCone extends BaseObject {
     protected static final Vector3D downNormal = new Vector3D(0, 0, -1);
     protected  Vector3D realUpNormal;
     protected  Vector3D realDownNormal;
-    private double angle;
-    private double height;
-    private double radius;
+    private final double angle;
+    private final double height;
+    private final double radius;
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public ClosedCone(double angle, double height) {
         super();
@@ -36,6 +42,12 @@ public class ClosedCone extends BaseObject {
         this.radius = Math.tan(Math.toRadians(this.angle)) * this.height;
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               SETTERS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public void setNormals() {
         try {
             realUpNormal = transform.apply(upNormal, MatrixTransformEnum.TO_REAL);
@@ -50,10 +62,22 @@ public class ClosedCone extends BaseObject {
 
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     protected Color getColor(Point3D localIntersection) {
         return colors.get(0);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

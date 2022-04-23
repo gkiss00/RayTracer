@@ -1,1 +1,3 @@
-# rayTracer.RayTracer
+# RayTracer
+
+![alt text](./Image.png)

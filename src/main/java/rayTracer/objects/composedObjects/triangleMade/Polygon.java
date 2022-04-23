@@ -12,17 +12,35 @@ import rayTracer.utils.Intersection;
 import java.util.List;
 
 public class Polygon extends BaseObject {
-    private List<Triangle> triangles;
+    private final List<Triangle> triangles;
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public Polygon(List<Triangle> triangles) {
         super();
         this.triangles = triangles;
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               SETTERS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     protected Color getColor(Point3D localIntersection) {
         return colors.get(0);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

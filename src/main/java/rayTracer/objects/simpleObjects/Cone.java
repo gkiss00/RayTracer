@@ -14,7 +14,7 @@ import rayTracer.utils.Intersection;
 import java.util.List;
 
 public class Cone extends BaseObject {
-    private double angle;
+    private final double angle;
 
     /* * * * * * * * * * * * * * * * * * * * *
 

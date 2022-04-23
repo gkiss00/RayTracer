@@ -57,10 +57,27 @@ public class SceneMaker {
         return new Camera(new Point3D(-200, 20, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleDisk(List<BaseObject> objects, List<Light> lights) {
+        Disk disk = new Disk(20, 60);
+        disk.updateMatrices(0, -45, 0, 1, 1, 1, 0, 0, 0);
+        disk.setNormal();
+        objects.add(disk);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getSimpleCylinder(List<BaseObject> objects, List<Light> lights) {
         Cylinder cylinder = new Cylinder(20);
         cylinder.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
         objects.add(cylinder);
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleCone(List<BaseObject> objects, List<Light> lights) {
+        Cone cone = new Cone(20);
+        cone.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(cone);
 
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
@@ -82,7 +99,7 @@ public class SceneMaker {
      * * * * * * * * * * * * * * * * * * * * */
 
     public static Camera getSimpleSphereWithPattern(List<BaseObject> objects, List<Light> lights) {
-        Sphere sphere = new Sphere(30, PatternTypeEnum.GRID, new Color(), new Color());
+        Sphere sphere = new Sphere(30, PatternTypeEnum.GRADIENT, new Color(), new Color());
         sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
         objects.add(sphere);
 
@@ -90,8 +107,8 @@ public class SceneMaker {
     }
 
     public static Camera getSimpleCubeWithPattern(List<BaseObject> objects, List<Light> lights) {
-        Cube cube = new Cube(30, PatternTypeEnum.TEXTURE, new Color(), new Color());
-        cube.setTexture("./src/main/resources/textures/rgba/squareBorder2.png");
+        Cube cube = new Cube(30, PatternTypeEnum.GRADIENT, new Color(), new Color());
+        //cube.setTexture("./src/main/resources/textures/rgba/squareBorder2.png");
         cube.updateMatrices(20, 20, 35, 1, 1, 1, 0, 0, 0);
         cube.setNormals();
         objects.add(cube);
@@ -108,10 +125,27 @@ public class SceneMaker {
         return new Camera(new Point3D(-200, 20, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleDiskWithPattern(List<BaseObject> objects, List<Light> lights) {
+        Disk disk = new Disk(20, 60, PatternTypeEnum.GRID, new Color(), new Color());
+        disk.updateMatrices(0, -45, 0, 1, 1, 1, 0, 0, 0);
+        disk.setNormal();
+        objects.add(disk);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getSimpleCylinderWithPattern(List<BaseObject> objects, List<Light> lights) {
         Cylinder cylinder = new Cylinder(20, PatternTypeEnum.GRID, new Color(), new Color());
         cylinder.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
         objects.add(cylinder);
+
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleConeWithPattern(List<BaseObject> objects, List<Light> lights) {
+        Cone cone = new Cone(20, PatternTypeEnum.GRID, new Color(), new Color());
+        cone.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(cone);
 
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
@@ -168,24 +202,6 @@ public class SceneMaker {
         lights.add(light);
 
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
-    }
-
-    public static Camera getSimpleDisk(List<BaseObject> objects, List<Light> lights) {
-        Disk disk1 = new Disk(20, 60, PatternTypeEnum.UNIFORM, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
-        disk1.updateMatrices(0, -45, 0, 1, 1, 1, 0, 0, 0);
-        disk1.setNormal();
-        objects.add(disk1);
-
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -30);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
-
-        Light light = new Light(new Point3D(-100, 0, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getSimpleStar(List<BaseObject> objects, List<Light> lights) {

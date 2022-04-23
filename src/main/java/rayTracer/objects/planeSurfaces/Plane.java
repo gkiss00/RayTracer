@@ -24,6 +24,12 @@ public class Plane extends BaseObject {
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
     private Vector3D realNormal;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public Plane() {
         super();
     }
@@ -36,6 +42,12 @@ public class Plane extends BaseObject {
         super(colors);
         setPattern(pattern);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               SETTERS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public void setNormal() {
         try {
@@ -89,6 +101,12 @@ public class Plane extends BaseObject {
     public void setTextureWidth(double textureWidth) {
         this.textureWidth = textureWidth;
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     protected Color getColor(Point3D localIntersection) {
@@ -153,6 +171,12 @@ public class Plane extends BaseObject {
         return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {
         Line3D localRay = transform.apply(ray, MatrixTransformEnum.TO_LOCAL);
@@ -169,11 +193,11 @@ public class Plane extends BaseObject {
             if(!Cutter.cut(localIntersection, cuts)) {
                 Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                 Vector3D normal = getNormal(localIntersection);
-                Vector3D realNormall = transform.apply(normal, MatrixTransformEnum.TO_REAL);
-                if (Vector3D.angleBetween(realNormall, ray.getVector()) < 90)
-                    realNormall.inverse();
-                realNormall.normalize();
-                intersections.add(new Intersection(realIntersection, realNormall, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                Vector3D realNormal = transform.apply(normal, MatrixTransformEnum.TO_REAL);
+                if (Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
+                    realNormal.inverse();
+                realNormal.normalize();
+                intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
             }
         }
     }

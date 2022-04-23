@@ -17,8 +17,14 @@ public class ClosedCylinder extends BaseObject {
     protected static final Vector3D downNormal = new Vector3D(0, 0, -1);
     protected  Vector3D realUpNormal;
     protected  Vector3D realDownNormal;
-    private double radius;
-    private double height;
+    private final double radius;
+    private final double height;
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public ClosedCylinder(double radius, double height) {
         super();
@@ -31,6 +37,12 @@ public class ClosedCylinder extends BaseObject {
         this.radius = radius;
         this.height = height / 2;
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                SETTERS                *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public void setNormals() {
         try {
@@ -46,10 +58,22 @@ public class ClosedCylinder extends BaseObject {
 
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     protected Color getColor(Point3D localIntersection) {
         return colors.get(0);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {
@@ -74,7 +98,7 @@ public class ClosedCylinder extends BaseObject {
                         localRay.getPY() + localRay.getVY() * solutions.get(i),
                         localRay.getPZ() + localRay.getVZ() * solutions.get(i)
                 );
-                if (localIntersection.getZ() <= height && localIntersection.getZ() >= -height && isCut(localIntersection) == false) {
+                if (localIntersection.getZ() <= height && localIntersection.getZ() >= -height && !isCut(localIntersection)) {
                     Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                     Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
@@ -105,7 +129,7 @@ public class ClosedCylinder extends BaseObject {
 
                 if (Math.sqrt(x * x + y * y) <= radius) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    if(isCut(localIntersection) == false){
+                    if(!isCut(localIntersection)){
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
@@ -125,7 +149,7 @@ public class ClosedCylinder extends BaseObject {
 
                 if (Math.sqrt(x * x + y * y) <= radius) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    if(isCut(localIntersection) == false) {
+                    if(!isCut(localIntersection)) {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());

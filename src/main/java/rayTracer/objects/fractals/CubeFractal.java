@@ -16,9 +16,15 @@ import java.util.List;
 
 public class CubeFractal extends Cube {
     private int deepness;
-    private List<BaseBlackObject> zCylinders = new ArrayList<>();
-    private List<BaseBlackObject> yCylinders = new ArrayList<>();
-    private List<BaseBlackObject> xCylinders = new ArrayList<>();
+    private final List<BaseBlackObject> zCylinders = new ArrayList<>();
+    private final List<BaseBlackObject> yCylinders = new ArrayList<>();
+    private final List<BaseBlackObject> xCylinders = new ArrayList<>();
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public CubeFractal(int deepness, double size) {
         super(size);
@@ -155,6 +161,12 @@ public class CubeFractal extends Cube {
         }
         return false;
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

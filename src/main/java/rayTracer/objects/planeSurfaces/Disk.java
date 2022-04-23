@@ -15,9 +15,15 @@ import java.util.List;
 public class Disk extends BaseObject {
     private static final Point3D localOrigin = new Point3D(0, 0, 0);
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
-    private double internalRadius;
-    private double externalRadius;
+    private final double internalRadius;
+    private final double externalRadius;
     private Vector3D realNormal;
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public Disk(double internalRadius, double externalRadius) {
         super();
@@ -37,6 +43,12 @@ public class Disk extends BaseObject {
         this.externalRadius = externalRadius;
         setPattern(pattern);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               SETTERS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public void setNormal() {
         try {
@@ -64,6 +76,12 @@ public class Disk extends BaseObject {
             this.pattern = pattern;
         }
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     protected Color getColor(Point3D localIntersection) {
@@ -145,6 +163,12 @@ public class Disk extends BaseObject {
                 colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
         );
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *            INTERSECTIONS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

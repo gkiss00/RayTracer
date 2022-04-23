@@ -120,7 +120,19 @@ public class Cube extends BaseObject {
     }
 
     private Color getColorFromGradient(Point3D localIntersection) {
-        return new Color();
+        double z = localIntersection.getZ() + size;
+        double cubeSize = 2 * size;
+        double colorRatio = cubeSize / (colors.size() - 1);
+        int previousColor = Math.min((int)(z / colorRatio), colors.size() - 2);
+        int nextColor = Math.min(previousColor + 1, colors.size() - 1);
+        double ratio = (z % colorRatio) / colorRatio;
+        return new Color(
+                colors.get(previousColor).getRed() + (colors.get(nextColor).getRed() - colors.get(previousColor).getRed()) * ratio,
+                colors.get(previousColor).getGreen() + (colors.get(nextColor).getGreen() - colors.get(previousColor).getGreen()) * ratio,
+                colors.get(previousColor).getBlue() + (colors.get(nextColor).getBlue() - colors.get(previousColor).getBlue()) * ratio,
+                colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
+        );
+        //return new Color();
     }
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {

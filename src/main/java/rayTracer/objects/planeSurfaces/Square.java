@@ -17,6 +17,12 @@ public class Square extends BaseObject {
     private Vector3D realNormal;
     private double size;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public Square(double size) {
         super();
         this.size = size / 2;
@@ -32,6 +38,12 @@ public class Square extends BaseObject {
         this.size = size / 2;
         setPattern(pattern);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               SETTERS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public void setNormal() {
         try {
@@ -50,6 +62,12 @@ public class Square extends BaseObject {
             this.pattern = pattern;
         }
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     protected Color getColor(Point3D localIntersection) {
@@ -97,6 +115,12 @@ public class Square extends BaseObject {
                 colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
         );
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

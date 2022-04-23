@@ -15,6 +15,12 @@ import java.util.List;
 public class GoursatSurface extends BaseObject {
     private double a, b, c;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public GoursatSurface(double a, double b, double c) {
         super();
         this.a = a;
@@ -22,15 +28,33 @@ public class GoursatSurface extends BaseObject {
         this.c = c;
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               SETTERS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     public void setPattern(PatternTypeEnum pattern) {
 
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               COLORS                  *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     protected Color getColor(Point3D localIntersection) {
         return colors.get(0);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {
