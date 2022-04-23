@@ -17,7 +17,6 @@ import java.io.File;
 import java.util.List;
 
 public class Plane extends BaseObject {
-    private Raster image;
     private BufferedImage bufferedImage;
     private Raster normalMap = null;
     private double textureWidth = 100;
@@ -77,8 +76,6 @@ public class Plane extends BaseObject {
         pattern = PatternTypeEnum.TEXTURE;
         File texture = new File(filePath);
         try {
-            image = ImageIO.read(texture).getData();
-            //test = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
             bufferedImage = ImageIO.read(texture);
         } catch (Exception e) {
             System.err.println("Plane error: can not read texture file, set pattern to UNIFORM");

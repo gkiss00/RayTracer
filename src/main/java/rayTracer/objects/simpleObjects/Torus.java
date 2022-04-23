@@ -12,14 +12,15 @@ import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.util.List;
 
 public class Torus extends BaseObject {
-    private double r; //minor radius
-    private double R; //major radius
-    private Raster image;
+    private final double r; //minor radius
+    private final double R; //major radius
+    private BufferedImage bufferedImage;
 
     /* * * * * * * * * * * * * * * * * * * * *
 
@@ -67,7 +68,7 @@ public class Torus extends BaseObject {
         pattern = PatternTypeEnum.TEXTURE;
         File texture = new File(filePath);
         try {
-            image = ImageIO.read(texture).getData();
+            bufferedImage = ImageIO.read(texture);
         } catch (Exception e) {
             System.err.println("Torus error: can not read texture file, set pattern to UNIFORM");
             pattern = PatternTypeEnum.UNIFORM;
@@ -109,17 +110,6 @@ public class Torus extends BaseObject {
     }
 
     private Color getColorFromHorizontalLined(Point3D localIntersection) {
-        //REALY COOL BUT NOTHING SERIOUS
-        /*double lineRadian = 360.0 / lineValue;
-        double z = localIntersection.getZ();
-        double y = localIntersection.getY();
-        double hypotenuse = Math.sqrt(z * z + y * y);
-        double angle = Math.toDegrees(Math.acos(y / hypotenuse));
-        if(z < 0)
-            angle = 360.0 - angle;
-        return colors.get(((int)(angle / lineRadian)) % 2);*/
-
-        // SOH CAH TOA
         double z = localIntersection.getZ();
         double lineRadian = 360.0 / lineValue;
         double alpha = Math.toDegrees(Math.asin(z / r));
@@ -160,8 +150,8 @@ public class Torus extends BaseObject {
     }
 
     private Color getColorFromTexture(Point3D localIntersection) {
-        int imageHeight = image.getHeight();
-        int imageWidth = image.getWidth();
+        int imageHeight = bufferedImage.getHeight();
+        int imageWidth = bufferedImage.getWidth();
 
         double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
@@ -178,11 +168,11 @@ public class Torus extends BaseObject {
         if(z < 0)
             alpha = 180 + (180 - alpha);
 
-        double[] rgb = new double[3];
         int x = Math.min(imageWidth - 1, (int)(((angle * 4 % 360) / 360) * imageWidth));
         int y = Math.min(imageHeight - 1, (int)((alpha / 360) * imageHeight));
-        image.getPixel(x, y, rgb);
-        return new Color(rgb[0] / 255, rgb[1] / 255, rgb[0] / 255);
+        int rgb = bufferedImage.getRGB(x, y);
+        java.awt.Color color = new java.awt.Color(rgb, true);
+        return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *

@@ -12,13 +12,14 @@ import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.util.List;
 
 public class Sphere extends BaseObject {
     private double radius;
-    private Raster image;
+    private BufferedImage bufferedImage;
 
     /* * * * * * * * * * * * * * * * * * * * *
 
@@ -71,7 +72,7 @@ public class Sphere extends BaseObject {
         pattern = PatternTypeEnum.TEXTURE;
         File texture = new File(filePath);
         try {
-            image = ImageIO.read(texture).getData();
+            bufferedImage = ImageIO.read(texture);
         } catch (Exception e) {
             System.err.println("Sphere error: can not read texture file, set pattern to UNIFORM");
             pattern = PatternTypeEnum.UNIFORM;
@@ -160,13 +161,14 @@ public class Sphere extends BaseObject {
         double diameter = 2 * radius;
         double zRatio = zValue / diameter;
 
-        int imageHeight = image.getHeight();
-        int imageWidth = image.getWidth();
-        double[] rgb = new double[3];
+        int imageHeight = bufferedImage.getHeight();
+        int imageWidth = bufferedImage.getWidth();
+
         int x = (int)(angle / 360 * imageWidth) >= imageWidth ? imageWidth - 1 : (int)(angle / 360 * imageWidth);
         int y = imageHeight - (int)(zRatio * imageHeight) >= imageHeight ? imageHeight - 1: imageHeight - (int)(zRatio * imageHeight);
-        image.getPixel(x, y, rgb);
-        return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+        int rgb = bufferedImage.getRGB(x, y);
+        java.awt.Color color = new java.awt.Color(rgb, true);
+        return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *

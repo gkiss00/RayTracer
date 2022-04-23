@@ -151,7 +151,7 @@ public class SceneMaker {
     }
 
     public static Camera getSimpleTorusWithPattern(List<BaseObject> objects, List<Light> lights) {
-        Torus torus = new Torus(25,  5, PatternTypeEnum.TEXTURE, new Color(), new Color());
+        Torus torus = new Torus(25,  5, PatternTypeEnum.TEXTURE);
         torus.updateMatrices(10, 20, 20, 1, 1, 1, 0, 0, 0);
         torus.setTexture("./src/main/resources/textures/planets/earthDay.jpeg");
         objects.add(torus);
