@@ -1,6 +1,8 @@
 # RayTracer
 
-![alt text](./images/mobiusTape.png)
+![alt text](./images/mobiusTape1.png)
+
+![alt text](./images/mobiusTape2.png)
 
 ![alt text](./images/torus.png)
 

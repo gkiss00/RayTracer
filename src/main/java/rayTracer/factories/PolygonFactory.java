@@ -201,18 +201,34 @@ public class PolygonFactory {
         double radius = values[0];
         double width = values[1];
         int precision = (int)values[2];
+        double semiWidth = width / 2;
         List<Point3D> sup_points = new ArrayList<>();
         List<Point3D> inf_points = new ArrayList<>();
 
         for(int i = 0; i < precision; ++i) {
-            double angle1 = (double)i * (360.0 / precision);
-            double angle2 = angle1 / 2.0;
-            double h = angle2 < 90 ? Math.sin(Math.toRadians(angle2)) * (width / 2) : (width / 2) + (-Math.cos(Math.toRadians(angle2)) * (width / 2));
-            double r1 = radius + (angle2 < 90 ? (Math.sin(Math.toRadians(angle2)) * (width / 2)) : (width / 2) + (Math.cos(Math.toRadians(angle2)) * (width / 2)));
-            double r2 = radius + (angle2 < 90 ? -(Math.sin(Math.toRadians(angle2)) * (width / 2)) : -(width / 2) - (Math.cos(Math.toRadians(angle2)) * (width / 2)));
+            double positionAngle = (double)i * (360.0 / precision);
+            double rotationAngle = positionAngle / 2.0;
 
-            sup_points.add(new Point3D(r1 * Math.cos(Math.toRadians(angle1)), r1 * Math.sin(Math.toRadians(angle1)), -h));
-            inf_points.add(new Point3D(r2 * Math.cos(Math.toRadians(angle1)), r2 * Math.sin(Math.toRadians(angle1)), -width + h));
+            double sin = Math.sin(Math.toRadians(rotationAngle)) * (semiWidth);
+            double cos = Math.cos(Math.toRadians(rotationAngle)) * (semiWidth);
+
+            double h = sin;
+            double r1 = radius + cos;
+            double r2 = radius - cos;
+
+            double x1 = r1 * Math.sin(Math.toRadians(positionAngle));
+            double x2 = r2 * Math.sin(Math.toRadians(positionAngle));
+
+            double y1 = r1 * Math.cos(Math.toRadians(positionAngle));
+            double y2 = r2 * Math.cos(Math.toRadians(positionAngle));
+
+            if(rotationAngle < 90) {
+                sup_points.add(new Point3D(x1, y1, h));
+                inf_points.add(new Point3D(x2, y2, -h));
+            } else {
+                sup_points.add(new Point3D(x2, y2, -h));
+                inf_points.add(new Point3D(x1, y1, h));
+            }
         }
 
         List<Triangle> triangles = new ArrayList<>();

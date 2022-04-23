@@ -189,6 +189,19 @@ public class SceneMaker {
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleMobiusTapePolygonWithPattern(List<BaseObject> objects, List<Light> lights) {
+        try {
+            Polygon mobiusTape = PolygonFactory.createPolygon(PolygonTypeEnum.MOBIUS_TAPE, 40, 20, 1000);
+            mobiusTape.updateMatrices(0, -20, 0, 1, 1, 1, 0, 0, 0);
+            mobiusTape.setTexture("./src/main/resources/textures/random/numbers.png");
+            objects.add(mobiusTape);
+        } catch(Exception e) {
+
+        }
+
+        return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     /* * * * * * * * * * * * * * * * * * * * *
 
      *              FULL OBJECTS             *
