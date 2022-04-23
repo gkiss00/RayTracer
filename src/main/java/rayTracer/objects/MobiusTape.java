@@ -75,7 +75,7 @@ public class MobiusTape extends BaseObject{
                 tmp.normalize();
                 Point3D pointOnRadius = new Point3D(tmp.getX(), tmp.getY(), 0);
                 //if the point is in the torus and cartesian match parametric
-                if(Point3D.distanceBetween(pointOnRadius, localIntersection) < .2 && checkPoint(localIntersection)){
+                if(Point3D.distanceBetween(pointOnRadius, localIntersection) < .4){
                     Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                     Vector3D localNormal = getTan(localIntersection);
                     if (Vector3D.angleBetween(localRay.getVector(), localNormal) < 90)

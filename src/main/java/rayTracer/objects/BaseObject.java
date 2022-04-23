@@ -21,7 +21,7 @@ public abstract class BaseObject {
     protected List<CutTypeEnum> cuts = new ArrayList<>();
     protected PatternTypeEnum pattern;
     public int lineValue = 10;
-    protected int columnValue = 10;
+    public int columnValue = 10;
     protected Transform transform;
     protected double reflectionRatio = 0;
     protected CapacityTypeEnum capacity = CapacityTypeEnum.EMPTY;

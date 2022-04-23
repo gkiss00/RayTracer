@@ -148,11 +148,8 @@ public class Plane extends BaseObject {
                 (int)(yRatio * imageWidth) :
                 (int)(imageWidth - (yRatio * imageWidth));
 
-//        double[] rgb = new double[3];
-//        image.getPixel(x, y, rgb);
         int rgb = bufferedImage.getRGB(x, y);
         java.awt.Color color = new java.awt.Color(rgb, true);
-        //return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
         return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 

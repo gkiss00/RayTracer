@@ -16,6 +16,12 @@ import java.util.List;
 public class Cone extends BaseObject {
     private double angle;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public Cone(double angle) {
         super();
         this.angle = angle;
@@ -32,6 +38,12 @@ public class Cone extends BaseObject {
         setPattern(pattern);
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                SETTERS                *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     public void setPattern(PatternTypeEnum pattern) {
         if (pattern == PatternTypeEnum.GRADIENT) {
@@ -47,6 +59,12 @@ public class Cone extends BaseObject {
             this.pattern = pattern;
         }
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     protected Color getColor(Point3D localIntersection) {
@@ -67,8 +85,8 @@ public class Cone extends BaseObject {
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenus = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
-        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenus));
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
         return colors.get(((int)(angle / lineRadian)) % 2);
@@ -83,8 +101,8 @@ public class Cone extends BaseObject {
 
     private Color getColorFromGrid(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenus = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
-        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenus));
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
 
@@ -93,6 +111,12 @@ public class Cone extends BaseObject {
             zValue = -zValue + lineValue;
         return colors.get(((int)(zValue / lineValue) + (int)(angle / lineRadian)) % 2);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

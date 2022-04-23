@@ -24,6 +24,14 @@ public class Color {
         this.alpha = 1;
     }
 
+    public Color(String rgb, double alpha) { // #ff0B45
+        java.awt.Color tmp = java.awt.Color.decode(rgb);
+        this.red = (double)tmp.getRed() / 255;
+        this.green = (double)tmp.getGreen() / 255;
+        this.blue = (double)tmp.getBlue() / 255;
+        this.alpha = alpha;
+    }
+
 
     public Color(double red, double green, double blue) {
         this.red = red;

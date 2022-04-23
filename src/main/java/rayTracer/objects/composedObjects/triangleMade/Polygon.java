@@ -32,9 +32,13 @@ public class Polygon extends BaseObject {
             Point3D localIntersection = tr.hit(localRay);
             if(localIntersection != null) {
                 Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
+                Vector3D localNormal = tr.getNormal();
+                if (Vector3D.angleBetween(localRay.getVector(), localNormal) < 90)
+                    localNormal = Vector3D.inverse(localNormal);
+                Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
                 intersections.add(new Intersection(
                         realIntersection,
-                        tr.getNormal(),
+                        realNormal,
                         getColor(localIntersection),
                         Point3D.distanceBetween(ray.getPoint(), realIntersection),
                         this.reflectionRatio,

@@ -21,6 +21,12 @@ public class Torus extends BaseObject {
     private double R; //major radius
     private Raster image;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public Torus(double R, double r) {
         super();
         this.r = r;
@@ -39,6 +45,12 @@ public class Torus extends BaseObject {
         this.r = r;
         this.R = R;
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                SETTERS                *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void setPattern(PatternTypeEnum pattern) {
@@ -62,6 +74,12 @@ public class Torus extends BaseObject {
         }
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                 COLORS                *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     protected Color getColor(Point3D localIntersection) {
         switch (pattern) {
@@ -83,7 +101,7 @@ public class Torus extends BaseObject {
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
         double columnRadian = 360.0 / columnValue;
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
@@ -112,7 +130,7 @@ public class Torus extends BaseObject {
 
     private Color getColorFromGrid(Point3D localIntersection) {
         double columnRadian = 360.0 / columnValue;
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle1 = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle1 = 360 - angle1;
@@ -145,22 +163,33 @@ public class Torus extends BaseObject {
         int imageHeight = image.getHeight();
         int imageWidth = image.getWidth();
 
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
 
         double z = localIntersection.getZ();
-        double alpha = Math.toDegrees(Math.asin(z / r));
+        Vector3D tmp = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
+        tmp.normalize();
+        tmp.times(R);
+        Vector3D tmp2 = new Vector3D(localIntersection.getX() - tmp.getX(), localIntersection.getY() - tmp.getY(), localIntersection.getZ());
+        tmp.inverse();
+        double alpha = Vector3D.angleBetween(tmp, tmp2);
         if(z < 0)
-            alpha = 360 + alpha;
+            alpha = 180 + (180 - alpha);
 
         double[] rgb = new double[3];
-        int x = angle / 360 > 1 ? imageWidth - 1 : (int)((angle / 360) * imageWidth);
-        int y = alpha / 360 > 1 ? imageHeight - 1: (int)(((angle / 360)) * imageHeight);
+        int x = Math.min(imageWidth - 1, (int)(((angle * 4 % 360) / 360) * imageWidth));
+        int y = Math.min(imageHeight - 1, (int)((alpha / 360) * imageHeight));
         image.getPixel(x, y, rgb);
         return new Color(rgb[0] / 255, rgb[1] / 255, rgb[0] / 255);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {
@@ -215,15 +244,5 @@ public class Torus extends BaseObject {
         tmp.normalize();
         tmp.times(R);
         return new Vector3D(localIntersection.getX() - tmp.getX(), localIntersection.getY() - tmp.getY(), localIntersection.getZ());
-        /*double x = localIntersection.getX();
-        double y = localIntersection.getY();
-        double hypotenuse = Math.sqrt(x * x + y * y);
-        double angle = Math.toDegrees(Math.acos(y / hypotenuse));
-        if(x < 0)
-            angle = 360.0 - angle;
-
-        double distX = Math.sin(Math.toRadians(angle)) * R;
-        double distY = Math.cos(Math.toRadians(angle)) * R;
-        return  new Vector3D(x - distX, y -distY, localIntersection.getZ());*/
     }
 }

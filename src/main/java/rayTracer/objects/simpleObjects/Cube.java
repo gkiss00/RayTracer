@@ -10,6 +10,10 @@ import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.io.File;
 import java.util.List;
 
 public class Cube extends BaseObject {
@@ -26,6 +30,13 @@ public class Cube extends BaseObject {
     protected  Vector3D realFrontNormal;
     protected  Vector3D realBackNormal;
     protected double size;
+    private BufferedImage bufferedImage;
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public Cube() {
         super();
@@ -48,6 +59,12 @@ public class Cube extends BaseObject {
         setPattern(pattern);
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                 SETTERS               *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public void setNormals() {
         try {
             realUpNormal = transform.apply(upNormal, MatrixTransformEnum.TO_REAL);
@@ -64,13 +81,141 @@ public class Cube extends BaseObject {
 
     @Override
     public void setPattern(PatternTypeEnum pattern) {
-
+        this.pattern = pattern;
     }
+
+    public void setTexture(String filePath) {
+        pattern = PatternTypeEnum.TEXTURE;
+        File texture = new File(filePath);
+        try {
+            bufferedImage = ImageIO.read(texture);
+        } catch (Exception e) {
+            System.err.println("Plane error: can not read texture file, set pattern to UNIFORM");
+            pattern = PatternTypeEnum.UNIFORM;
+        }
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     protected Color getColor(Point3D localIntersection) {
-        return colors.get(0);
+        switch (pattern) {
+            case GRADIENT:
+                return getColorFromGradient(localIntersection);
+            case VERTICAL_LINED:
+                return getColorFromVerticalLined(localIntersection);
+            case HORIZONTAL_LINED:
+                return getColorFromHorizontalLined(localIntersection);
+            case GRID:
+                return getColorFromGrid(localIntersection);
+            case TEXTURE:
+                return getColorFromTexture(localIntersection);
+            default:
+                return colors.get(0);
+        }
     }
+
+    private Color getColorFromGradient(Point3D localIntersection) {
+        return new Color();
+    }
+
+    private Color getColorFromVerticalLined(Point3D localIntersection) {
+        double lineRadian = 360.0 / columnValue;
+        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+        if(localIntersection.getX() < 0)
+            angle = 360 - angle;
+        return colors.get(((int)(angle / lineRadian)) % 2);
+    }
+
+    private Color getColorFromHorizontalLined(Point3D localIntersection) {
+        double zValue = localIntersection.getZ() + size;
+        double cubeSize = 2 * size;
+        double zRatio = zValue / cubeSize;
+        double lineRatio = 1.0 / lineValue;
+        return colors.get(((int)(zRatio / lineRatio)) % 2);
+    }
+
+    private Color getColorFromGrid(Point3D localIntersection) {
+        double cubeSize = 2 * size;
+        double lineFrequency = cubeSize / lineValue;
+        double columnFrequency = cubeSize / columnValue;
+
+        // TOP AND BOTTOM FACE
+        if(
+                (localIntersection.getZ() < size + EPSILON && localIntersection.getZ() > size - EPSILON) ||
+                (localIntersection.getZ() < -size + EPSILON && localIntersection.getZ() > -size - EPSILON)
+        ) {
+            double x = localIntersection.getX() + size;
+            double y = localIntersection.getY() + size;
+
+            return colors.get(((int)(x / lineFrequency) + (int)(y / columnFrequency)) % 2);
+        }
+        // LEFT AND RIGHT
+        else if(
+                (localIntersection.getY() < size + EPSILON && localIntersection.getY() > size - EPSILON) ||
+                (localIntersection.getY() < -size + EPSILON && localIntersection.getY() > -size - EPSILON)
+        ) {
+            double x = localIntersection.getX() + size;
+            double z = localIntersection.getZ() + size;
+
+            return colors.get(((int)(x / lineFrequency) + (int)(z / columnFrequency)) % 2);
+        }
+        // FRONT AND BACK
+        else {
+            double y = localIntersection.getY() + size;
+            double z = localIntersection.getZ() + size;
+
+            return colors.get(((int)(y / lineFrequency) + (int)(z / columnFrequency)) % 2);
+        }
+    }
+
+    private Color getColorFromTexture(Point3D localIntersection) {
+        double cubeSize = 2 * size;
+        double x, y;
+        // TOP AND BOTTOM FACE
+        if(
+                (localIntersection.getZ() < size + EPSILON && localIntersection.getZ() > size - EPSILON) ||
+                (localIntersection.getZ() < -size + EPSILON && localIntersection.getZ() > -size - EPSILON)
+        ) {
+            x = localIntersection.getX() + size;
+            y = localIntersection.getY() + size;
+        }
+        // LEFT AND RIGHT
+        else if(
+                (localIntersection.getY() < size + EPSILON && localIntersection.getY() > size - EPSILON) ||
+                (localIntersection.getY() < -size + EPSILON && localIntersection.getY() > -size - EPSILON)
+        ) {
+            x = localIntersection.getX() + size;
+            y = localIntersection.getZ() + size;
+        }
+        // FRONT AND BACK
+        else {
+            x = localIntersection.getY() + size;
+            y = localIntersection.getZ() + size;
+        }
+
+        int imageHeight = bufferedImage.getHeight();
+        int imageWidth = bufferedImage.getWidth();
+        int xImage = (int)((x / cubeSize) * imageWidth);
+        int yImage = (int)((y / cubeSize) * imageHeight);
+        xImage = Math.min(xImage, imageWidth - 1);
+        yImage = Math.min(yImage, imageHeight - 1);
+
+        int rgb = bufferedImage.getRGB(xImage, yImage);
+        java.awt.Color color = new java.awt.Color(rgb, true);
+        return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

@@ -22,6 +22,12 @@ public class Cylinder extends BaseObject {
     private Raster image;
     private BufferedImage bufferedImage;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public Cylinder(double radius) {
         super();
         this.radius = radius;
@@ -37,6 +43,12 @@ public class Cylinder extends BaseObject {
         this.radius = radius;
         setPattern(pattern);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                SETTERS                *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void setPattern(PatternTypeEnum pattern) {
@@ -66,6 +78,12 @@ public class Cylinder extends BaseObject {
         }
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                 COLORS                *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     protected Color getColor(Point3D localIntersection) {
         switch (pattern) {
@@ -87,8 +105,8 @@ public class Cylinder extends BaseObject {
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenus = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
-        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenus));
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
         return colors.get(((int)(angle / lineRadian)) % 2);
@@ -103,8 +121,8 @@ public class Cylinder extends BaseObject {
 
     private Color getColorFromGrid(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenus = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
-        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenus));
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
 
@@ -119,24 +137,28 @@ public class Cylinder extends BaseObject {
         int imageWidth = bufferedImage.getWidth();
         double circumference = 2 * Math.PI * radius;
         double textureHeight = (double)imageHeight / (double)imageWidth * circumference;
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
 
         double zRatio = (Math.abs(localIntersection.getZ()) % textureHeight) / textureHeight;
 
-        //double[] rgb = new double[3];
         int x = (int)(angle / 360 * imageWidth) >= imageWidth ? imageWidth - 1 : (int)(angle / 360 * imageWidth);
         int y = localIntersection.getZ() >= 0 ?
                 imageHeight - (int)(zRatio * imageHeight) >= imageHeight ? imageHeight - 1: imageHeight - (int)(zRatio * imageHeight) :
                 (int)(zRatio * imageHeight) >= imageHeight ? imageHeight - 1: (int)(zRatio * imageHeight);
-        //image.getPixel(x, y, rgb);
-        //return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+
         int rgb = bufferedImage.getRGB(x, y);
         java.awt.Color color = new java.awt.Color(rgb, true);
         return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {

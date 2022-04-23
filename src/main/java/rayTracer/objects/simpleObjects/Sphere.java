@@ -20,6 +20,12 @@ public class Sphere extends BaseObject {
     private double radius;
     private Raster image;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public Sphere(double radius) {
         super();
         this.radius = radius;
@@ -35,6 +41,12 @@ public class Sphere extends BaseObject {
         this.radius = radius;
         setPattern(pattern);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                SETTERS                *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void setPattern(PatternTypeEnum pattern) {
@@ -66,6 +78,12 @@ public class Sphere extends BaseObject {
         }
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     protected Color getColor(Point3D localIntersection) {
         switch (pattern) {
@@ -87,7 +105,7 @@ public class Sphere extends BaseObject {
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
@@ -104,7 +122,7 @@ public class Sphere extends BaseObject {
 
     private Color getColorFromGrid(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
@@ -133,7 +151,7 @@ public class Sphere extends BaseObject {
     }
 
     private Color getColorFromTexture(Point3D localIntersection) {
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
@@ -150,6 +168,12 @@ public class Sphere extends BaseObject {
         image.getPixel(x, y, rgb);
         return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     @Override
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception{

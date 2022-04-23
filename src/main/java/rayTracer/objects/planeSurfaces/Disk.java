@@ -84,7 +84,7 @@ public class Disk extends BaseObject {
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
@@ -101,7 +101,7 @@ public class Disk extends BaseObject {
 
     private Color getColorFromGrid(Point3D localIntersection) {
         double lineRadian = 360.0 / columnValue;
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;
@@ -129,7 +129,7 @@ public class Disk extends BaseObject {
 //    }
 
     private Color getColorFromGradient(Point3D localIntersection) {
-        double hypotenuse = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY());
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
             angle = 360 - angle;

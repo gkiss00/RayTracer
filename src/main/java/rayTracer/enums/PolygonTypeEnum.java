@@ -2,5 +2,7 @@ package rayTracer.enums;
 
 public enum PolygonTypeEnum {
     STAR,
-    TETRAHEDRON
+    TETRAHEDRON,
+    DIAMOND,
+    TETRAHEDRON_FRACTAL
 }

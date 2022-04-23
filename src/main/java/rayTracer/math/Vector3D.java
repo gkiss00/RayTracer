@@ -1,7 +1,5 @@
 package rayTracer.math;
 
-import org.springframework.expression.spel.support.ReflectiveConstructorResolver;
-
 public class Vector3D {
     private double x;
     private double y;
@@ -82,6 +80,15 @@ public class Vector3D {
         x *= -1;
         y *= -1;
         z *= -1;
+    }
+
+    // return a vector perpendicular to the two others
+    public static Vector3D inverse(Vector3D v) {
+        return new Vector3D(
+                -v.x,
+                -v.y,
+                -v.z
+        );
     }
 
     public static double scalarProduct(Vector3D v1, Vector3D v2) {
