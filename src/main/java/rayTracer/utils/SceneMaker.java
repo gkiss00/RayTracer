@@ -90,6 +90,26 @@ public class SceneMaker {
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleMobiusTapePolygon(List<BaseObject> objects, List<Light> lights) {
+        try {
+            Polygon mobiusTape = PolygonFactory.createPolygon(PolygonTypeEnum.MOBIUS_TAPE, 40, 10, 500);
+            mobiusTape.updateMatrices(0, -20, 0, 1, 1, 1, 0, 0, 0);
+            mobiusTape.setPattern(PatternTypeEnum.GRADIENT);
+            mobiusTape.clearColors();
+            mobiusTape.addColor(new Color(1, 0.1, 0.1));
+            mobiusTape.addColor(new Color());
+            mobiusTape.addColor(new Color());
+            mobiusTape.addColor(new Color());
+            mobiusTape.addColor(new Color());
+            mobiusTape.addColor(new Color(1, 0.1, 0.1));
+            objects.add(mobiusTape);
+        } catch(Exception e) {
+
+        }
+
+        return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
     /* * * * * * * * * * * * * * * * * * * * *
 
      *             SIMPLE OBJECTS            *

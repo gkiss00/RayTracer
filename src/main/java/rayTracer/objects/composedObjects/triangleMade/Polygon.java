@@ -33,9 +33,31 @@ public class Polygon extends BaseObject {
 
     @Override
     protected Color getColor(Point3D localIntersection) {
+        switch (pattern) {
+            case GRADIENT:
+                return getColorFromGradient(localIntersection);
+        }
         return colors.get(0);
     }
 
+    private Color getColorFromGradient(Point3D localIntersection) {
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+        if(localIntersection.getX() < 0)
+            angle = 360 - angle;
+
+        double colorRatio = 360.0 / (colors.size() - 1);
+        double ratio = (angle % colorRatio) / colorRatio;
+
+        int previousColor = Math.min((int)(angle / colorRatio), colors.size() - 2);
+        int nextColor = Math.min(previousColor + 1, colors.size() - 1);
+        return new Color(
+                colors.get(previousColor).getRed() + (colors.get(nextColor).getRed() - colors.get(previousColor).getRed()) * ratio,
+                colors.get(previousColor).getGreen() + (colors.get(nextColor).getGreen() - colors.get(previousColor).getGreen()) * ratio,
+                colors.get(previousColor).getBlue() + (colors.get(nextColor).getBlue() - colors.get(previousColor).getBlue()) * ratio,
+                colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
+        );
+    }
     /* * * * * * * * * * * * * * * * * * * * *
 
      *             INTERSECTIONS             *

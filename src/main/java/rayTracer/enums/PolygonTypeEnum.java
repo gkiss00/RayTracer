@@ -4,5 +4,6 @@ public enum PolygonTypeEnum {
     STAR,
     TETRAHEDRON,
     DIAMOND,
-    TETRAHEDRON_FRACTAL
+    TETRAHEDRON_FRACTAL,
+    MOBIUS_TAPE
 }

@@ -19,6 +19,8 @@ public class PolygonFactory {
                 return createDiamond(values);
             case TETRAHEDRON_FRACTAL:
                 return createTetrahedronFractal(values);
+            case MOBIUS_TAPE:
+                return createMobiusTape(values);
             default:
                 return null;
         }
@@ -136,7 +138,7 @@ public class PolygonFactory {
      *
      * @param values
      * first value: radius
-     * secondValue: deepness
+     * second value: deepness
      * @return tetrahedron
      */
     private static Polygon createTetrahedronFractal(double... values) {
@@ -185,5 +187,43 @@ public class PolygonFactory {
         currentPoints.clear();
         currentPoints.addAll(newPoints);
         return addPoint(currentLevel + 1, maxLevel, r, currentPoints);
+    }
+
+    /**
+     *
+     * @param values
+     * first value: radius
+     * secondValue: width
+     * third value: precision
+     * @return mobius tape
+     */
+    private static Polygon createMobiusTape(double... values) {
+        double radius = values[0];
+        double width = values[1];
+        int precision = (int)values[2];
+        List<Point3D> sup_points = new ArrayList<>();
+        List<Point3D> inf_points = new ArrayList<>();
+
+        for(int i = 0; i < precision; ++i) {
+            double angle1 = (double)i * (360.0 / precision);
+            double angle2 = angle1 / 2.0;
+            double h = angle2 < 90 ? Math.sin(Math.toRadians(angle2)) * (width / 2) : (width / 2) + (-Math.cos(Math.toRadians(angle2)) * (width / 2));
+            double r1 = radius + (angle2 < 90 ? (Math.sin(Math.toRadians(angle2)) * (width / 2)) : (width / 2) + (Math.cos(Math.toRadians(angle2)) * (width / 2)));
+            double r2 = radius + (angle2 < 90 ? -(Math.sin(Math.toRadians(angle2)) * (width / 2)) : -(width / 2) - (Math.cos(Math.toRadians(angle2)) * (width / 2)));
+
+            sup_points.add(new Point3D(r1 * Math.cos(Math.toRadians(angle1)), r1 * Math.sin(Math.toRadians(angle1)), -h));
+            inf_points.add(new Point3D(r2 * Math.cos(Math.toRadians(angle1)), r2 * Math.sin(Math.toRadians(angle1)), -width + h));
+        }
+
+        List<Triangle> triangles = new ArrayList<>();
+
+        for(int i = 0; i < precision - 1; ++i) {
+            triangles.add(new Triangle(sup_points.get(i), sup_points.get((i + 1) % precision), inf_points.get(i)));
+            triangles.add(new Triangle(inf_points.get(i), inf_points.get((i + 1) % precision), sup_points.get((i + 1) % precision)));
+        }
+        triangles.add(new Triangle(sup_points.get(0), inf_points.get(0), inf_points.get(precision - 1)));
+        triangles.add(new Triangle(inf_points.get(precision - 1), sup_points.get(precision - 1), inf_points.get(0)));
+
+        return new Polygon(triangles);
     }
 }

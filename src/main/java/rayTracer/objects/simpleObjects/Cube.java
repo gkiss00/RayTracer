@@ -132,7 +132,6 @@ public class Cube extends BaseObject {
                 colors.get(previousColor).getBlue() + (colors.get(nextColor).getBlue() - colors.get(previousColor).getBlue()) * ratio,
                 colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
         );
-        //return new Color();
     }
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
