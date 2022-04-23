@@ -92,7 +92,7 @@ public class SceneMaker {
 
     public static Camera getSimpleMobiusTapePolygon(List<BaseObject> objects, List<Light> lights) {
         try {
-            Polygon mobiusTape = PolygonFactory.createPolygon(PolygonTypeEnum.MOBIUS_TAPE, 40, 10, 500);
+            Polygon mobiusTape = PolygonFactory.createPolygon(PolygonTypeEnum.MOBIUS_TAPE, 40, 10, 1000);
             mobiusTape.updateMatrices(0, -20, 0, 1, 1, 1, 0, 0, 0);
             mobiusTape.setPattern(PatternTypeEnum.GRADIENT);
             mobiusTape.clearColors();
