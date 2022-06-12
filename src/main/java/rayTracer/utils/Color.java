@@ -138,6 +138,16 @@ public class Color {
         return (int)(intRed * Math.pow(16, 4) + intGreen * Math.pow(16, 2) + intBlue);
     }
 
+    public String toHex() {
+        int intRed = Math.min((int) (red * 255.0), 255);
+        intRed = Math.max(intRed, 0);
+        int intGreen = Math.min((int) (green * 255.0), 255);
+        intGreen = Math.max(intGreen, 0);
+        int intBlue = Math.min((int) (blue * 255.0), 255);
+        intBlue = Math.max(intBlue, 0);
+        return "#" + Integer.toHexString(intRed) + Integer.toHexString(intGreen) + Integer.toHexString(intBlue);
+    }
+
     public static Color alphaBlending(Color color1, Color color2) {
         if(color1.getAlpha() == 0 && color2.getAlpha() == 0)
             return new Color(color1);

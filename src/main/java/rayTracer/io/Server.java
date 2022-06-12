@@ -90,8 +90,11 @@ public class Server {
             InetAddress serverAddress = InetAddress.getByName(localIpV4Address);
             serverSocket = new ServerSocket(5000, 50, serverAddress);
             startListening();
+            long start = System.nanoTime();
             startJob();
             endJob();
+            long end = System.nanoTime();
+            System.out.println("Time taken: " + ((double)(end - start) / 1000000000D));
             saveImage();
         } catch (Exception e) {
             System.out.println(e);

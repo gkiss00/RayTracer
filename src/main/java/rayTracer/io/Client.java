@@ -21,7 +21,7 @@ public class Client {
     private static List<BaseObject> objects = new ArrayList<>();
     private static List<Light> lights = new ArrayList<>();
     private static List<Thread> threads = new ArrayList<>();
-    private Semaphore mutex = new Semaphore(1);
+    private static Semaphore mutex = new Semaphore(1);
 
 
     private static Socket socket;
@@ -57,6 +57,7 @@ public class Client {
 
     private static void waitThreadsToEnd(int nbThread) {
         for (int i = 0; i < nbThread; ++i) {
+            System.out.println("End thread " + i);
             try {
                 threads.get(i).join();
             } catch (Exception e) {
@@ -66,8 +67,11 @@ public class Client {
     }
 
     private static void startThreads(int nbThread, rayTracer.config.Config config) {
+        System.out.println(min);
+        System.out.println(max);
         for (int i = 0; i < nbThread; ++i) {
-            Calculator calculator = new Calculator(config, null, nbThread, min + i, max, false);
+            System.out.println("Start thread " + i);
+            Calculator calculator = new Calculator(config, min + i, max, nbThread, mutex, printStream);
             Thread thread = new Thread(calculator);
             threads.add(thread);
             thread.start();
@@ -78,13 +82,6 @@ public class Client {
         int nbThread = Runtime.getRuntime().availableProcessors();
         startThreads(nbThread, config);
         waitThreadsToEnd(nbThread);
-        for (int h = 0; h < config.height; ++h) {
-            for (int w = min; w < max; ++ w) {
-                // calculate pixel color
-                // send it to the server
-                printStream.println(w + " " + h + " #ff0000"); // <X> <Y> <PIXEL_COLOR>
-            }
-        }
         printStream.println("DISCONNECT");
         closeConnection();
     }
@@ -103,6 +100,7 @@ public class Client {
             socket.close();
             System.exit(1);
         }
+        System.out.println(msg);
         String[] args = msg.split("\\s+");
         if (args.length != 3) {
             System.out.println("Bad message from the server");
@@ -133,7 +131,7 @@ public class Client {
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             printStream = new PrintStream(socket.getOutputStream());
             waitForStart();
-            start(config);
+            startMultiThread(config);
         }catch(Exception e){
             System.out.println("Exception : " + e.getMessage());
         }

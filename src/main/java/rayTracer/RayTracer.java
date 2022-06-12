@@ -72,7 +72,7 @@ public class RayTracer {
 
     private static void startThreads(int nbThread, rayTracer.config.Config config, BufferedImage buffer) {
         for (int i = 0; i < nbThread; ++i) {
-            Calculator calculator = new Calculator(config, buffer, nbThread, i, config.width, true);
+            Calculator calculator = new Calculator(config, buffer, nbThread, i, config.width);
             Thread thread = new Thread(calculator);
             threads.add(thread);
             thread.start();
@@ -100,7 +100,6 @@ public class RayTracer {
         config.cam = cam;
         long start = System.nanoTime();
         runViaThread(config);
-        //run();
         long end = System.nanoTime();
         System.out.println("Time taken: " + ((double)(end - start) / 1000000000D));
     }

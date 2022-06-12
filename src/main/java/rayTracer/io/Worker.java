@@ -45,7 +45,7 @@ public class Worker implements Runnable{
         while(true){
             try {
                 String msg = bufferedReader.readLine();
-                System.out.println(msg);
+                //System.out.println(msg);
                 if(msg == null || msg.equals("DISCONNECT")) {
                     closeConnection();
                     break;

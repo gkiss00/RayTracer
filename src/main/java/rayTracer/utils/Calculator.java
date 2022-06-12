@@ -7,8 +7,10 @@ import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
 
 import java.awt.image.BufferedImage;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 public class Calculator implements Runnable{
     private final int totalThread;
@@ -17,15 +19,46 @@ public class Calculator implements Runnable{
     private final int min;
     private final int max;
     private final boolean shouldUpdateBuffer;
+    private final boolean shouldUpdateServer;
+    private final Semaphore mutex;
+    private static PrintStream printStream;
 
-    public Calculator(Config config, BufferedImage buffer, int totalThread, int min, int max, boolean shouldUpdateBuffer) {
+    // FOR NORMAL RAYTRACING
+    public Calculator(Config config, BufferedImage buffer, int totalThread, int min, int max) {
         this.config = config;
         this.buffer = buffer;
         this.totalThread = totalThread;
         this.min = min;
         this.max = max;
-        this.shouldUpdateBuffer = shouldUpdateBuffer;
+        this.shouldUpdateBuffer = true;
+        this.shouldUpdateServer = false;
+        this.mutex = null;
+        this.printStream = null;
     }
+
+    // FOR CLIENT
+    public Calculator(Config config, int min, int max, int totalThread, Semaphore mutex, PrintStream printStream) {
+        this.config = config;
+        this.buffer = null;
+        this.totalThread = totalThread;
+        this.min = min;
+        this.max = max;
+        this.shouldUpdateBuffer = false;
+        this.shouldUpdateServer = true;
+        this.mutex = mutex;
+        this.printStream = printStream;
+    }
+
+    private void senColorToServer(int x, int y, Color color) {
+        try {
+            mutex.acquire();
+            printStream.println(x + " " + y + " " + color.toHex());
+            mutex.release();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
 
     @Override
     public void run() {
@@ -37,6 +70,8 @@ public class Calculator implements Runnable{
                 Filter.applyFilter(pixelColor, config.filter);
                 if(shouldUpdateBuffer)
                     buffer.setRGB(x, y, pixelColor.toInt());
+                if(shouldUpdateServer)
+                    senColorToServer(x, y, pixelColor);
             }
         }
     }
