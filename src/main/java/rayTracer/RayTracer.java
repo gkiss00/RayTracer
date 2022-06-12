@@ -21,44 +21,32 @@ import java.util.List;
 import java.util.Random;
 
 public class RayTracer {
-    public static void run(Config config, List<BaseObject> baseObjects, List<Camera> cameras, List<Light> newLights) {
-        //SET CONFIG
-        /*height = config.getHeight();
-        width = config.getWidth();
-        ANTI_ALIASING = config.getAntiAliasing();
-        filter = config.getFinalFilter();
-        REFLECTION_MAX = config.getMaxReflexion();
-
-        // SET CAMERA
-        cam = cameras.get(0);
-        cam.update(height, width);
-
-        // SET OBJECTS
-        objects.clear();
-        objects.addAll(baseObjects);
-
-        // SET LIGHTS
-        lights.clear();
-        lights.addAll(newLights);
-
-        try {
-
-        } catch (Exception e) {
-
-        }
-        long start = System.nanoTime();
-        run();
-        long end = System.nanoTime();
-        System.out.println("Time taken: " + (double)((double)(end - start) / 1000000000D));
-
-         */
-    }
 
     private static Camera cam;
     private static List<BaseObject> objects = new ArrayList<>();
     private static List<Light> lights = new ArrayList<>();
     private static List<Thread> threads = new ArrayList<>();
 
+    //***********************************************************************
+    //***********************************************************************
+    // BACKEND SERVER
+    //***********************************************************************
+    //***********************************************************************
+    public static void runFromSever(Config config, List<BaseObject> baseObjects, List<Camera> cameras, List<Light> newLights) {
+
+    }
+
+    //***********************************************************************
+    //***********************************************************************
+    // CLUSTER SERVER
+    //***********************************************************************
+    //***********************************************************************
+
+    //***********************************************************************
+    //***********************************************************************
+    // NORMAL
+    //***********************************************************************
+    //***********************************************************************
     private static void runViaThread(rayTracer.config.Config config) {
         File image = new File("Image.png");
         BufferedImage buffer = new BufferedImage(config.width, config.height, BufferedImage.TYPE_INT_RGB);
@@ -91,10 +79,6 @@ public class RayTracer {
     }
 
     public static void main(String[] args) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        double width = screenSize.getWidth();
-        double height = screenSize.getHeight();
-        System.out.println(width);
         rayTracer.config.Config config = new rayTracer.config.Config();
 
         cam = SceneMaker.getProjectedShadow(objects, lights);

@@ -33,7 +33,7 @@ public class RayTracerServer {
             produces = MediaType.IMAGE_PNG_VALUE
     )
     public byte[] run() {
-        RayTracer.run(
+        RayTracer.runFromSever(
                 ConfigController.getConfiguration(),
                 Converter.getObjects(ObjectController.getObjects()),
                 Converter.getCameras(CameraController.getCameras()),
