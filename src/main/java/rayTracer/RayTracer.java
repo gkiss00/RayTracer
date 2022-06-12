@@ -91,6 +91,6 @@ public class RayTracer {
         runViaThread(config);
         //run();
         long end = System.nanoTime();
-        System.out.println("Time taken: " + (double)((double)(end - start) / 1000000000D));
+        System.out.println("Time taken: " + ((double)(end - start) / 1000000000D));
     }
 }

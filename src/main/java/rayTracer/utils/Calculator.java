@@ -23,23 +23,28 @@ public class Calculator implements Runnable{
         this.totalThread = totalThread;
         this.id = _id++;
     }
+
     @Override
     public void run() {
         for (int y = id; y < config.height; y += totalThread) {
             for (int x = 0; x < config.width; ++x) {
                 Color pixelColor = new Color(0, 0, 0);
-                for (int h = 0; h < config.ANTI_ALIASING; ++h) {
-                    for (int w = 0; w < config.ANTI_ALIASING; ++w) {
-                        double heightRatio = ((y - (config.height / 2) + 0.5) / config.height) + ((1.0 / config.height / config.ANTI_ALIASING) * h);
-                        double widthRatio = ((x - (config.width / 2) + 0.5) / config.width) + ((1.0 / config.width / config.ANTI_ALIASING) * w);
-                        Line3D ray = new Line3D(config.cam.getPointOfVue(), config.cam.getPoint(heightRatio, widthRatio));
-                        ray.normalize();
-                        pixelColor.add(getPixelColor(ray, 0));
-                    }
-                }
+                addPixelColor(x, y, pixelColor);
                 pixelColor.divide(config.ANTI_ALIASING * config.ANTI_ALIASING);
                 Filter.applyFilter(pixelColor, config.filter);
                 buffer.setRGB(x, y, pixelColor.toInt());
+            }
+        }
+    }
+
+    public void addPixelColor(int x, int y, Color pixelColor) {
+        for (int h = 0; h < config.ANTI_ALIASING; ++h) {
+            for (int w = 0; w < config.ANTI_ALIASING; ++w) {
+                double heightRatio = ((y - (config.height / 2) + 0.5) / config.height) + ((1.0 / config.height / config.ANTI_ALIASING) * h);
+                double widthRatio = ((x - (config.width / 2) + 0.5) / config.width) + ((1.0 / config.width / config.ANTI_ALIASING) * w);
+                Line3D ray = new Line3D(config.cam.getPointOfVue(), config.cam.getPoint(heightRatio, widthRatio));
+                ray.normalize();
+                pixelColor.add(getPixelColor(ray, 0));
             }
         }
     }
