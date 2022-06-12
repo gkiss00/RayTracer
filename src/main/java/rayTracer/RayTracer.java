@@ -47,27 +47,9 @@ public class RayTracer {
     // NORMAL
     //***********************************************************************
     //***********************************************************************
-    private static void runViaThread(rayTracer.config.Config config) {
+
+    private static void saveImage(BufferedImage buffer) {
         File image = new File("Image.png");
-        BufferedImage buffer = new BufferedImage(config.width, config.height, BufferedImage.TYPE_INT_RGB);
-
-        int nbThread = Runtime.getRuntime().availableProcessors();
-
-        for (int i = 0; i < nbThread; ++i) {
-            Calculator calculator = new Calculator(config, buffer, nbThread);
-            Thread thread = new Thread(calculator);
-            threads.add(thread);
-            thread.start();
-        }
-
-        for (int i = 0; i < nbThread; ++i) {
-            try {
-                threads.get(i).join();
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
         try {
             ImageIO.write(buffer, "PNG", image);
             /*Random rand = new Random();
@@ -76,6 +58,35 @@ public class RayTracer {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private static void waitThreadsToEnd(int nbThread) {
+        for (int i = 0; i < nbThread; ++i) {
+            try {
+                threads.get(i).join();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void startThreads(int nbThread, rayTracer.config.Config config, BufferedImage buffer) {
+        for (int i = 0; i < nbThread; ++i) {
+            Calculator calculator = new Calculator(config, buffer, nbThread, i, config.width, true);
+            Thread thread = new Thread(calculator);
+            threads.add(thread);
+            thread.start();
+        }
+    }
+
+    private static void runViaThread(rayTracer.config.Config config) {
+        BufferedImage buffer = new BufferedImage(config.width, config.height, BufferedImage.TYPE_INT_RGB);
+
+        int nbThread = Runtime.getRuntime().availableProcessors();
+        startThreads(nbThread, config, buffer);
+        waitThreadsToEnd(nbThread);
+
+        saveImage(buffer);
     }
 
     public static void main(String[] args) {
@@ -91,6 +102,6 @@ public class RayTracer {
         runViaThread(config);
         //run();
         long end = System.nanoTime();
-        System.out.println("Time taken: " + (double)((double)(end - start) / 1000000000D));
+        System.out.println("Time taken: " + ((double)(end - start) / 1000000000D));
     }
 }

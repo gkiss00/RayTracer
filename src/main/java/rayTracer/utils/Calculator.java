@@ -11,35 +11,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Calculator implements Runnable{
-    private static int _id = 0;
-    private final int id;
     private final int totalThread;
     private final Config config;
     private final BufferedImage buffer;
+    private final int min;
+    private final int max;
+    private final boolean shouldUpdateBuffer;
 
-    public Calculator(Config config, BufferedImage buffer, int totalThread) {
+    public Calculator(Config config, BufferedImage buffer, int totalThread, int min, int max, boolean shouldUpdateBuffer) {
         this.config = config;
         this.buffer = buffer;
         this.totalThread = totalThread;
-        this.id = _id++;
+        this.min = min;
+        this.max = max;
+        this.shouldUpdateBuffer = shouldUpdateBuffer;
     }
+
     @Override
     public void run() {
-        for (int y = id; y < config.height; y += totalThread) {
-            for (int x = 0; x < config.width; ++x) {
+        for (int y = 0; y < config.height; ++y) {
+            for (int x = min; x < max; x += totalThread) {
                 Color pixelColor = new Color(0, 0, 0);
-                for (int h = 0; h < config.ANTI_ALIASING; ++h) {
-                    for (int w = 0; w < config.ANTI_ALIASING; ++w) {
-                        double heightRatio = ((y - (config.height / 2) + 0.5) / config.height) + ((1.0 / config.height / config.ANTI_ALIASING) * h);
-                        double widthRatio = ((x - (config.width / 2) + 0.5) / config.width) + ((1.0 / config.width / config.ANTI_ALIASING) * w);
-                        Line3D ray = new Line3D(config.cam.getPointOfVue(), config.cam.getPoint(heightRatio, widthRatio));
-                        ray.normalize();
-                        pixelColor.add(getPixelColor(ray, 0));
-                    }
-                }
+                addPixelColor(x, y, pixelColor);
                 pixelColor.divide(config.ANTI_ALIASING * config.ANTI_ALIASING);
                 Filter.applyFilter(pixelColor, config.filter);
-                buffer.setRGB(x, y, pixelColor.toInt());
+                if(shouldUpdateBuffer)
+                    buffer.setRGB(x, y, pixelColor.toInt());
+            }
+        }
+    }
+
+    public void addPixelColor(int x, int y, Color pixelColor) {
+        for (int h = 0; h < config.ANTI_ALIASING; ++h) {
+            for (int w = 0; w < config.ANTI_ALIASING; ++w) {
+                double heightRatio = ((y - (config.height / 2) + 0.5) / config.height) + ((1.0 / config.height / config.ANTI_ALIASING) * h);
+                double widthRatio = ((x - (config.width / 2) + 0.5) / config.width) + ((1.0 / config.width / config.ANTI_ALIASING) * w);
+                Line3D ray = new Line3D(config.cam.getPointOfVue(), config.cam.getPoint(heightRatio, widthRatio));
+                ray.normalize();
+                pixelColor.add(getPixelColor(ray, 0));
             }
         }
     }

@@ -1,46 +1,55 @@
 package rayTracer.io;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server {
-    private static final int maxClient = 1;
     private static int nbClient = 0;
-    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private static final int maxClient = 1;
+    private static String localIpV4Address;
+    private static ServerSocket serverSocket;
+    private static final List<Thread> threadList = new ArrayList<>();
+    private static final int HEIGHT = 900;
+    private static final int WIDTH = 900;
+    private static File image;
+    private static BufferedImage buffer;
+    private static final int sizePerClient = WIDTH / maxClient;
 
-    //***********************************************************************
-    //***********************************************************************
-    //UTILS
-    //***********************************************************************
-    //***********************************************************************
-
-    //RETURN A SERVER SOCKET CHANNEL CONFIGURED NON BLOCKING
-    private static ServerSocketChannel createServerSocketChannel(Selector selector, int port){
-        try{
-            //NEW SERVER SOCKET
-            ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-            ServerSocket serverSocket = serverSocketChannel.socket();
-
-            //CONFIGURE NON BLOCKING
-            serverSocketChannel.configureBlocking(false);
-            //OPEN ON PORT <SELECTED>
-            serverSocket.bind(new InetSocketAddress(port));
-            //REGISTER TO THE SELECTOR
-            serverSocketChannel.register(selector, serverSocketChannel.validOps()); //SelectionKey.OP_ACCEPT
-            return (serverSocketChannel);
-        }catch(Exception e){
-            e.printStackTrace();
-            System.exit(1);
+    private static void saveImage() {
+        try {
+            ImageIO.write(buffer, "PNG", image);
+            /*Random rand = new Random();
+            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
+            ImageIO.write(buffer, "PNG", savedImage);*/
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        return (null);
+    }
+
+    //***********************************************************************
+    //***********************************************************************
+    //START JOB
+    //***********************************************************************
+    //***********************************************************************
+
+    private static void endJob() {
+        for (int i = 0; i < threadList.size(); ++i) {
+            try {
+                threadList.get(i).join();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    private static void startJob() {
+        for (int i = 0; i < threadList.size(); ++i) {
+            threadList.get(i).start();
+        }
     }
 
     //***********************************************************************
@@ -50,33 +59,21 @@ public class Server {
     //***********************************************************************
 
     //START LISTENING FOR ANY CHANGE
-    private static void startListening(Selector selector) throws Exception{
-        System.out.println("Waiting for connexion");
-        while(true){
-            selector.select();
-            //if someone try to connect
-            Iterator<SelectionKey> it = selector.selectedKeys().iterator();
-            //foreach connexion
-            while(it.hasNext()){
-                //remove the key from the list
-                SelectionKey sk = it.next();
-                it.remove();
-                //get the serverSocket
-                ServerSocketChannel serverSocketChannel = (ServerSocketChannel)sk.channel();
-                //Accept the entry connexion
-                Socket sock = serverSocketChannel.socket().accept();
-                //START A WORKER WITH THE SOCKET...
-                ++nbClient;
-                Worker worker = new Worker(sock, nbClient);
-                System.out.println("Client " + nbClient + ": accepted");
-                executorService.submit(worker);
-                if(nbClient == maxClient)
-                    break;
-            }
-            if(nbClient == maxClient)
-                break;
+    private static void startListening() throws Exception{
+        System.out.println("Waiting for connexion on: " + localIpV4Address);
+        while(nbClient != maxClient){
+            Socket clientSocket = serverSocket.accept();
+            System.out.println("Client " + nbClient + ": accepted");
+            int clientMin = nbClient * sizePerClient;
+            int clientMax = clientMin + sizePerClient;
+            if(nbClient == clientMax - 1)
+                clientMax = WIDTH;
+            Worker worker = new Worker(clientSocket, nbClient, buffer, clientMin, clientMax);
+            Thread thread = new Thread(worker);
+            threadList.add(thread);
+            ++nbClient;
         }
-        Worker.start();
+        serverSocket.close();
     }
 
     //***********************************************************************
@@ -87,12 +84,17 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            Selector selector = Selector.open();
-            //CREATE A SERVER SOCKET FOR THE CLIENTS
-            ServerSocketChannel serverSocketChannel = createServerSocketChannel(selector, 5000);
-            startListening(selector);
+            image = new File("Image.png");
+            buffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+            localIpV4Address = Inet4Address.getLocalHost().getHostAddress();
+            InetAddress serverAddress = InetAddress.getByName(localIpV4Address);
+            serverSocket = new ServerSocket(5000, 50, serverAddress);
+            startListening();
+            startJob();
+            endJob();
+            saveImage();
         } catch (Exception e) {
-
+            System.out.println(e);
         }
     }
 }

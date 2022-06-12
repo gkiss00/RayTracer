@@ -1,21 +1,27 @@
 package rayTracer.io;
 
+import rayTracer.utils.Color;
+
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 
 public class Worker implements Runnable{
-    private static boolean go = false;
     private final int id;
-    private final int min = 0;
-    private final int max = 100;
+    private final int min;
+    private final int max;
+    BufferedImage bufferedImage;
     private final Socket socket;
     private BufferedReader bufferedReader;
     private PrintStream printStream;
 
-    public Worker(Socket socket, int id) {
+    public Worker(Socket socket, int id, BufferedImage buffer, int min, int max) {
         this.id = id;
+        this.bufferedImage = buffer;
+        this.min = min;
+        this.max = max;
         this.socket = socket;
         try{
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -25,28 +31,17 @@ public class Worker implements Runnable{
         }
     }
 
-    public static void start() {
-        go = true;
-    }
-
     private void closeConnection(){
         try {
             socket.close();
         } catch (Exception e) {
-
+            System.out.println(e);
         }
-    }
-
-    private void waitForStart() {
-        while(!go) {
-
-        }
-        printStream.println("START " + min + " " + max);
     }
 
     @Override
     public void run() {
-        waitForStart();
+        printStream.println("START " + min + " " + max);
         while(true){
             try {
                 String msg = bufferedReader.readLine();
@@ -54,9 +49,14 @@ public class Worker implements Runnable{
                 if(msg == null || msg.equals("DISCONNECT")) {
                     closeConnection();
                     break;
+                } else {
+                    String[] data = msg.split("\\s+");
+                    int x = Integer.parseInt(data[0]);
+                    int y = Integer.parseInt(data[1]);
+                    bufferedImage.setRGB(x, y, new Color(data[2]).toInt());
                 }
-            } catch (Exception exception) {
-
+            } catch (Exception e) {
+                System.out.println(e);
             }
         }
     }
