@@ -11,28 +11,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Calculator implements Runnable{
-    private static int _id = 0;
-    private final int id;
     private final int totalThread;
     private final Config config;
     private final BufferedImage buffer;
+    private final int min;
+    private final int max;
+    private final boolean shouldUpdateBuffer;
 
-    public Calculator(Config config, BufferedImage buffer, int totalThread) {
+    public Calculator(Config config, BufferedImage buffer, int totalThread, int min, int max, boolean shouldUpdateBuffer) {
         this.config = config;
         this.buffer = buffer;
         this.totalThread = totalThread;
-        this.id = _id++;
+        this.min = min;
+        this.max = max;
+        this.shouldUpdateBuffer = shouldUpdateBuffer;
     }
 
     @Override
     public void run() {
-        for (int y = id; y < config.height; y += totalThread) {
-            for (int x = 0; x < config.width; ++x) {
+        for (int y = 0; y < config.height; ++y) {
+            for (int x = min; x < max; x += totalThread) {
                 Color pixelColor = new Color(0, 0, 0);
                 addPixelColor(x, y, pixelColor);
                 pixelColor.divide(config.ANTI_ALIASING * config.ANTI_ALIASING);
                 Filter.applyFilter(pixelColor, config.filter);
-                buffer.setRGB(x, y, pixelColor.toInt());
+                if(shouldUpdateBuffer)
+                    buffer.setRGB(x, y, pixelColor.toInt());
             }
         }
     }
