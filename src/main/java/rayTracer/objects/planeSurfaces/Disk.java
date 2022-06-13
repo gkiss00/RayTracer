@@ -10,6 +10,9 @@ import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 
 public class Disk extends BaseObject {
@@ -18,6 +21,7 @@ public class Disk extends BaseObject {
     private final double internalRadius;
     private final double externalRadius;
     private Vector3D realNormal;
+    private BufferedImage bufferedImage;
 
     /* * * * * * * * * * * * * * * * * * * * *
 
@@ -77,6 +81,17 @@ public class Disk extends BaseObject {
         }
     }
 
+    public void setTexture(String filePath) {
+        pattern = PatternTypeEnum.TEXTURE;
+        File texture = new File(filePath);
+        try {
+            bufferedImage = ImageIO.read(texture);
+        } catch (Exception e) {
+            System.err.println("Disk error: can not read texture file, set pattern to UNIFORM");
+            pattern = PatternTypeEnum.UNIFORM;
+        }
+    }
+
     /* * * * * * * * * * * * * * * * * * * * *
 
      *                COLORS                 *
@@ -96,6 +111,8 @@ public class Disk extends BaseObject {
                 return getColorFromGrid(localIntersection);
             case GRADIENT:
                 return getColorFromGradient(localIntersection);
+            case TEXTURE:
+                return getColorFromTexture(localIntersection);
         }
         return null;
     }
@@ -162,6 +179,26 @@ public class Disk extends BaseObject {
                 colors.get(previousColor).getBlue() + (colors.get(nextColor).getBlue() - colors.get(previousColor).getBlue()) * ratio,
                 colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
         );
+    }
+
+    public Color getColorFromTexture(Point3D localIntersection) {
+        int imageHeight = bufferedImage.getHeight();
+        int imageWidth = bufferedImage.getWidth();
+
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+        if(localIntersection.getX() < 0)
+            angle = 360 - angle;
+
+        double width = externalRadius - internalRadius;
+        double yRatio = (Math.hypot(localIntersection.getX(), localIntersection.getY()) - internalRadius) / width;
+
+        int x = Math.min(imageWidth - 1, (int)(((angle * 4 % 360) / 360) * imageWidth));
+        int y = Math.min(imageHeight - 1, imageHeight - (int)(yRatio * imageHeight));
+
+        int rgb = bufferedImage.getRGB(x, y);
+        java.awt.Color color = new java.awt.Color(rgb, true);
+        return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *

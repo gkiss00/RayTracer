@@ -58,6 +58,10 @@ public abstract class BaseObject {
         colors.clear();
     }
 
+    public void addColor() {
+        this.colors.add(new Color());
+    }
+
     public void addColor(Color color) {
         this.colors.add(new Color(color));
     }

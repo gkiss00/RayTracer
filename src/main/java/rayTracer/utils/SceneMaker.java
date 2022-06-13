@@ -139,9 +139,19 @@ public class SceneMaker {
 
     public static Camera getSimpleStar(List<BaseObject> objects, List<Light> lights) {
         Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.STAR, 5, 20, 60, 20);
-        if( star != null) {
+        if(star != null) {
             star.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
             objects.add(star);
+        }
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleTorusPolygon(List<BaseObject> objects, List<Light> lights) {
+        Polygon torus = PolygonFactory.createPolygon(PolygonTypeEnum.TORUS, 60, 20, 10, 10);
+        if(torus != null) {
+            torus.updateMatrices(0, -30, 0, 1, 1, 1, 0, 0, 0);
+            objects.add(torus);
         }
 
         return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
@@ -196,8 +206,8 @@ public class SceneMaker {
 
     public static Camera getSimpleCubeWithPattern(List<BaseObject> objects, List<Light> lights) {
         Cube cube = new Cube(30, PatternTypeEnum.GRADIENT, new Color(), new Color());
-        //cube.setTexture("./src/main/resources/textures/rgba/squareBorder2.png");
         cube.updateMatrices(20, 20, 35, 1, 1, 1, 0, 0, 0);
+        cube.setTexture("./src/main/resources/textures/random/numbers.png");
         cube.setNormals();
         objects.add(cube);
 
@@ -215,11 +225,12 @@ public class SceneMaker {
 
     public static Camera getSimpleDiskWithPattern(List<BaseObject> objects, List<Light> lights) {
         Disk disk = new Disk(20, 60, PatternTypeEnum.GRID, new Color(), new Color());
-        disk.updateMatrices(0, -45, 0, 1, 1, 1, 0, 0, 0);
+        disk.updateMatrices(0, -90, 0, 1, 1, 1, 0, 0, 0);
+        disk.setTexture("./src/main/resources/textures/random/numbers.png");
         disk.setNormal();
         objects.add(disk);
 
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getSimpleCylinderWithPattern(List<BaseObject> objects, List<Light> lights) {
@@ -250,8 +261,13 @@ public class SceneMaker {
     public static Camera getSimpleMobiusTapePolygonWithPattern(List<BaseObject> objects, List<Light> lights) {
         try {
             Polygon mobiusTape = PolygonFactory.createPolygon(PolygonTypeEnum.MOBIUS_TAPE, 40, 20, 1000);
-            mobiusTape.updateMatrices(0, -20, 0, 1, 1, 1, 0, 0, 0);
-            mobiusTape.setTexture("./src/main/resources/textures/random/numbers.png");
+            mobiusTape.updateMatrices(0, -30, 0, 1, 1, 1, 0, 0, 0);
+
+            mobiusTape.setPattern(PatternTypeEnum.VERTICAL_LINED);
+            mobiusTape.clearColors();
+            mobiusTape.addColor();
+            mobiusTape.addColor();
+            //mobiusTape.setTexture("./src/main/resources/textures/random/numbers.png");
             objects.add(mobiusTape);
         } catch(Exception e) {
 

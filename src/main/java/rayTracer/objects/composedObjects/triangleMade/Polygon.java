@@ -2,6 +2,7 @@ package rayTracer.objects.composedObjects.triangleMade;
 
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.enums.PatternTypeEnum;
+import rayTracer.enums.PolygonTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Triangle;
@@ -17,6 +18,8 @@ import java.io.File;
 import java.util.List;
 
 public class Polygon extends BaseObject {
+    private PolygonTypeEnum type;
+    private double[] values;
     private final List<Triangle> triangles;
     private BufferedImage bufferedImage;
 
@@ -28,6 +31,13 @@ public class Polygon extends BaseObject {
 
     public Polygon(List<Triangle> triangles) {
         super();
+        this.triangles = triangles;
+    }
+
+    public Polygon(PolygonTypeEnum type, double[] values, List<Triangle> triangles) {
+        super();
+        this.type = type;
+        this.values = values;
         this.triangles = triangles;
     }
 
@@ -56,16 +66,124 @@ public class Polygon extends BaseObject {
 
     @Override
     protected Color getColor(Point3D localIntersection) {
+        switch (type) {
+            case MOBIUS_TAPE:
+                return getColorForMobiusTape(localIntersection);
+            default:
+                return colors.get(0);
+        }
+    }
+
+    /**
+     *
+     * @param localIntersection
+     * first value: radius
+     * secondValue: width
+     * third value: precision
+     * @return color
+     */
+    private Color getColorForMobiusTape(Point3D localIntersection) {
         switch (pattern) {
+            case VERTICAL_LINED:
+                return getColorForMobiusTapeFromVerticalLined(localIntersection);
+            case HORIZONTAL_LINED:
+                return getColorForMobiusTapeFromHorizontalLined(localIntersection);
+            case GRID:
+                return getColorForMobiusTapeFromGrid(localIntersection);
             case GRADIENT:
-                return getColorFromGradient(localIntersection);
+                return getColorForMobiusTapeFromGradient(localIntersection);
             case TEXTURE:
-                return getColorFromTexture(localIntersection);
+                return getColorForMobiusTapeFromTexture(localIntersection);
         }
         return colors.get(0);
     }
 
-    private Color getColorFromGradient(Point3D localIntersection) {
+    private Color getColorForMobiusTapeFromVerticalLined(Point3D localIntersection) {
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+        if(localIntersection.getX() < 0)
+            angle = 360 - angle;
+
+        double lineWidth = 360.0 / columnValue;
+        return colors.get((int)(angle / lineWidth) % 2);
+    }
+
+    private Color getColorForMobiusTapeFromHorizontalLined(Point3D localIntersection) {
+        double radius = values[0];
+        double width = values[1];
+
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+        if(localIntersection.getX() < 0)
+            angle = 360 - angle;
+
+        Point3D pointOnPlane = new Point3D(localIntersection.getX(), localIntersection.getY(), 0);
+
+        Vector3D tmp = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
+        tmp.normalize();
+        tmp.times(radius);
+
+        Point3D pointOnRadius = new Point3D(tmp.getX(), tmp.getY(), 0);
+        Point3D oo = new Point3D(0, 0, 0);
+        double distToOO = Point3D.distanceBetween(oo, pointOnPlane);
+        double distToRadius = Point3D.distanceBetween(localIntersection, pointOnRadius);
+
+        double ratio;
+        if (angle < 180) {
+            if (distToOO > radius)
+                ratio = (width / 2) + distToRadius;
+            else
+                ratio = (width / 2) - distToRadius;
+        } else {
+            if (distToOO < radius)
+                ratio = (width / 2) + distToRadius;
+            else
+                ratio = (width / 2) - distToRadius;
+        }
+
+        double lineWidth = width / lineValue;
+        return colors.get((int)(ratio / lineWidth) % 2);
+    }
+
+    private Color getColorForMobiusTapeFromGrid(Point3D localIntersection) {
+        double radius = values[0];
+        double width = values[1];
+
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+        if(localIntersection.getX() < 0)
+            angle = 360 - angle;
+
+        Point3D pointOnPlane = new Point3D(localIntersection.getX(), localIntersection.getY(), 0);
+
+        Vector3D tmp = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
+        tmp.normalize();
+        tmp.times(radius);
+
+        Point3D pointOnRadius = new Point3D(tmp.getX(), tmp.getY(), 0);
+        Point3D oo = new Point3D(0, 0, 0);
+        double distToOO = Point3D.distanceBetween(oo, pointOnPlane);
+        double distToRadius = Point3D.distanceBetween(localIntersection, pointOnRadius);
+
+        double ratio;
+        if (angle < 180) {
+            if (distToOO > radius)
+                ratio = (width / 2) + distToRadius;
+            else
+                ratio = (width / 2) - distToRadius;
+        } else {
+            if (distToOO < radius)
+                ratio = (width / 2) + distToRadius;
+            else
+                ratio = (width / 2) - distToRadius;
+        }
+
+        double lineWidth = width / lineValue;
+        double columnWidth = 360.0 / columnValue;
+        return colors.get((int)((ratio / lineWidth) + (angle / columnWidth)) % 2);
+    }
+
+    private Color getColorForMobiusTapeFromGradient(Point3D localIntersection) {
         double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
         if(localIntersection.getX() < 0)
@@ -84,9 +202,9 @@ public class Polygon extends BaseObject {
         );
     }
 
-    private Color getColorFromTexture(Point3D localIntersection) {
-        double radius = 40;
-        double width = 20;
+    private Color getColorForMobiusTapeFromTexture(Point3D localIntersection) {
+        double radius = values[0];
+        double width = values[1];
 
         double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());
         double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
