@@ -15,6 +15,7 @@ import java.util.List;
 // Ax² + By² + Cz² + Dxy + Exz + Fyz + Gx + Hy + Iz + J = 0
 public class QuadraticSurface extends BaseObject{
     private double A, B, C, D, E, F, G, H, I, J;
+    public double maxHeight = 2000000000, minHeight = 2000000000;
 
     public QuadraticSurface() {
         super();
@@ -113,10 +114,12 @@ public class QuadraticSurface extends BaseObject{
                         localRay.getPY() + localRay.getVY() * solutions.get(i),
                         localRay.getPZ() + localRay.getVZ() * solutions.get(i)
                 );
-                Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                Vector3D localNormal = normalAt(localIntersection);
-                Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                intersections.add(new Intersection(realIntersection, realNormal, colors.get(0), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                if(localIntersection.getZ() < maxHeight + 3 && localIntersection.getZ() > minHeight + 3) {
+                    Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
+                    Vector3D localNormal = normalAt(localIntersection);
+                    Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
+                    intersections.add(new Intersection(realIntersection, realNormal, colors.get(0), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                }
             }
         }
     }

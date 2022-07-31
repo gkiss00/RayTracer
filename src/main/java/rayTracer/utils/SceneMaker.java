@@ -117,6 +117,18 @@ public class SceneMaker {
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimplePipe(List<BaseObject> objects, List<Light> lights) {
+
+        Pipe pipe = new Pipe(30, 25, 40);
+        pipe.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        pipe.setNormals();
+        objects.add(pipe);
+
+        lights.add(new Light(new Point3D(-100, 100, 100)));
+
+        return new Camera(new Point3D(-150, 0, 150), new Vector3D(1, 0, -1), new Vector3D(0, 0, 1), 90);
+    }
+
     public static Camera getSimpleMobiusTapePolygon(List<BaseObject> objects, List<Light> lights) {
         try {
             Polygon mobiusTape = PolygonFactory.createPolygon(PolygonTypeEnum.MOBIUS_TAPE, 40, 10, 1000);
@@ -954,5 +966,133 @@ public class SceneMaker {
 
 
         return new Camera(new Point3D(-150, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getChestGame(List<BaseObject> objects, List<Light> lights) {
+
+        Square board = new Square(160, PatternTypeEnum.GRID, new Color(0, 0, 0), new Color(1, 1, 1));
+        board.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -17.6);
+        board.setNormal();
+        //board.setReflectionRatio(0.2);
+        board.lineValue = 8;
+        board.columnValue = 8;
+        objects.add(board);
+
+        // WHITE PAWNS
+        int x = -50;
+        int y = -70;
+        for (int i = 0; i < 8; ++i) {
+            Sphere sp1 = new Sphere(5, new Color(1, 1, 1));
+            sp1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 3);
+            sp1.setReflectionRatio(0.2);
+            objects.add(sp1);
+
+            Torus torus1 = new Torus(3.5, 2, new Color(1, 1, 1));
+            torus1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 0);
+            torus1.setReflectionRatio(0.2);
+            objects.add(torus1);
+
+            /*OpenCylinder cylinder = new OpenCylinder(3.5, 15, new Color(1, 1, 1));
+            cylinder.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -7.5);
+            cylinder.setReflectionRatio(0.2);
+            objects.add(cylinder);
+
+             */
+            QuadraticSurface s = new QuadraticSurface(1, 1, -0.075, 0, 0, 0, 0, 0, 0, -5, new Color(1, 1, 1));
+            s.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -3);
+            s.maxHeight = 3;
+            s.minHeight = -16.5;
+            objects.add(s);
+
+            Torus torus2 = new Torus(3.5, 2, new Color(1, 1, 1));
+            torus2.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -15);
+            torus2.setReflectionRatio(0.2);
+            objects.add(torus2);
+
+            Torus torus3 = new Torus(4, 2.2, new Color(1, 1, 1));
+            torus3.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -16.5);
+            torus3.addCut(CutTypeEnum.BOTTOM);
+            torus3.setReflectionRatio(0.2);
+            objects.add(torus3);
+
+            y += 20;
+        }
+
+        // BLACK PAWNS
+        x = 50;
+        y = -70;
+        for (int i = 0; i < 8; ++i) {
+            Sphere sp1 = new Sphere(5, new Color(0.1, 0.1, 0.2));
+            sp1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 3);
+            objects.add(sp1);
+
+            Torus torus1 = new Torus(3.5, 2, new Color(0.1, 0.1, 0.2));
+            torus1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 0);
+            objects.add(torus1);
+
+            /*OpenCylinder cylinder = new OpenCylinder(3.5, 15, new Color(0.1, 0.1, 0.2));
+            cylinder.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -7.5);
+            objects.add(cylinder);
+
+             */
+            QuadraticSurface s = new QuadraticSurface(1, 1, -0.075, 0, 0, 0, 0, 0, 0, -5, new Color(0.1, 0.1, 0.2));
+            s.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -3);
+            s.maxHeight = 3;
+            s.minHeight = -16.5;
+            objects.add(s);
+
+            Torus torus2 = new Torus(3.5, 2, new Color(0.1, 0.1, 0.2));
+            torus2.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -15);
+            objects.add(torus2);
+
+            Torus torus3 = new Torus(4, 2.2, new Color(0.1, 0.1, 0.2));
+            torus3.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -16.5);
+            torus3.addCut(CutTypeEnum.BOTTOM);
+            objects.add(torus3);
+
+            y += 20;
+        }
+
+
+
+        lights.add(new Light(new Point3D(-100, 100, 100)));
+
+        return new Camera(new Point3D(-150, 0, 150), new Vector3D(1, 0, -1), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getPawn(List<BaseObject> objects, List<Light> lights) {
+
+        int x = 0;
+        int y = 0;
+        QuadraticSurface s = new QuadraticSurface(1, 1, -0.075, 0, 0, 0, 0, 0, 0, -5, new Color(0.1, 0.1, 0.2));
+        s.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -3);
+        s.maxHeight = 3;
+        s.minHeight = -16.5;
+        objects.add(s);
+
+        Sphere sp1 = new Sphere(5, new Color(0.1, 0.1, 0.2));
+        sp1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 3);
+        objects.add(sp1);
+
+        Torus torus1 = new Torus(3.5, 2, new Color(0.1, 0.1, 0.2));
+        torus1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 0);
+        objects.add(torus1);
+
+        OpenCylinder cylinder = new OpenCylinder(3.5, 15, new Color(0.1, 0.1, 0.2));
+        cylinder.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -7.5);
+        //objects.add(cylinder);
+
+        Torus torus2 = new Torus(3.5, 2, new Color(0.1, 0.1, 0.2));
+        torus2.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -15);
+        objects.add(torus2);
+
+        Torus torus3 = new Torus(4, 2.2, new Color(0.1, 0.1, 0.2));
+        torus3.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -16.5);
+        torus3.addCut(CutTypeEnum.BOTTOM);
+        objects.add(torus3);
+
+        lights.add(new Light(new Point3D(-100, 100, 100), new Color(0.2, 0.2, 1)));
+
+        return new Camera(new Point3D(-70, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 }

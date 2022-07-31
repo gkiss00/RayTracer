@@ -21,7 +21,7 @@ public class Calculator implements Runnable{
     private final boolean shouldUpdateBuffer;
     private final boolean shouldUpdateServer;
     private final Semaphore mutex;
-    private static PrintStream printStream;
+    private final PrintStream printStream;
 
     // FOR NORMAL RAYTRACING
     public Calculator(Config config, BufferedImage buffer, int totalThread, int min, int max) {

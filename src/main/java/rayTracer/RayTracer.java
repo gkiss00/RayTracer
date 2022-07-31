@@ -23,9 +23,9 @@ import java.util.Random;
 public class RayTracer {
 
     private static Camera cam;
-    private static List<BaseObject> objects = new ArrayList<>();
-    private static List<Light> lights = new ArrayList<>();
-    private static List<Thread> threads = new ArrayList<>();
+    private final static List<BaseObject> objects = new ArrayList<>();
+    private final static List<Light> lights = new ArrayList<>();
+    private final static List<Thread> threads = new ArrayList<>();
 
     //***********************************************************************
     //***********************************************************************
@@ -92,7 +92,7 @@ public class RayTracer {
     public static void main(String[] args) {
         rayTracer.config.Config config = new rayTracer.config.Config();
 
-        cam = SceneMaker.getProjectedShadow(objects, lights);
+        cam = SceneMaker.getChestGame(objects, lights);
         cam.update(config.height, config.width);
 
         config.objects = objects;
