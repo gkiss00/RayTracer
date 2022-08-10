@@ -1,5 +1,6 @@
 package rayTracer.config;
 
+import rayTracer.blackObjects.BlackObject;
 import rayTracer.enums.FilterTypeEnum;
 import rayTracer.lights.Light;
 import rayTracer.objects.BaseObject;
@@ -17,10 +18,11 @@ public class Config {
     public int height = 900;
     public int width = 900;
     public int ANTI_ALIASING = 3;
-    public double MAX_DIST = 30;
+    public double MAX_DIST = 60;
     public double SHADOW_DEEPNESS = 0.3;
 
     public Camera cam;
     public List<BaseObject> objects = new ArrayList<>();
+    public List<BlackObject> backObjects = new ArrayList<>();
     public List<Light> lights = new ArrayList<>();
 }

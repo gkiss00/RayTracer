@@ -1,10 +1,12 @@
 package rayTracer.utils;
 
+import lombok.Setter;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
 import rayTracer.objects.BaseObject;
 import rayTracer.objects.planeSurfaces.Plane;
 
+@Setter()
 public class Intersection {
     private Point3D pointOfIntersection;
     private Vector3D normal;

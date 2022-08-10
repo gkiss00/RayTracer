@@ -1,15 +1,19 @@
 package rayTracer.utils;
 
+import rayTracer.blackObjects.BlackObject;
 import rayTracer.config.Config;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
+import rayTracer.objects.BaseObject;
 
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public class Calculator implements Runnable{
@@ -88,6 +92,65 @@ public class Calculator implements Runnable{
         }
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             INTERSECTIONS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
+    private void removeIntersectionsInFullObjects(List<Intersection> intersections) {
+        List<Intersection> tmp = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>();
+        for (Intersection intersection : intersections) {
+            if (intersection.getObject().getCapacity() == CapacityTypeEnum.FULL) {
+                tmp.add(intersection);
+                if (map.containsKey(intersection.getObject().getId()))
+                    map.remove(intersection.getObject().getId());
+                else
+                    map.put(intersection.getObject().getId(), 1);
+            } else {
+                if (map.isEmpty())
+                    tmp.add(intersection);
+            }
+        }
+        intersections.clear();
+        intersections.addAll(tmp);
+    }
+
+    private void fusionFullObjects(List<Intersection> intersections) {
+        List<Intersection> tmp = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>();
+        Intersection firstInserted = null;
+        for (Intersection intersection : intersections) {
+            if (intersection.getObject().getCapacity() == CapacityTypeEnum.FULL) {
+                if(map.isEmpty()) {
+                    firstInserted = intersection;
+                    tmp.add(intersection);
+                }
+                if (map.containsKey(intersection.getObject().getId()))
+                    map.remove(intersection.getObject().getId());
+                else
+                    map.put(intersection.getObject().getId(), 1);
+                if(map.isEmpty()) {
+                    intersection.setObject(firstInserted.getObject());
+                    tmp.add(intersection);
+                }
+            } else {
+                tmp.add(intersection);
+            }
+        }
+        intersections.clear();
+        intersections.addAll(tmp);
+    }
+
+    private void preProcessIntersections(List<Intersection> intersections) {
+        // 1. Remove intersections of empty objects contained in full objects
+        removeIntersectionsInFullObjects(intersections);
+        // 2. Fusion consecutive full objects of same color
+        fusionFullObjects(intersections);
+        // 3. Remove and create intersections with black objects
+    }
+
     private static void sortIntersections(List<Intersection> intersections) {
         int size = intersections.size();
         for (int i = 0; i < size - 1; ++i) {
@@ -115,6 +178,12 @@ public class Calculator implements Runnable{
         }
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                LIGHTS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     private Color applyAmbientLight(Intersection intersection, Color color) {
         Color tmp = new Color(color);
         Line3D ray = new Line3D(config.cam.getPointOfVue(), intersection.getPointOfIntersection());
@@ -139,6 +208,7 @@ public class Calculator implements Runnable{
             List<Intersection> intersections = new ArrayList<>();
             getIntersections(ray, intersections);
             sortIntersections(intersections);
+            preProcessIntersections(intersections);
 
             // IF LIGHT MET WITH INTERSECTION => BRIGHT FALSE
             double alpha = 0.0;
@@ -148,12 +218,23 @@ public class Calculator implements Runnable{
                 if(distanceFromLightToNewIntersection < distanceFromLightToIntersection - config.EPSILON) {
                     // OBJECT INTERSECTED IS FULL
                     if(currentIntersection.getColor().getAlpha() != 1 && currentIntersection.getObject().getCapacity() == CapacityTypeEnum.FULL) {
-                        double dist = Point3D.distanceBetween(currentIntersection.getPointOfIntersection(), intersections.get(j + 1).getPointOfIntersection());
-                        double ratio = Math.min(1, dist / config.MAX_DIST);
-                        double colorAlpha = currentIntersection.getColor().getAlpha();
-                        double newAlpha = (1 - colorAlpha) * ratio + colorAlpha;
-                        alpha = alpha + newAlpha;
-                        ++i;
+                        Intersection nextIntersectionWithSameObject = findNextIntersectionOfSameObject(currentIntersection, intersections, i + 1);
+                        if (nextIntersectionWithSameObject != null) {
+                            double dist = Point3D.distanceBetween(currentIntersection.getPointOfIntersection(), intersections.get(j + 1).getPointOfIntersection());
+                            double ratio = Math.min(1, dist / config.MAX_DIST);
+                            double colorAlpha = currentIntersection.getColor().getAlpha();
+                            double newAlpha = (1 - colorAlpha) * ratio + colorAlpha;
+                            alpha = alpha + newAlpha;
+                        }else {
+                            Intersection previousIntersection = intersections.get(i - 1);
+                            if (currentIntersection.getObject() != previousIntersection.getObject()) {
+                                double dist = Point3D.distanceBetween(currentIntersection.getPointOfIntersection(), previousIntersection.getPointOfIntersection());
+                                double ratio = Math.min(1, dist / config.MAX_DIST);
+                                double colorAlpha = currentIntersection.getColor().getAlpha();
+                                double newAlpha = (1 - colorAlpha) * ratio + colorAlpha;
+                                alpha = alpha + newAlpha;
+                            }
+                        }
                     } else {
                         // OBJECT INTERSECTED IS EMPTY
                         alpha = alpha + (currentIntersection.getColor().getAlpha() * (1.0 - alpha));
@@ -176,11 +257,35 @@ public class Calculator implements Runnable{
         return tmp;
     }
 
+    private boolean isBetween(Intersection intersection, Intersection intersection1, Intersection intersection2) {
+        return (
+                (
+                        intersection.getDistanceFromCamera() > intersection1.getDistanceFromCamera() &&
+                                intersection.getDistanceFromCamera() < intersection2.getDistanceFromCamera()
+                ) ||
+                        (
+                                intersection.getDistanceFromCamera() > intersection2.getDistanceFromCamera() &&
+                                        intersection.getDistanceFromCamera() < intersection1.getDistanceFromCamera()
+                        )
+        );
+    }
+
+    private void removeIntersections(Line3D ray, List<Intersection> intersections) {
+
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLOR                  *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     private Color getPixelColor(Line3D ray, int reflectionDeepness) {
         // FIND INTERSECTIONS
         List<Intersection> intersections = new ArrayList<>();
         getIntersections(ray, intersections);
         sortIntersections(intersections);
+        preProcessIntersections(intersections);
 
         // COMPUTE COLOR
         Color res = new Color(0, 0, 0, 0);
@@ -195,16 +300,31 @@ public class Calculator implements Runnable{
             }
             // TRANSPARENCY FULL OBJECT
             if(intersection.getColor().getAlpha() != 1 && intersection.getObject().getCapacity() == CapacityTypeEnum.FULL) {
-                double dist = Point3D.distanceBetween(intersection.getPointOfIntersection(), intersections.get(i + 1).getPointOfIntersection());
-                double ratio = Math.min(1, dist / config.MAX_DIST);
-                double alpha = (1 - intersection.getColor().getAlpha()) * ratio + intersection.getColor().getAlpha();
-                tmp = new Color(
-                        intersection.getColor().getRed(),
-                        intersection.getColor().getGreen(),
-                        intersection.getColor().getBlue(),
-                        alpha
-                );
-                ++i;
+                Intersection nextIntersectionWithSameObject = findNextIntersectionOfSameObject(intersection, intersections, i + 1);
+                if (nextIntersectionWithSameObject != null) {
+                    double dist = Point3D.distanceBetween(intersection.getPointOfIntersection(), intersections.get(i + 1).getPointOfIntersection());
+                    double ratio = Math.min(1, dist / config.MAX_DIST);
+                    double alpha = (1 - intersection.getColor().getAlpha()) * ratio + intersection.getColor().getAlpha();
+                    tmp = new Color(
+                            intersection.getColor().getRed(),
+                            intersection.getColor().getGreen(),
+                            intersection.getColor().getBlue(),
+                            alpha
+                    );
+                } else {
+                    Intersection previousIntersection = intersections.get(i - 1);
+                    if (intersection.getObject() != previousIntersection.getObject()) {
+                        double dist = Point3D.distanceBetween(intersection.getPointOfIntersection(), previousIntersection.getPointOfIntersection());
+                        double ratio = Math.min(1, dist / config.MAX_DIST);
+                        double alpha = (1 - intersection.getColor().getAlpha()) * ratio + intersection.getColor().getAlpha();
+                        tmp = new Color(
+                                intersection.getColor().getRed(),
+                                intersection.getColor().getGreen(),
+                                intersection.getColor().getBlue(),
+                                alpha
+                        );
+                    }
+                }
             }
             // LIGHTS
             tmp = applyLights(intersection, tmp);
@@ -218,5 +338,19 @@ public class Calculator implements Runnable{
             }
         }
         return res;
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                UTILS                  *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
+    private Intersection findNextIntersectionOfSameObject(Intersection intersection, List<Intersection> intersections, int i) {
+        for (i = i;i < intersections.size(); ++i) {
+            if (intersection.getObject().equals(intersections.get(i).getObject()))
+                return intersections.get(i);
+        }
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 package rayTracer.objects.fractals;
 
-import rayTracer.blackObjects.BaseBlackObject;
-import rayTracer.blackObjects.BlackCylinder;
+import rayTracer.blackSpaces.BlackSpace;
+import rayTracer.blackSpaces.BlackTube;
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
@@ -16,9 +16,9 @@ import java.util.List;
 
 public class CubeFractal extends Cube {
     private int deepness;
-    private final List<BaseBlackObject> zCylinders = new ArrayList<>();
-    private final List<BaseBlackObject> yCylinders = new ArrayList<>();
-    private final List<BaseBlackObject> xCylinders = new ArrayList<>();
+    private final List<BlackSpace> zCylinders = new ArrayList<>();
+    private final List<BlackSpace> yCylinders = new ArrayList<>();
+    private final List<BlackSpace> xCylinders = new ArrayList<>();
 
     /* * * * * * * * * * * * * * * * * * * * *
 
@@ -47,11 +47,11 @@ public class CubeFractal extends Cube {
             return;
         if(currentDeepness == 1) {
             // Z cylinder
-            zCylinders.add(new BlackCylinder(new Line3D(new Point3D(0, 0, size / 2), new Vector3D(upNormal)), currentCylinderRadius));
+            zCylinders.add(new BlackTube(new Line3D(new Point3D(0, 0, size / 2), new Vector3D(upNormal)), currentCylinderRadius));
             // Y cylinder
-            yCylinders.add(new BlackCylinder(new Line3D(new Point3D(0, size / 2, 0), new Vector3D(rightNormal)), currentCylinderRadius));
+            yCylinders.add(new BlackTube(new Line3D(new Point3D(0, size / 2, 0), new Vector3D(rightNormal)), currentCylinderRadius));
             // X cylinder
-            xCylinders.add(new BlackCylinder(new Line3D(new Point3D(size / 2, 0, 0), new Vector3D(backNormal)), currentCylinderRadius));
+            xCylinders.add(new BlackTube(new Line3D(new Point3D(size / 2, 0, 0), new Vector3D(backNormal)), currentCylinderRadius));
         } else {
             // Z cylinders
             int size = zCylinders.size();
@@ -62,21 +62,21 @@ public class CubeFractal extends Cube {
                     double z = zCylinders.get(i).getPoint().getZ();
 
                     // top left
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y - 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y - 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
                     // top
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z), new Vector3D(upNormal)), currentCylinderRadius));
                     // top right
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y + 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y + 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
                     // left
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
                     // right
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
                     // bottom left
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y - 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y - 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
                     // bottom
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z), new Vector3D(upNormal)), currentCylinderRadius));
                     // bottom right
-                    zCylinders.add(new BlackCylinder(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y + 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
+                    zCylinders.add(new BlackTube(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y + 2 * previousCylinderRadius, z), new Vector3D(upNormal)), currentCylinderRadius));
                 }
             }
             // Y cylinders
@@ -88,21 +88,21 @@ public class CubeFractal extends Cube {
                     double z = yCylinders.get(i).getPoint().getZ();
 
                     // top left
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z - 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z - 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
                     // top
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z), new Vector3D(rightNormal)), currentCylinderRadius));
                     // top right
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z + 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x + 2 * previousCylinderRadius, y, z + 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
                     // left
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y, z - 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x, y, z - 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
                     // right
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y, z + 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x, y, z + 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
                     // bottom left
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z - 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z - 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
                     // bottom
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z), new Vector3D(rightNormal)), currentCylinderRadius));
                     // bottom right
-                    yCylinders.add(new BlackCylinder(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z + 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
+                    yCylinders.add(new BlackTube(new Line3D(new Point3D(x - 2 * previousCylinderRadius, y, z + 2 * previousCylinderRadius), new Vector3D(rightNormal)), currentCylinderRadius));
                 }
             }
             // X cylinders
@@ -114,21 +114,21 @@ public class CubeFractal extends Cube {
                     double z = xCylinders.get(i).getPoint().getZ();
 
                     // top left
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z + 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z + 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
                     // top
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y, z + 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y, z + 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
                     // top right
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z + 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z + 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
                     // left
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z), new Vector3D(backNormal)), currentCylinderRadius));
                     // right
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z), new Vector3D(backNormal)), currentCylinderRadius));
                     // bottom left
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z - 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y - 2 * previousCylinderRadius, z - 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
                     // bottom
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y, z - 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y, z - 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
                     // bottom right
-                    xCylinders.add(new BlackCylinder(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z - 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
+                    xCylinders.add(new BlackTube(new Line3D(new Point3D(x, y + 2 * previousCylinderRadius, z - 2 * previousCylinderRadius), new Vector3D(backNormal)), currentCylinderRadius));
                 }
             }
         }

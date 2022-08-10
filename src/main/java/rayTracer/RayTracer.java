@@ -1,6 +1,7 @@
 package rayTracer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import rayTracer.blackObjects.BlackObject;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.FilterTypeEnum;
 import rayTracer.lights.Light;
@@ -24,6 +25,7 @@ public class RayTracer {
 
     private static Camera cam;
     private final static List<BaseObject> objects = new ArrayList<>();
+    private final static List<BlackObject> blackObjects = new ArrayList<>();
     private final static List<Light> lights = new ArrayList<>();
     private final static List<Thread> threads = new ArrayList<>();
 
@@ -35,12 +37,6 @@ public class RayTracer {
     public static void runFromSever(Config config, List<BaseObject> baseObjects, List<Camera> cameras, List<Light> newLights) {
 
     }
-
-    //***********************************************************************
-    //***********************************************************************
-    // CLUSTER SERVER
-    //***********************************************************************
-    //***********************************************************************
 
     //***********************************************************************
     //***********************************************************************
@@ -92,10 +88,11 @@ public class RayTracer {
     public static void main(String[] args) {
         rayTracer.config.Config config = new rayTracer.config.Config();
 
-        cam = SceneMaker.getChestGame(objects, lights);
+        cam = SceneMaker.getFullSphere(objects, lights);
         cam.update(config.height, config.width);
 
         config.objects = objects;
+        config.backObjects = blackObjects;
         config.lights = lights;
         config.cam = cam;
         long start = System.nanoTime();

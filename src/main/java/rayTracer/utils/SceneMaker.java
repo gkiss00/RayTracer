@@ -1,5 +1,7 @@
 package rayTracer.utils;
 
+import rayTracer.blackObjects.BlackObject;
+import rayTracer.blackObjects.BlackSphere;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.PatternTypeEnum;
@@ -285,6 +287,43 @@ public class SceneMaker {
         cube.setCapacity(CapacityTypeEnum.FULL);
         objects.add(cube);
 
+        cube = new Cube(30, new Color(0.1, 0.1, 1, 0));
+        cube.updateMatrices(30, -15, -45, 1, 1, 1, 0, -20, 0);
+        cube.setNormals();
+        cube.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(cube);
+
+        Cylinder cylinder = new Cylinder(8);
+        cylinder.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(cylinder);
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -60);
+        plane1.setNormal();
+        objects.add(plane1);
+
+        Plane plane2 = new Plane(new Color(0.9, 0.1, 0));
+        plane2.updateMatrices(0, 90, 0, 1, 1, 1, 100, 0, 0);
+        plane2.setNormal();
+        objects.add(plane2);
+
+        Light light = new Light(new Point3D(-60, 60, 0));
+        lights.add(light);
+
+        return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getFullSphere(List<BaseObject> objects, List<Light> lights) {
+        Sphere sphere = new Sphere(30, new Color(0.1, 0.1, 1, 0));
+        sphere.updateMatrices(30, -15, -45, 1, 1, 1, 0, 0, 0);
+        sphere.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(sphere);
+
+        sphere = new Sphere(30, new Color(0.1, 0.1, 1, 0));
+        sphere.updateMatrices(30, -15, -45, 1, 1, 1, 0, -20, 0);
+        sphere.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(sphere);
+
         Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
         plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -60);
         plane1.setNormal();
@@ -430,6 +469,27 @@ public class SceneMaker {
         lights.add(light);
 
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             BLACK OBJECTS             *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
+    public static Camera getSimpleBlackSphereOnSphere(List<BaseObject> objects, List<Light> lights, List<BlackObject> blackObjects) {
+        Sphere sphere = new Sphere(30);
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        sphere.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(sphere);
+
+        BlackSphere blackSphere = new BlackSphere(30);
+        blackSphere.updateMatrices(0, 0, 0, 1, 1, 1, -30, 0, 30);
+        blackObjects.add(blackSphere);
+
+        lights.add(new Light(new Point3D(-100, 100, 100)));
+
+        return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *

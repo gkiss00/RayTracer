@@ -18,7 +18,7 @@ import java.io.File;
 import java.util.List;
 
 public class Sphere extends BaseObject {
-    private double radius;
+    private final double radius;
     private BufferedImage bufferedImage;
 
     /* * * * * * * * * * * * * * * * * * * * *

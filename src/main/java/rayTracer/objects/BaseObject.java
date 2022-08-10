@@ -78,6 +78,10 @@ public abstract class BaseObject {
         return Cutter.cut(point, cuts);
     }
 
+    public int getId() {
+        return id;
+    }
+
     public double getReflectionRatio() {
         return this.reflectionRatio;
     }
@@ -108,6 +112,16 @@ public abstract class BaseObject {
         try {
             transform.updateMatrices(alpha, beta, gama, scalingX, scalingY, scalingZ, translationX, translationY, translationZ);
         } catch (Exception e) {}
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null)
+            return false;
+        if (!(o instanceof BaseObject))
+            return false;
+        BaseObject object = (BaseObject) o;
+        return this.id == object.id;
     }
 
     public void setPattern(PatternTypeEnum pattern) {
