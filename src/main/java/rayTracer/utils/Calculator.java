@@ -188,9 +188,14 @@ public class Calculator implements Runnable{
         Color tmp = new Color(color);
         Line3D ray = new Line3D(config.cam.getPointOfVue(), intersection.getPointOfIntersection());
         double angle = Vector3D.angleBetween(ray.getVector(), intersection.getNormal());
-        if (angle >= 90) {
-            double intensity = 1.0 - (angle - 90) / 90;
-            tmp.add(config.ambientLight.reduceOf(Math.abs(Math.cos(Math.toRadians(angle - 90))) / 1.1).reduceOf(0.75));
+        if (angle >= 135) {
+            // 1.0 -> 0 of ambient 180 135
+            double rest = (angle - 135) * 2;
+            tmp.add(config.ambientLight.reduceOf(Math.cos(Math.toRadians(rest))).reduceOf(0.5));
+        } else if(angle >= 90) {
+            // 0 -> 1 of shadow 135 -> 90
+            double rest = (angle - 90) * 2;
+            tmp = tmp.reduceOf(1.0 - Math.sin(Math.toRadians(rest)));
         }
         return tmp;
     }
@@ -297,9 +302,18 @@ public class Calculator implements Runnable{
             if(intersection.getReflectionRatio() != 0 && reflectionDeepness < config.REFLECTION_MAX) {
                 Line3D reflectedRay = new Line3D(intersection.getPointOfIntersection(), Vector3D.reflectedRay(ray.getVector(), intersection.getNormal()));
                 tmp = Color.colorReflection(tmp, getPixelColor(reflectedRay, reflectionDeepness + 1), intersection.getReflectionRatio());
+            } else if (intersection.getObject().getCapacity() == CapacityTypeEnum.FULL && intersection.getObject().getDensity() != 1) {
+                Vector3D refracted1 = Vector3D.refractedRay(ray.getVector(), intersection.getNormal(), 1, intersection.getObject().getDensity());
+                Line3D newRay1 = new Line3D(intersection.getPointOfIntersection(), refracted1);
+                List<Intersection> xxx = new ArrayList<>();
+                getIntersections(newRay1, xxx);
+                sortIntersections(xxx);
+                Vector3D refracted2 = Vector3D.refractedRay(newRay1.getVector(), xxx.get(0).getNormal(), intersection.getObject().getDensity(), 1);
+                Line3D newRay2 = new Line3D(xxx.get(0).getPointOfIntersection(), refracted2);
+                tmp =getPixelColor(newRay2, reflectionDeepness + 1);
             }
             // TRANSPARENCY FULL OBJECT
-            if(intersection.getColor().getAlpha() != 1 && intersection.getObject().getCapacity() == CapacityTypeEnum.FULL) {
+            if(intersection.getColor().getAlpha() != 1 && intersection.getObject().getCapacity() == CapacityTypeEnum.FULL && intersection.getObject().getDensity() == 1) {
                 Intersection nextIntersectionWithSameObject = findNextIntersectionOfSameObject(intersection, intersections, i + 1);
                 if (nextIntersectionWithSameObject != null) {
                     double dist = Point3D.distanceBetween(intersection.getPointOfIntersection(), intersections.get(i + 1).getPointOfIntersection());

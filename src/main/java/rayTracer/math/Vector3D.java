@@ -130,20 +130,15 @@ public class Vector3D {
             θ2: angle entre la normal et le rayon refracte
      */
     public static Vector3D refractedRay(Vector3D incident, Vector3D normal, double n1, double n2) {
-        double n = n1 / n2;
-        double cosI = - Vector3D.dotProduct(incident, normal);
-        double sinT2 = n * n * (1.0 - cosI * cosI);
-        if(sinT2 > 1.0){
-            //INVALID
-            return new Vector3D(incident);
-        } else {
-            double cosT = Math.sqrt(1.0 - sinT2);
-            Vector3D incidentTmp = new Vector3D(incident);
-            Vector3D normalTmp = new Vector3D(normal);
-            incidentTmp.times(n);
-            normalTmp.times(n * cosI - cosT);
-            return Vector3D.sum(incidentTmp, normalTmp);
-        }
+        Vector3D incidentTmp = new Vector3D(incident);
+        incidentTmp.normalize();
+        Vector3D normalTmp = new Vector3D(normal);
+        normalTmp.normalize();
+        double r = n1 / n2;
+        double c = Math.cos(Math.toRadians(angleBetween(incident, normal)));
+        incidentTmp.times(r);
+        normalTmp.times(r * c - Math.sqrt(1.0 - r * r * (1.0 - c * c)));
+        return Vector3D.sum(incidentTmp, normalTmp);
     }
 
     public static Vector3D sum(Vector3D... vectors) {

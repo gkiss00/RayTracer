@@ -308,7 +308,7 @@ public class SceneMaker {
         objects.add(plane2);
 
         Light light = new Light(new Point3D(-60, 60, 0));
-        lights.add(light);
+        //lights.add(light);
 
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
     }
@@ -360,6 +360,109 @@ public class SceneMaker {
         lights.add(light);
 
         return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *           REFRACTION OBJECTS          *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
+    public static Camera getRefractedSphere(List<BaseObject> objects, List<Light> lights) {
+        Torus sphere = new Torus(30, 10, new Color(1, 1, 1, 1));
+        sphere.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+        sphere.setCapacity(CapacityTypeEnum.FULL);
+        //sphere.setReflectionRatio(1);
+        sphere.density = 2;
+        objects.add(sphere);
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -60);
+        plane1.setNormal();
+        objects.add(plane1);
+
+        Plane plane2 = new Plane(new Color(0.9, 0.1, 0));
+        plane2.updateMatrices(0, 90, 0, 1, 1, 1, 100, 0, 0);
+        plane2.setNormal();
+        plane2.setTexture("./src/main/resources/textures/random/numbers.png");
+        objects.add(plane2);
+
+        Light light = new Light(new Point3D(-60, 60, 0));
+        //lights.add(light);
+
+        return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, -0.2, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getRefractedSpheres(List<BaseObject> objects, List<Light> lights) {
+        Cube c1 = new Cube(50);
+        c1.updateMatrices(0, 0, 0, 1, 1, 1, 0, -75, 25);
+        c1.setNormals();
+        c1.setTexture("./src/main/resources/textures/random/numbers.png");
+        objects.add(c1);
+
+        c1 = new Cube(50);
+        c1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 25);
+        c1.setNormals();
+        c1.setTexture("./src/main/resources/textures/random/numbers.png");
+        objects.add(c1);
+
+        c1 = new Cube(50);
+        c1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 75, 25);
+        c1.setNormals();
+        c1.setTexture("./src/main/resources/textures/random/numbers.png");
+        objects.add(c1);
+
+        Sphere sp1 = new Sphere(20, new Color(1, 1, 1, 1));
+        sp1.updateMatrices(0, 90, 0, 1, 1, 1, 0, -75, 70);
+        sp1.setCapacity(CapacityTypeEnum.FULL);
+        sp1.density = 2;
+        objects.add(sp1);
+
+        sp1 = new Sphere(20, new Color(1, 1, 1, 1));
+        sp1.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 70);
+        sp1.setCapacity(CapacityTypeEnum.FULL);
+        sp1.density = 5;
+        objects.add(sp1);
+
+        sp1 = new Sphere(20, new Color(1, 1, 1, 1));
+        sp1.updateMatrices(0, 90, 0, 1, 1, 1, 0, 75, 70);
+        sp1.setCapacity(CapacityTypeEnum.FULL);
+        sp1.density = 10;
+        objects.add(sp1);
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -60);
+        plane1.setNormal();
+        plane1.lineValue = 100;
+        plane1.columnValue = 100;
+        objects.add(plane1);
+
+        Light light = new Light(new Point3D(-1000, 1000, 1000));
+        //lights.add(light);
+
+        return new Camera(new Point3D(-300, 0, 50), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                 TEST                  *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
+    public static Camera getSphereInTorus(List<BaseObject> objects, List<Light> lights) {
+        Sphere sp = new Sphere(5, new Color(0.25, 0.365, 0.7));
+        sp.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        sp.setReflectionRatio(1);
+        objects.add(sp);
+
+        Torus torus = new Torus(20, 5, new Color(0.25, 0.365, 0.7));
+        torus.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(torus);
+
+        Light light = new Light(new Point3D(-100, 100, 0));
+        //lights.add(light);
+
+        return new Camera(new Point3D(-30, 0, 10), new Vector3D(1, 0, -0.3), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getSimpleTetrahedronFractal(List<BaseObject> objects, List<Light> lights) {

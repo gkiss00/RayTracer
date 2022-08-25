@@ -24,6 +24,7 @@ public abstract class BaseObject {
     public int columnValue = 10;
     protected Transform transform;
     protected double reflectionRatio = 0;
+    public double density = 1;
     protected CapacityTypeEnum capacity = CapacityTypeEnum.EMPTY;
 
     public BaseObject() {
@@ -69,7 +70,7 @@ public abstract class BaseObject {
     }
 
     public void addCut(CutTypeEnum cut) {
-        if(cuts.contains(cut) == false) {
+        if(!cuts.contains(cut)) {
             cuts.add(cut);
         }
     }
@@ -88,6 +89,10 @@ public abstract class BaseObject {
 
     public void setReflectionRatio(double reflectionRatio) {
         this.reflectionRatio = reflectionRatio < 0 ? 0 : reflectionRatio > 1 ? 1 : reflectionRatio;
+    }
+
+    public double getDensity() {
+        return this.density;
     }
 
     public CapacityTypeEnum getCapacity() {

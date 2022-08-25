@@ -110,6 +110,12 @@ public class Color {
         this.blue /= d;
     }
 
+    public void mult(double d) {
+        this.red *= d;
+        this.green *= d;
+        this.blue *= d;
+    }
+
     public void unit() {
         double max = Math.max(red, Math.max(green, blue));
         if(max > 1.0) {
