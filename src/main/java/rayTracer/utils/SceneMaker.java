@@ -367,7 +367,7 @@ public class SceneMaker {
 
      * * * * * * * * * * * * * * * * * * * * */
 
-    public static Camera getRefractedSphere(List<Obj> objects, List<Light> lights) {
+    public static Camera getRefractedSphere(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
         Torus sphere = new Torus(30, 10, new Color(1, 1, 1, 1));
         sphere.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
         sphere.setCapacity(CapacityTypeEnum.FULL);
@@ -1210,7 +1210,7 @@ public class SceneMaker {
         return new Camera(new Point3D(-150, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getChestGame(List<Obj> objects, List<Light> lights) {
+    public static Camera getChestGame(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
 
         Square board = new Square(160, PatternTypeEnum.GRID, new Color(0, 0, 0), new Color(1, 1, 1));
         board.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -17.6);
@@ -1336,5 +1336,31 @@ public class SceneMaker {
         lights.add(new Light(new Point3D(-100, 100, 100), new Color(0.2, 0.2, 1)));
 
         return new Camera(new Point3D(-70, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getTower(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+
+        int x = 0;
+        int y = 0;
+
+        Pipe pipe = new Pipe(10, 8, 5);
+        pipe.setCapacity(CapacityTypeEnum.FULL);
+        pipe.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        pipe.setNormals();
+        objects.add(pipe);
+
+        BlackCube blackCube = new BlackCube(5);
+        blackCube.updateMatrices(0, 0, 0, 5, 1, 2, 0, 0, 0);
+        blackCube.setNormals();
+        blacks.add(blackCube);
+
+        blackCube = new BlackCube(5);
+        blackCube.updateMatrices(0, 0, 0, 1, 5, 2, 0, 0, 0);
+        blackCube.setNormals();
+        blacks.add(blackCube);
+
+        //lights.add(new Light(new Point3D(-100, 100, 100), new Color(0.2, 0.2, 1)));
+
+        return new Camera(new Point3D(-60, 0, 20), new Vector3D(1, 0, -0.30), new Vector3D(0, 0, 1), 90);
     }
 }

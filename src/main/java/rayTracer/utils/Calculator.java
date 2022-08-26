@@ -168,24 +168,24 @@ public class Calculator implements Runnable{
     }
 
     private void createNewIntersections(List<Intersection> base, List<Intersection> black) {
-        List<Intersection> all = new ArrayList<>();
+        List<Intersection> all = new ArrayList<>(base.size() + black.size());
         all.addAll(base);
         all.addAll(black);
         sortIntersections(all);
-        List<Intersection> res = new ArrayList<>();
+        List<Intersection> res = new ArrayList<>(base.size() + black.size());
         int i = 0;
         int baseI = 0;
         boolean inBlack = false;
         boolean inBase = false;
 
-        if(base.size() % 2 != 0 || black.size() % 2 != 0)
-            System.out.println(base.size() + " " + black.size());
-
         while(i < all.size()) {
             Intersection inter = all.get(i);
             // keep all empty for now
             if(inter.getObject().getCapacity() == CapacityTypeEnum.EMPTY) {
-                System.out.println("debug");
+                //System.out.println("debug");
+                ++i;
+                ++baseI;
+                baseI = Math.min(baseI, base.size() - 1);
                 res.add(inter);
                 continue;
             }
@@ -231,7 +231,9 @@ public class Calculator implements Runnable{
             ++i;
         }
         base.clear();
+        black.clear();
         base.addAll(res);
+        all.clear();
     }
 
     private void preProcessIntersections(List<Intersection> intersections, List<Intersection> blackIntersections) {
