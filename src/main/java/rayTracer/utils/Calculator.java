@@ -286,7 +286,7 @@ public class Calculator implements Runnable{
         if (angle >= 135) {
             // 1.0 -> 0 of ambient 180 135
             double rest = (angle - 135) * 2;
-            tmp.add(config.ambientLight.reduceOf(Math.cos(Math.toRadians(rest))).reduceOf(0.5));
+            tmp.add(config.ambientLight.reduceOf(Math.cos(Math.toRadians(rest))).reduceOf(0.75));
         } else if(angle >= 90) {
             // 0 -> 1 of shadow 135 -> 90
             double rest = (angle - 90) * 2;

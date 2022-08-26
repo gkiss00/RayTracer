@@ -1,8 +1,7 @@
 package rayTracer.utils;
 
 import rayTracer.objects.Obj;
-import rayTracer.objects.blackObjects.BlackObject;
-import rayTracer.objects.blackObjects.BlackSphere;
+import rayTracer.objects.blackObjects.*;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.PatternTypeEnum;
@@ -641,6 +640,33 @@ public class SceneMaker {
         blackSphere = new BlackSphere(10);
         blackSphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 25, 0);
         blackObjects.add(blackSphere);
+
+        BlackCylinder cylinder = new BlackCylinder(5);
+        cylinder.updateMatrices(45, 0, 0, 1, 1, 1, -25, 0, 0);
+        blackObjects.add(cylinder);
+
+        cylinder = new BlackCylinder(5);
+        cylinder.updateMatrices(-45, 0, 0, 1, 1, 1, -25, 0, 0);
+        blackObjects.add(cylinder);
+
+        BlackTorus blackTorus = new BlackTorus(20, 5);
+        blackTorus.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 25);
+        blackObjects.add(blackTorus);
+
+        BlackCube blackCube = new BlackCube(10);
+        blackCube.updateMatrices(0, 0, 0, 1, 1, 1, 25, 25, 0);
+        blackCube.setNormals();
+        blackObjects.add(blackCube);
+
+        blackCube = new BlackCube(10);
+        blackCube.updateMatrices(0, 0, 0, 1, 1, 1, -25, 25, 0);
+        blackCube.setNormals();
+        blackObjects.add(blackCube);
+
+        blackCube = new BlackCube(10);
+        blackCube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 25, -25);
+        blackCube.setNormals();
+        blackObjects.add(blackCube);
 
 
         //lights.add(new Light(new Point3D(-100, 100, 100)));
