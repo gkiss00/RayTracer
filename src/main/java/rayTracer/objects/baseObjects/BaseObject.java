@@ -1,10 +1,11 @@
-package rayTracer.objects;
+package rayTracer.objects.baseObjects;
 
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.PatternTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
+import rayTracer.objects.Obj;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
@@ -13,34 +14,28 @@ import rayTracer.utils.Transform;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseObject {
-    private  static int _id = 0;
-    protected int id = 0;
-    protected final static double EPSILON = 0.0001;
+public abstract class BaseObject extends Obj {
     protected List<Color> colors = new ArrayList<>();
     protected List<CutTypeEnum> cuts = new ArrayList<>();
     protected PatternTypeEnum pattern;
     public int lineValue = 10;
     public int columnValue = 10;
-    protected Transform transform;
     protected double reflectionRatio = 0;
-    public double density = 1;
-    protected CapacityTypeEnum capacity = CapacityTypeEnum.EMPTY;
 
     public BaseObject() {
-        this.id = ++_id;
+        super();
         this.colors.add(new Color());
         init();
     }
 
     public BaseObject(Color color) {
-        this.id = ++_id;
+        super();
         this.colors.add(new Color(color));
         init();
     }
 
     public BaseObject(Color... colors) {
-        this.id = ++_id;
+        super();
         for (int i = 0; i < colors.length; ++i)
             this.colors.add(new Color(colors[i]));
         init();
@@ -48,11 +43,6 @@ public abstract class BaseObject {
 
     private void init() {
         this.pattern = PatternTypeEnum.UNIFORM;
-        try {
-            this.transform = new Transform();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     public void clearColors(){
@@ -79,10 +69,6 @@ public abstract class BaseObject {
         return Cutter.cut(point, cuts);
     }
 
-    public int getId() {
-        return id;
-    }
-
     public double getReflectionRatio() {
         return this.reflectionRatio;
     }
@@ -91,47 +77,12 @@ public abstract class BaseObject {
         this.reflectionRatio = reflectionRatio < 0 ? 0 : reflectionRatio > 1 ? 1 : reflectionRatio;
     }
 
-    public double getDensity() {
-        return this.density;
-    }
-
-    public CapacityTypeEnum getCapacity() {
-        return capacity;
-    }
-
     public void setCapacity(CapacityTypeEnum capacity) {
         this.capacity = capacity;
-    }
-
-    public void updateMatrices(
-            double alpha,
-            double beta,
-            double gama,
-            double scalingX,
-            double scalingY,
-            double scalingZ,
-            double translationX,
-            double translationY,
-            double translationZ
-    ) {
-        try {
-            transform.updateMatrices(alpha, beta, gama, scalingX, scalingY, scalingZ, translationX, translationY, translationZ);
-        } catch (Exception e) {}
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null)
-            return false;
-        if (!(o instanceof BaseObject))
-            return false;
-        BaseObject object = (BaseObject) o;
-        return this.id == object.id;
     }
 
     public void setPattern(PatternTypeEnum pattern) {
         this.pattern = pattern;
     }
     abstract protected Color getColor(Point3D localIntersection);
-    abstract public void hit(Line3D ray, List<Intersection> intersections) throws Exception;
 }

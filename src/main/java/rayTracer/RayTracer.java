@@ -1,31 +1,24 @@
 package rayTracer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import rayTracer.blackObjects.BlackObject;
-import rayTracer.enums.CapacityTypeEnum;
-import rayTracer.enums.FilterTypeEnum;
+import rayTracer.objects.Obj;
+import rayTracer.objects.blackObjects.BlackObject;
 import rayTracer.lights.Light;
-import rayTracer.math.Line3D;
-import rayTracer.math.Point3D;
-import rayTracer.math.Vector3D;
-import rayTracer.objects.*;
+import rayTracer.objects.baseObjects.*;
 import rayTracer.utils.*;
 import rayTracer.visual.Camera;
 import server.model.Config;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class RayTracer {
 
     private static Camera cam;
-    private final static List<BaseObject> objects = new ArrayList<>();
-    private final static List<BlackObject> blackObjects = new ArrayList<>();
+    private final static List<Obj> objects = new ArrayList<>();
+    private final static List<Obj> blackObjects = new ArrayList<>();
     private final static List<Light> lights = new ArrayList<>();
     private final static List<Thread> threads = new ArrayList<>();
 
@@ -88,7 +81,7 @@ public class RayTracer {
     public static void main(String[] args) {
         rayTracer.config.Config config = new rayTracer.config.Config();
 
-        cam = SceneMaker.getRefractedSphere(objects, lights);
+        cam = SceneMaker.getSimpleBlackSphereOnCube(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;

@@ -1,4 +1,4 @@
-package rayTracer.objects.fractals;
+package rayTracer.objects.baseObjects.fractals;
 
 import rayTracer.blackSpaces.BlackSpace;
 import rayTracer.blackSpaces.BlackTube;
@@ -6,7 +6,8 @@ import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
-import rayTracer.objects.simpleObjects.Cube;
+import rayTracer.objects.baseObjects.BaseObject;
+import rayTracer.objects.baseObjects.simpleObjects.Cube;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
@@ -39,7 +40,7 @@ public class CubeFractal extends Cube {
     }
 
     private void setDeepness(int deepness) {
-        this.deepness = deepness <= 0 ? 0 : deepness;
+        this.deepness = Math.max(deepness, 0);
     }
 
     private void initBlackObjects(int currentDeepness, double previousCylinderRadius, double currentCylinderRadius) {

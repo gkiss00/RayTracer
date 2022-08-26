@@ -3,7 +3,7 @@ package rayTracer.factories;
 import rayTracer.enums.PolygonTypeEnum;
 import rayTracer.math.Point3D;
 import rayTracer.math.Triangle;
-import rayTracer.objects.composedObjects.triangleMade.Polygon;
+import rayTracer.objects.baseObjects.composedObjects.triangleMade.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;

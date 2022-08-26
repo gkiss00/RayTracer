@@ -1,4 +1,4 @@
-package rayTracer.blackObjects;
+package rayTracer.objects.blackObjects;
 
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.math.Line3D;
@@ -13,6 +13,7 @@ public class BlackSphere extends BlackObject{
     private final double radius;
 
     public BlackSphere(double radius) {
+        super();
         this.radius = radius;
     }
 
@@ -44,7 +45,7 @@ public class BlackSphere extends BlackObject{
                 Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
                 if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                     realNormal.inverse();
-                intersections.add(new Intersection(realIntersection, realNormal, null, Point3D.distanceBetween(ray.getPoint(), realIntersection), 0, null));
+                intersections.add(new Intersection(realIntersection, realNormal, null, Point3D.distanceBetween(ray.getPoint(), realIntersection), 0, this));
             }
         }
     }

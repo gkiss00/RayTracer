@@ -1,24 +1,23 @@
 package rayTracer.io;
 
 import rayTracer.lights.Light;
-import rayTracer.objects.BaseObject;
+import rayTracer.objects.Obj;
+import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Calculator;
 import rayTracer.utils.SceneMaker;
 import rayTracer.visual.Camera;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 public class Client {
     private static Camera cam;
-    private static List<BaseObject> objects = new ArrayList<>();
+    private static List<Obj> objects = new ArrayList<>();
     private static List<Light> lights = new ArrayList<>();
     private static List<Thread> threads = new ArrayList<>();
     private static Semaphore mutex = new Semaphore(1);

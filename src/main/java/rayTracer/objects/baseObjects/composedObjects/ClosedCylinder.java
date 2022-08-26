@@ -1,4 +1,4 @@
-package rayTracer.objects.composedObjects;
+package rayTracer.objects.baseObjects.composedObjects;
 
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.enums.PatternTypeEnum;
@@ -6,21 +6,19 @@ import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Solver;
 import rayTracer.math.Vector3D;
-import rayTracer.objects.BaseObject;
+import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
-import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
 
 import java.util.List;
 
-public class ClosedCone extends BaseObject {
+public class ClosedCylinder extends BaseObject {
     protected static final Vector3D upNormal = new Vector3D(0, 0, 1);
     protected static final Vector3D downNormal = new Vector3D(0, 0, -1);
     protected  Vector3D realUpNormal;
     protected  Vector3D realDownNormal;
-    private final double angle;
-    private final double height;
     private final double radius;
+    private final double height;
 
     /* * * * * * * * * * * * * * * * * * * * *
 
@@ -28,23 +26,21 @@ public class ClosedCone extends BaseObject {
 
      * * * * * * * * * * * * * * * * * * * * */
 
-    public ClosedCone(double angle, double height) {
+    public ClosedCylinder(double radius, double height) {
         super();
-        this.angle = angle;
+        this.radius = radius;
         this.height = height / 2;
-        this.radius = Math.tan(Math.toRadians(this.angle)) * this.height;
     }
 
-    public ClosedCone(double angle, double height, Color color) {
+    public ClosedCylinder(double radius, double height, Color color) {
         super(color);
-        this.angle = angle;
+        this.radius = radius;
         this.height = height / 2;
-        this.radius = Math.tan(Math.toRadians(this.angle)) * this.height;
     }
 
     /* * * * * * * * * * * * * * * * * * * * *
 
-     *               SETTERS                 *
+     *                SETTERS                *
 
      * * * * * * * * * * * * * * * * * * * * */
 
@@ -84,17 +80,15 @@ public class ClosedCone extends BaseObject {
         Line3D localRay = transform.apply(ray, MatrixTransformEnum.TO_LOCAL);
 
         double a, b, c;
-        a = localRay.getVX() * localRay.getVX() +
-                localRay.getVY() * localRay.getVY() -
-                localRay.getVZ() * localRay.getVZ() * Math.tan(Math.toRadians(angle)) * Math.tan(Math.toRadians(angle));
+        a = localRay.getVX() * localRay.getVX()+
+                localRay.getVY() * localRay.getVY();
 
         b = 2 * localRay.getPX() * localRay.getVX() +
-                2 * localRay.getPY() * localRay.getVY() -
-                2 * localRay.getPZ() * localRay.getVZ() * Math.tan(Math.toRadians(angle)) * Math.tan(Math.toRadians(angle));
+                2 * localRay.getPY() * localRay.getVY();
 
         c = localRay.getPX() * localRay.getPX() +
-                localRay.getPY() * localRay.getPY()-
-                localRay.getPZ() * Math.tan(Math.toRadians(angle)) * localRay.getPZ() * Math.tan(Math.toRadians(angle));
+                localRay.getPY() * localRay.getPY() -
+                radius * radius;
 
         List<Double> solutions = Solver.solve(a, b, c);
         for (int i = 0; i < solutions.size(); ++i) {
@@ -104,13 +98,12 @@ public class ClosedCone extends BaseObject {
                         localRay.getPY() + localRay.getVY() * solutions.get(i),
                         localRay.getPZ() + localRay.getVZ() * solutions.get(i)
                 );
-                if(localIntersection.getZ() <= height && localIntersection.getZ() >= -height && !Cutter.cut(localIntersection, cuts)) {
+                if (localIntersection.getZ() <= height && localIntersection.getZ() >= -height && !isCut(localIntersection)) {
                     Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    double h = Math.sqrt(localIntersection.getX() * localIntersection.getX() + localIntersection.getY() * localIntersection.getY()) / Math.tan(Math.toRadians(90 - angle));
-                    if (localIntersection.getZ() < 0)
-                        h = -h;
-                    Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), -h);
+                    Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
+                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
+                        realNormal.inverse();
                     intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
@@ -136,7 +129,7 @@ public class ClosedCone extends BaseObject {
 
                 if (Math.sqrt(x * x + y * y) <= radius) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    if(isCut(localIntersection) == false){
+                    if(!isCut(localIntersection)){
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
@@ -156,7 +149,7 @@ public class ClosedCone extends BaseObject {
 
                 if (Math.sqrt(x * x + y * y) <= radius) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    if(isCut(localIntersection) == false) {
+                    if(!isCut(localIntersection)) {
                         Color color = getColor(localIntersection);
                         Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                         double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());

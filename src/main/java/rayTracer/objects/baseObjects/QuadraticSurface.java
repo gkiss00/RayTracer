@@ -1,4 +1,4 @@
-package rayTracer.objects;
+package rayTracer.objects.baseObjects;
 
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.enums.PatternTypeEnum;

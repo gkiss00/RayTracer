@@ -1,12 +1,14 @@
 package rayTracer.utils;
 
-import rayTracer.blackObjects.BlackObject;
 import rayTracer.config.Config;
 import rayTracer.enums.CapacityTypeEnum;
+import rayTracer.enums.ObjectTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
-import rayTracer.objects.BaseObject;
+import rayTracer.objects.Obj;
+import rayTracer.objects.baseObjects.BaseObject;
+import rayTracer.objects.blackObjects.BlackObject;
 
 import java.awt.image.BufferedImage;
 import java.io.PrintStream;
@@ -59,7 +61,7 @@ public class Calculator implements Runnable{
             printStream.println(x + " " + y + " " + color.toHex());
             mutex.release();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -83,8 +85,8 @@ public class Calculator implements Runnable{
     public void addPixelColor(int x, int y, Color pixelColor) {
         for (int h = 0; h < config.ANTI_ALIASING; ++h) {
             for (int w = 0; w < config.ANTI_ALIASING; ++w) {
-                double heightRatio = ((y - (config.height / 2) + 0.5) / config.height) + ((1.0 / config.height / config.ANTI_ALIASING) * h);
-                double widthRatio = ((x - (config.width / 2) + 0.5) / config.width) + ((1.0 / config.width / config.ANTI_ALIASING) * w);
+                double heightRatio = ((y - ((double)config.height / 2) + 0.5) / config.height) + ((1.0 / config.height / config.ANTI_ALIASING) * h);
+                double widthRatio = ((x - ((double)config.width / 2) + 0.5) / config.width) + ((1.0 / config.width / config.ANTI_ALIASING) * w);
                 Line3D ray = new Line3D(config.cam.getPointOfVue(), config.cam.getPoint(heightRatio, widthRatio));
                 ray.normalize();
                 pixelColor.add(getPixelColor(ray, 0));
@@ -143,12 +145,104 @@ public class Calculator implements Runnable{
         intersections.addAll(tmp);
     }
 
-    private void preProcessIntersections(List<Intersection> intersections) {
+    private void fusionBlackObjects(List<Intersection> intersections) {
+        List<Intersection> tmp = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>();
+        Intersection firstInserted = null;
+        for (Intersection intersection : intersections) {
+            if(map.isEmpty()) {
+                firstInserted = intersection;
+                tmp.add(intersection);
+            }
+            if (map.containsKey(intersection.getObject().getId()))
+                map.remove(intersection.getObject().getId());
+            else
+                map.put(intersection.getObject().getId(), 1);
+            if(map.isEmpty()) {
+                intersection.setObject(firstInserted.getObject());
+                tmp.add(intersection);
+            }
+        }
+        intersections.clear();
+        intersections.addAll(tmp);
+    }
+
+    private void createNewIntersections(List<Intersection> base, List<Intersection> black) {
+        List<Intersection> all = new ArrayList<>();
+        all.addAll(base);
+        all.addAll(black);
+        sortIntersections(all);
+        List<Intersection> res = new ArrayList<>();
+        int i = 0;
+        int baseI = 0;
+        boolean inBlack = false;
+        boolean inBase = false;
+
+        if(base.size() % 2 != 0 || black.size() % 2 != 0)
+            System.out.println(base.size() + " " + black.size());
+
+        while(i < all.size()) {
+            Intersection inter = all.get(i);
+            // keep all empty for now
+            if(inter.getObject().getCapacity() == CapacityTypeEnum.EMPTY) {
+                System.out.println("debug");
+                res.add(inter);
+                continue;
+            }
+
+            //code here
+            if(!inBase && !inBlack) {
+                if(inter.getObject().getType() == ObjectTypeEnum.BASE) {
+                    inBase = true;
+                    res.add(inter);
+                } else {
+                    inBlack = true;
+                }
+            } else if (inBase && !inBlack) {
+                if(inter.getObject().getType() == ObjectTypeEnum.BASE) {
+                    inBase = false;
+                    res.add(inter);
+                } else {
+                    inBlack = true;
+                    inter.setColor(base.get(baseI).getColor());
+                    inter.setObject(base.get(baseI).getObject());
+                    res.add(inter);
+                }
+            } else if (!inBase && inBlack) {
+                if(inter.getObject().getType() == ObjectTypeEnum.BASE) {
+                    inBase = true;
+                } else {
+                    inBlack = false;
+                }
+            } else if (inBase && inBlack) {
+                if(inter.getObject().getType() == ObjectTypeEnum.BASE) {
+                    inBase = false;
+                } else {
+                    inBlack = false;
+                    inter.setColor(base.get(baseI).getColor());
+                    inter.setObject(base.get(baseI).getObject());
+                    res.add(inter);
+                }
+            }
+            if(inter.getObject().getType() == ObjectTypeEnum.BASE && i != 0) {
+                ++baseI;
+                baseI = Math.min(baseI, base.size() - 1);
+            }
+            ++i;
+        }
+        base.clear();
+        base.addAll(res);
+    }
+
+    private void preProcessIntersections(List<Intersection> intersections, List<Intersection> blackIntersections) {
         // 1. Remove intersections of empty objects contained in full objects
         removeIntersectionsInFullObjects(intersections);
         // 2. Fusion consecutive full objects of same color
         fusionFullObjects(intersections);
         // 3. Remove and create intersections with black objects
+        fusionFullObjects(blackIntersections);
+        if(intersections.size() != 0 && blackIntersections.size() != 0)
+            createNewIntersections(intersections, blackIntersections);
     }
 
     private static void sortIntersections(List<Intersection> intersections) {
@@ -168,14 +262,15 @@ public class Calculator implements Runnable{
         }
     }
 
-    private void getIntersections(Line3D ray, List<Intersection> intersections) {
-        for (int i = 0; i < config.objects.size(); ++i) {
+    private void getIntersections(Line3D ray, List<Obj> objects, List<Intersection> intersections) {
+        for (int i = 0; i < objects.size(); ++i) {
             try {
-                config.objects.get(i).hit(ray, intersections);
+                objects.get(i).hit(ray, intersections);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
+        sortIntersections(intersections);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *
@@ -211,9 +306,10 @@ public class Calculator implements Runnable{
 
             // GET THE NEW INTERSECTIONS
             List<Intersection> intersections = new ArrayList<>();
-            getIntersections(ray, intersections);
-            sortIntersections(intersections);
-            preProcessIntersections(intersections);
+            getIntersections(ray, config.objects, intersections);
+            List<Intersection> blackIntersections = new ArrayList<>();
+            getIntersections(ray, config.backObjects, blackIntersections);
+            preProcessIntersections(intersections, blackIntersections);
 
             // IF LIGHT MET WITH INTERSECTION => BRIGHT FALSE
             double alpha = 0.0;
@@ -262,23 +358,6 @@ public class Calculator implements Runnable{
         return tmp;
     }
 
-    private boolean isBetween(Intersection intersection, Intersection intersection1, Intersection intersection2) {
-        return (
-                (
-                        intersection.getDistanceFromCamera() > intersection1.getDistanceFromCamera() &&
-                                intersection.getDistanceFromCamera() < intersection2.getDistanceFromCamera()
-                ) ||
-                        (
-                                intersection.getDistanceFromCamera() > intersection2.getDistanceFromCamera() &&
-                                        intersection.getDistanceFromCamera() < intersection1.getDistanceFromCamera()
-                        )
-        );
-    }
-
-    private void removeIntersections(Line3D ray, List<Intersection> intersections) {
-
-    }
-
     /* * * * * * * * * * * * * * * * * * * * *
 
      *                COLOR                  *
@@ -288,9 +367,11 @@ public class Calculator implements Runnable{
     private Color getPixelColor(Line3D ray, int reflectionDeepness) {
         // FIND INTERSECTIONS
         List<Intersection> intersections = new ArrayList<>();
-        getIntersections(ray, intersections);
-        sortIntersections(intersections);
-        preProcessIntersections(intersections);
+        getIntersections(ray, config.objects, intersections);
+        List<Intersection> blackIntersections = new ArrayList<>();
+        getIntersections(ray, config.backObjects, blackIntersections);
+        preProcessIntersections(intersections, blackIntersections);
+
 
         // COMPUTE COLOR
         Color res = new Color(0, 0, 0, 0);
@@ -306,7 +387,7 @@ public class Calculator implements Runnable{
                 Vector3D refracted1 = Vector3D.refractedRay(ray.getVector(), intersection.getNormal(), 1, intersection.getObject().getDensity());
                 Line3D newRay1 = new Line3D(intersection.getPointOfIntersection(), refracted1);
                 List<Intersection> xxx = new ArrayList<>();
-                getIntersections(newRay1, xxx);
+                getIntersections(newRay1, config.objects, xxx);
                 sortIntersections(xxx);
                 Vector3D refracted2 = Vector3D.refractedRay(newRay1.getVector(), xxx.get(0).getNormal(), intersection.getObject().getDensity(), 1);
                 Line3D newRay2 = new Line3D(xxx.get(0).getPointOfIntersection(), refracted2);

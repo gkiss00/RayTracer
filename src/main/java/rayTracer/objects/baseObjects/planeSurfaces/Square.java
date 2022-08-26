@@ -1,11 +1,11 @@
-package rayTracer.objects.planeSurfaces;
+package rayTracer.objects.baseObjects.planeSurfaces;
 
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.enums.PatternTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
-import rayTracer.objects.BaseObject;
+import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;

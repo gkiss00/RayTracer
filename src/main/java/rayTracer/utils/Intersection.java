@@ -3,19 +3,19 @@ package rayTracer.utils;
 import lombok.Setter;
 import rayTracer.math.Point3D;
 import rayTracer.math.Vector3D;
-import rayTracer.objects.BaseObject;
-import rayTracer.objects.planeSurfaces.Plane;
+import rayTracer.objects.Obj;
+import rayTracer.objects.baseObjects.BaseObject;
 
 @Setter()
-public class Intersection {
+public class Intersection{
     private Point3D pointOfIntersection;
     private Vector3D normal;
     private Color color;
     private double distanceFromCamera;
     private double reflectionRatio;
-    private BaseObject object;
+    private Obj object;
 
-    public Intersection(Point3D pointOfIntersection, Vector3D normal, Color color, double distanceFromCamera, double reflectionRatio, BaseObject object) {
+    public Intersection(Point3D pointOfIntersection, Vector3D normal, Color color, double distanceFromCamera, double reflectionRatio, Obj object) {
         this.pointOfIntersection = pointOfIntersection;
         this.normal = normal;
         this.color = color;
@@ -44,7 +44,7 @@ public class Intersection {
         return reflectionRatio;
     }
 
-    public BaseObject getObject() {
+    public Obj getObject() {
         return object;
     }
 }

@@ -1,4 +1,4 @@
-package rayTracer.objects.composedObjects.triangleMade;
+package rayTracer.objects.baseObjects.composedObjects.triangleMade;
 
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.enums.PatternTypeEnum;
@@ -6,12 +6,11 @@ import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Triangle;
 import rayTracer.math.Vector3D;
-import rayTracer.objects.BaseObject;
+import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Intersection;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.List;

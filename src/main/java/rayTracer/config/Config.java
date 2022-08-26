@@ -1,9 +1,10 @@
 package rayTracer.config;
 
-import rayTracer.blackObjects.BlackObject;
+import rayTracer.objects.Obj;
+import rayTracer.objects.blackObjects.BlackObject;
 import rayTracer.enums.FilterTypeEnum;
 import rayTracer.lights.Light;
-import rayTracer.objects.BaseObject;
+import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.visual.Camera;
 
@@ -22,7 +23,7 @@ public class Config {
     public double SHADOW_DEEPNESS = 0.3;
 
     public Camera cam;
-    public List<BaseObject> objects = new ArrayList<>();
-    public List<BlackObject> backObjects = new ArrayList<>();
+    public List<Obj> objects = new ArrayList<>();
+    public List<Obj> backObjects = new ArrayList<>();
     public List<Light> lights = new ArrayList<>();
 }
