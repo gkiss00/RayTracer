@@ -1,5 +1,7 @@
 package rayTracer.math;
 
+import java.util.Random;
+
 public class Vector3D {
     private double x;
     private double y;
@@ -80,6 +82,25 @@ public class Vector3D {
         x *= -1;
         y *= -1;
         z *= -1;
+    }
+
+    public static Vector3D generateRandom2DVector() {
+        Random rand = new Random();
+        Vector3D v = new Vector3D(0, 0, 0);
+        v.x = rand.nextDouble() - 0.5;
+        v.y = rand.nextDouble() - 0.5;
+        v.normalize();
+        return v;
+    }
+
+    public static Vector3D generateRandom3DVector() {
+        Random rand = new Random();
+        Vector3D v = new Vector3D(0, 0, 0);
+        v.x = rand.nextDouble() - 0.5;
+        v.y = rand.nextDouble() - 0.5;
+        v.z = rand.nextDouble() - 0.5;
+        v.normalize();
+        return v;
     }
 
     // return a vector perpendicular to the two others

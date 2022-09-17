@@ -6,5 +6,6 @@ public enum PatternTypeEnum {
     HORIZONTAL_LINED,
     GRID,
     GRADIENT,
-    TEXTURE
+    TEXTURE,
+    NOISE
 }

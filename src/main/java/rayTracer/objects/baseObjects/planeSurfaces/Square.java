@@ -99,6 +99,8 @@ public class Square extends BaseObject {
                 return getColorFromGradient(localIntersection);
             case TEXTURE:
                 return getColorFromTexture(localIntersection);
+            case NOISE:
+                return getColorFromNoise(localIntersection);
         }
         return null;
     }
@@ -133,7 +135,7 @@ public class Square extends BaseObject {
         );
     }
 
-    public Color getColorFromTexture(Point3D localIntersection) {
+    private Color getColorFromTexture(Point3D localIntersection) {
         double heightRatio = (localIntersection.getX() + size) / (2 * size);
         double widthRatio = (localIntersection.getY() + size) / (2 * size);
 
@@ -146,6 +148,15 @@ public class Square extends BaseObject {
         int rgb = bufferedImage.getRGB(x, y);
         java.awt.Color color = new java.awt.Color(rgb, true);
         return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
+    }
+
+    private Color getColorFromNoise(Point3D localIntersection) {
+        double heightRatio = (localIntersection.getX() + size) / (2 * size);
+        double widthRatio = (localIntersection.getY() + size) / (2 * size);
+
+        double tmp = noise.getValue(widthRatio, heightRatio);
+
+        return colors.get(0).reduceOf(tmp);
     }
 
     /* * * * * * * * * * * * * * * * * * * * *

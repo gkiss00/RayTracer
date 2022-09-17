@@ -3,13 +3,11 @@ package rayTracer.objects.baseObjects;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.PatternTypeEnum;
-import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
+import rayTracer.noiser.Noise;
 import rayTracer.objects.Obj;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
-import rayTracer.utils.Intersection;
-import rayTracer.utils.Transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +19,7 @@ public abstract class BaseObject extends Obj {
     public int lineValue = 10;
     public int columnValue = 10;
     protected double reflectionRatio = 0;
+    public Noise noise;
 
     public BaseObject() {
         super();

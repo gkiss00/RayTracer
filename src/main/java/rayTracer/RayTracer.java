@@ -81,7 +81,7 @@ public class RayTracer {
     public static void main(String[] args) {
         rayTracer.config.Config config = new rayTracer.config.Config();
 
-        cam = SceneMaker.getSimpleBlackSphereOnCube(objects, lights, blackObjects);
+        cam = SceneMaker.getHoledCube(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;

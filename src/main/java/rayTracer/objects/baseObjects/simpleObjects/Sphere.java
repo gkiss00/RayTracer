@@ -1,6 +1,7 @@
 package rayTracer.objects.baseObjects.simpleObjects;
 
 import rayTracer.enums.MatrixTransformEnum;
+import rayTracer.enums.NoiseDimensionEnum;
 import rayTracer.enums.PatternTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
@@ -10,13 +11,16 @@ import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
+import rayTracer.utils.IntersectionManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Sphere extends BaseObject {
+    public boolean x = true;
     private final double radius;
     private BufferedImage bufferedImage;
 
@@ -87,8 +91,6 @@ public class Sphere extends BaseObject {
     @Override
     protected Color getColor(Point3D localIntersection) {
         switch (pattern) {
-            case UNIFORM:
-                return colors.get(0);
             case VERTICAL_LINED:
                 return getColorFromVerticalLined(localIntersection);
             case HORIZONTAL_LINED:
@@ -99,8 +101,11 @@ public class Sphere extends BaseObject {
                 return getColorFromGradient(localIntersection);
             case TEXTURE:
                 return getColorFromTexture(localIntersection);
+            case NOISE:
+                return getColorFromNoise(localIntersection);
+            default:
+                return colors.get(0);
         }
-        return null;
     }
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
@@ -170,6 +175,38 @@ public class Sphere extends BaseObject {
         return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
+    private Color getColorFrom2DNoise(Point3D localIntersection) {
+        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+        if(localIntersection.getX() < 0)
+            angle = 360 - angle;
+
+        double zValue = localIntersection.getZ() + radius;
+        double diameter = 2 * radius;
+        double zRatio = zValue / diameter;
+
+        double tmp = noise.getValue(angle / 360, zRatio);
+
+        return colors.get(0).reduceOf(tmp);
+    }
+
+    private Color getColorFrom3DNoise(Point3D localIntersection) {
+        double x, y, z;
+        x = (localIntersection.getY() + radius) / (2 * radius);
+        y = (localIntersection.getZ() + radius) / (2 * radius);
+        z = (localIntersection.getX() + radius) / (2 * radius);
+        double tmp = noise.getValue(x, y, z);
+        return colors.get(0).reduceOf(Math.abs(tmp));
+    }
+
+    private Color getColorFromNoise(Point3D localIntersection) {
+        // 2D noise
+        if(noise.dimension == NoiseDimensionEnum.DIMENSION_2D)
+            return getColorFrom2DNoise(localIntersection);
+        // 3D noise
+        return getColorFrom3DNoise(localIntersection);
+    }
+
     /* * * * * * * * * * * * * * * * * * * * *
 
      *             INTERSECTIONS             *
@@ -192,6 +229,7 @@ public class Sphere extends BaseObject {
                 radius * radius;
 
         List<Double> solutions = Solver.solve(a, b, c);
+        List<Intersection> tmp = new ArrayList<>();
         for (int i = 0; i < solutions.size(); ++i) {
             if (solutions.get(i) > EPSILON) {
                 Point3D localIntersection = new Point3D(
@@ -203,9 +241,13 @@ public class Sphere extends BaseObject {
                     Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                     Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), localIntersection.getZ());
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                    tmp.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }
+        List<Intersection> blackIntersections = new ArrayList<>();
+        IntersectionManager.getIntersections(ray, blackObjects, blackIntersections);
+        IntersectionManager.preProcessIntersections(tmp, blackIntersections);
+        intersections.addAll(tmp);
     }
 }

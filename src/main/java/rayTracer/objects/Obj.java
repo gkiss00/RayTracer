@@ -4,9 +4,11 @@ import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.ObjectTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.objects.baseObjects.BaseObject;
+import rayTracer.objects.blackObjects.BlackObject;
 import rayTracer.utils.Intersection;
 import rayTracer.utils.Transform;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Obj {
@@ -17,6 +19,7 @@ public abstract class Obj {
     protected CapacityTypeEnum capacity = CapacityTypeEnum.EMPTY;
     protected ObjectTypeEnum type = ObjectTypeEnum.BASE;
     public double density = 1;
+    protected List<Obj> blackObjects = new ArrayList<>();
 
     public Obj() {
         this.id = ++_id;
@@ -40,6 +43,10 @@ public abstract class Obj {
 
     public double getDensity() {
         return this.density;
+    }
+
+    public void addBlackObject(BlackObject obj) {
+        blackObjects.add(obj);
     }
 
     public void updateMatrices(

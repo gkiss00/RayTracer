@@ -1,11 +1,12 @@
 package rayTracer.utils;
 
+import rayTracer.enums.*;
+import rayTracer.noiser.GradientNoise;
+import rayTracer.noiser.GradientNoise3D;
+import rayTracer.noiser.WorleyNoise;
+import rayTracer.noiser.WorleyNoise3D;
 import rayTracer.objects.Obj;
 import rayTracer.objects.blackObjects.*;
-import rayTracer.enums.CapacityTypeEnum;
-import rayTracer.enums.CutTypeEnum;
-import rayTracer.enums.PatternTypeEnum;
-import rayTracer.enums.PolygonTypeEnum;
 import rayTracer.factories.PolygonFactory;
 import rayTracer.lights.Light;
 import rayTracer.math.Point3D;
@@ -573,6 +574,145 @@ public class SceneMaker {
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
+    public static Camera getSimpleSquareNoise(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+
+        GradientNoise noise = new GradientNoise(2);
+        noise.amplitude = 4;
+        //noise.noise = new GradientNoiser(10);
+
+        Square square = new Square(50, new Color());
+        square.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+        square.setNormal();
+        square.noise = new WorleyNoise(10, 1);
+        objects.add(square);
+
+        return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleSphereNoise(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+
+        WorleyNoise worleyNoise1 =  new WorleyNoise(10, 1);
+
+        GradientNoise noise1 = new GradientNoise(16);
+        noise1.amplitude = 4;
+        noise1.range = NoiseRangeEnum.INFINITY;
+
+        GradientNoise noise2 = new GradientNoise(16);
+        noise2.amplitude = 1;
+
+        GradientNoise noise3 = new GradientNoise(256);
+        noise3.amplitude = 0.2;
+        //noise1.noise = noise2;
+        noise2.noise = noise3;
+        worleyNoise1.noise = noise1;
+
+        GradientNoise gradientNoise = new GradientNoise(5);
+        noise1.amplitude = 4;
+
+        GradientNoise3D gradientNoise3D1 = new GradientNoise3D(8);
+        gradientNoise3D1.amplitude = 1;
+
+        GradientNoise3D gradientNoise3D2 = new GradientNoise3D(16);
+        gradientNoise3D2.amplitude = 1;
+
+        GradientNoise3D gradientNoise3D3 = new GradientNoise3D(32);
+        gradientNoise3D3.amplitude = 1;
+
+        GradientNoise3D gradientNoise3D4 = new GradientNoise3D(64);
+        gradientNoise3D4.amplitude = 10;
+
+        gradientNoise3D1.noise = gradientNoise3D2;
+        gradientNoise3D2.noise = gradientNoise3D3;
+        gradientNoise3D3.noise = gradientNoise3D4;
+
+        Sphere sphere = new Sphere(25, PatternTypeEnum.GRADIENT, new Color(), new Color());
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        sphere.noise = gradientNoise3D1;
+        objects.add(sphere);
+
+        return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimplePlaneNoise(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+        GradientNoise gradientNoiser = new GradientNoise(10);
+        gradientNoiser.amplitude = 4;
+        gradientNoiser.range = NoiseRangeEnum.INFINITY;
+
+        Plane plane = new Plane();
+        plane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        plane.setNormal();
+        plane.noise = gradientNoiser;
+        objects.add(plane);
+
+        return new Camera(new Point3D(-4, 0, 5), new Vector3D(1, 0, -1), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getNoiseScene(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+
+        WorleyNoise worleyNoise1 =  new WorleyNoise(10, 1);
+        WorleyNoise3D worleyNoise2 =  new WorleyNoise3D(10, 2);
+        WorleyNoise3D worleyNoise3 =  new WorleyNoise3D(10, 3);
+
+        WorleyNoise3D worleyNoise3D = new WorleyNoise3D(10, 2);
+
+        GradientNoise gradientNoise1 = new GradientNoise(5);
+        gradientNoise1.amplitude = 4;
+
+        GradientNoise3D gradientNoise3D1 = new GradientNoise3D(5);
+        gradientNoise3D1.amplitude = 4;
+
+        GradientNoise3D gradientNoise3D2 = new GradientNoise3D(16);
+        gradientNoise3D2.amplitude = 1;
+
+        GradientNoise3D gradientNoise3D3 = new GradientNoise3D(32);
+        gradientNoise3D3.amplitude = 1;
+
+        GradientNoise3D gradientNoise3D4 = new GradientNoise3D(64);
+        gradientNoise3D4.amplitude = 10;
+
+        gradientNoise3D1.noise = gradientNoise3D2;
+        //gradientNoise3D2.noise = gradientNoise3D3;
+        gradientNoise3D3.noise = gradientNoise3D4;
+
+        Sphere sphere = new Sphere(25, new Color());
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        sphere.noise = gradientNoise3D1;
+        objects.add(sphere);
+
+        sphere = new Sphere(25, new Color());
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, -60, 0);
+        sphere.noise = worleyNoise1;
+        objects.add(sphere);
+
+        sphere = new Sphere(25, new Color());
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 60, 0);
+        sphere.noise = gradientNoise1;
+        objects.add(sphere);
+
+        sphere = new Sphere(25, new Color());
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 60);
+        sphere.noise = worleyNoise3D;
+        objects.add(sphere);
+
+        sphere = new Sphere(25, new Color());
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, -60, 60);
+        sphere.noise = worleyNoise2;
+        objects.add(sphere);
+
+        sphere = new Sphere(25, new Color());
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 60, 60);
+        sphere.noise = worleyNoise3;
+        objects.add(sphere);
+
+        Plane plane = new Plane();
+        plane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -25);
+        plane.setNormal();
+        plane.setReflectionRatio(0.75);
+        objects.add(plane);
+
+        return new Camera(new Point3D(-200, 0, 100), new Vector3D(1, 0, -0.5), new Vector3D(0, 0, 1), 90);
+    }
+
     /* * * * * * * * * * * * * * * * * * * * *
 
      *             BLACK OBJECTS             *
@@ -587,11 +727,60 @@ public class SceneMaker {
 
         BlackSphere blackSphere = new BlackSphere(30);
         blackSphere.updateMatrices(0, 0, 0, 1, 1, 1, -30, 0, 30);
-        blackObjects.add(blackSphere);
+        sphere.addBlackObject(blackSphere);
 
         lights.add(new Light(new Point3D(-100, 100, 100)));
 
         return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getSimpleBlackTorusOnTorus(List<Obj> objects, List<Light> lights, List<Obj> blackObjects) {
+        Torus torus = new Torus(30, 5);
+        torus.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        torus.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(torus);
+
+        BlackTorus blackTorus = new BlackTorus(37, 5);
+        blackTorus.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        blackObjects.add(blackTorus);
+
+        blackTorus = new BlackTorus(23, 5);
+        blackTorus.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        blackObjects.add(blackTorus);
+
+        blackTorus = new BlackTorus(30, 5);
+        blackTorus.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 7);
+        blackObjects.add(blackTorus);
+
+        blackTorus = new BlackTorus(30, 5);
+        blackTorus.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -7);
+        blackObjects.add(blackTorus);
+
+        lights.add(new Light(new Point3D(-100, 100, 100)));
+
+        return new Camera(new Point3D(-100, 0, 50), new Vector3D(1, 0, -0.5), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getHoledCube(List<Obj> objects, List<Light> lights, List<Obj> blackObjects) {
+        Cube cube = new Cube(50);
+        cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        cube.setNormals();
+        cube.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(cube);
+
+        BlackCylinder blackCylinder = new BlackCylinder(12.5);
+        blackCylinder.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        blackObjects.add(blackCylinder);
+
+        blackCylinder = new BlackCylinder(12.5);
+        blackCylinder.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+        blackObjects.add(blackCylinder);
+
+        blackCylinder = new BlackCylinder(12.5);
+        blackCylinder.updateMatrices(90, 0, 0, 1, 1, 1, 0, 0, 0);
+        blackObjects.add(blackCylinder);
+
+        return new Camera(new Point3D(-100, 50, 50), new Vector3D(1, -0.5, -0.5), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getSimpleBlackSphereOnCube(List<Obj> objects, List<Light> lights, List<Obj> blackObjects) {

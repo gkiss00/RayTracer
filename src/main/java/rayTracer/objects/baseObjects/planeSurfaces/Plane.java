@@ -168,6 +168,12 @@ public class Plane extends BaseObject {
         return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
     }
 
+    private Color getColorFromNoise(Point3D localIntersection) {
+        double tmp = noise.getValue(localIntersection.getX(), localIntersection.getY());
+
+        return colors.get(0).reduceOf(tmp);
+    }
+
     /* * * * * * * * * * * * * * * * * * * * *
 
      *             INTERSECTIONS             *
