@@ -182,8 +182,8 @@ public class SceneMaker {
         return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getSimpleCubeFractal(List<Obj> objects, List<Light> lights) {
-        CubeFractal cubeFractal = new CubeFractal(1, 90);
+    public static Camera getSimpleCubeFractal(List<Obj> objects, List<Light> lights, List<Obj> blackObjects) {
+        CubeFractal cubeFractal = new CubeFractal(4, 90);
         cubeFractal.updateMatrices(0, -40, 45, 1, 1, 1, 0, 0, 0);
         cubeFractal.setNormals();
         objects.add(cubeFractal);
@@ -465,30 +465,18 @@ public class SceneMaker {
         return new Camera(new Point3D(-30, 0, 10), new Vector3D(1, 0, -0.3), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getSimpleTetrahedronFractal(List<Obj> objects, List<Light> lights) {
-        Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.TETRAHEDRON_FRACTAL, 60, 4);
-        if(star != null) {
-            star.updateMatrices(0, 0, 180, 1, 1, 1, 0, 0, 0);
-            star.clearColors();
-            star.addColor(new Color("#870a24"));
-            objects.add(star);
+    public static Camera getSimpleTetrahedronFractal(List<Obj> objects, List<Light> lights, List<Obj> blackObjects) {
+        Polygon fractal = PolygonFactory.createPolygon(PolygonTypeEnum.TETRAHEDRON_FRACTAL, 60, 3);
+        if(fractal != null) {
+            fractal.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+            fractal.clearColors();
+            fractal.addColor(new Color(1, 1, 1));
+            objects.add(fractal);
         }
 
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -80);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.15);
-        objects.add(plane1);
+        lights.add(new Light(new Point3D(100, 100, 100)));
 
-        Plane plane2 = new Plane(new Color(1, 1, 1));
-        plane2.updateMatrices(0, -90, 0, 1, 1, 1, 150, 0, 0);
-        plane2.setNormal();
-        objects.add(plane2);
-
-        Light light = new Light(new Point3D(-100, 100, 0));
-        lights.add(light);
-
-        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+        return new Camera(new Point3D(-150, 0, 10), new Vector3D(1, 0, -(10.0 / 150.0)), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera test(List<Obj> objects, List<Light> lights) {

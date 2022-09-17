@@ -137,31 +137,49 @@ public class PolygonFactory {
     /**
      *
      * @param values
-     * first value: radius
+     * first value: height
      * second value: deepness
      * @return tetrahedron
      */
     private static Polygon createTetrahedronFractal(double... values) {
-        double r = values[0];
+        double height = values[0];
+        double deepness = values[1];
+        double finalHeight = height / (deepness * 2);
+        double finalR = (3.0 / 4.0) * finalHeight;
+        double finalRPrime = Math.sqrt(8.0 / 9.0) * finalR;
 
-        List<Point3D> points = new ArrayList<>();
-        points.add(new Point3D(0, 0, 0));
+        Point3D oo = new Point3D(0, 0, 0);
 
-        r = addPoint(0, (int)values[1], r, points);
-        double h = r / 3.0;
-        double rPrime = r * Math.sqrt(8.0 / 9.0);
-        double H = r + h;
+        List<Point3D> points = new ArrayList<>() {{ add(oo); }};
+
+        List<Point3D> tmp = new ArrayList<>();
+        for(int i = 1; i <= deepness; ++i) {
+            double H = height / (i * 2);
+            double r = (3.0 / 4.0) * H;
+            double rPrime = Math.sqrt(8.0 / 9.0) * r;
+            for(Point3D p: points) {
+                tmp.add(new Point3D(p.getX(), p.getY(), p.getZ() + H / 2));
+                tmp.add(new Point3D(p.getX() + rPrime * Math.cos(Math.toRadians(0.0)), p.getY() - rPrime * Math.sin(Math.toRadians(0.0)), p.getZ() - H / 2));
+                tmp.add(new Point3D(p.getX() + rPrime * Math.cos(Math.toRadians(120.0)), p.getY() - rPrime * Math.sin(Math.toRadians(120.0)), p.getZ() - H / 2));
+                tmp.add(new Point3D(p.getX() + rPrime * Math.cos(Math.toRadians(240.0)), p.getY() - rPrime * Math.sin(Math.toRadians(240.0)), p.getZ() - H / 2));
+            }
+            points.clear();
+            points.addAll(tmp);
+            tmp.clear();
+        }
 
         List<Triangle> triangles = new ArrayList<>();
-        for (Point3D p : points) {
-            Point3D top = new Point3D(p.getX(), p.getY(), p.getZ() + H / 2);
-            Point3D p1 = new Point3D(p.getX() + rPrime * Math.cos(Math.toRadians(0.0)), p.getY() + rPrime * Math.sin(Math.toRadians(0.0)), p.getZ() - H / 2);
-            Point3D p2 = new Point3D(p.getX() + rPrime * Math.cos(Math.toRadians(120.0)), p.getY() + rPrime * Math.sin(Math.toRadians(120.0)), p.getZ() - H / 2);
-            Point3D p3 = new Point3D(p.getX() + rPrime * Math.cos(Math.toRadians(240.0)), p.getY() + rPrime * Math.sin(Math.toRadians(240.0)), p.getZ() - H / 2);
-            triangles.add(new Triangle(p1, p2, p3));
-            triangles.add(new Triangle(p1, p2, top));
-            triangles.add(new Triangle(p1, p3, top));
-            triangles.add(new Triangle(p2, p3, top));
+        for(Point3D p: points) {
+            List<Point3D> bottom = new ArrayList<>(3);
+            Point3D top = new Point3D(p.getX(), p.getY(), p.getZ() + finalHeight / 2);
+            bottom.add(new Point3D(p.getX() + finalRPrime * Math.cos(Math.toRadians(0.0)), p.getY() - finalRPrime * Math.sin(Math.toRadians(0.0)), p.getZ() - finalHeight / 2));
+            bottom.add(new Point3D(p.getX() + finalRPrime * Math.cos(Math.toRadians(120.0)), p.getY() - finalRPrime * Math.sin(Math.toRadians(120.0)), p.getZ() - finalHeight / 2));
+            bottom.add(new Point3D(p.getX() + finalRPrime * Math.cos(Math.toRadians(240.0)), p.getY() - finalRPrime * Math.sin(Math.toRadians(240.0)), p.getZ() - finalHeight / 2));
+
+            for(int i = 0; i < 3; ++i) {
+                triangles.add(new Triangle(bottom.get(i), bottom.get((i + 1) % 3), top));
+            }
+            triangles.add(new Triangle(bottom.get(0), bottom.get(1), bottom.get(2)));
         }
 
         return new Polygon(triangles);
