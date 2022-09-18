@@ -1,6 +1,7 @@
 package rayTracer.objects.baseObjects.simpleObjects;
 
 import rayTracer.enums.MatrixTransformEnum;
+import rayTracer.enums.NoiseDimensionEnum;
 import rayTracer.enums.PatternTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
@@ -101,6 +102,16 @@ public class Cube extends BaseObject {
      * * * * * * * * * * * * * * * * * * * * */
 
     @Override
+    public Color getColorAt(Point3D realIntersection) {
+        try {
+            Point3D localIntersection = transform.apply(realIntersection, MatrixTransformEnum.TO_LOCAL);
+            return getColorFromNoise(localIntersection);
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
+    @Override
     protected Color getColor(Point3D localIntersection) {
         switch (pattern) {
             case GRADIENT:
@@ -113,6 +124,8 @@ public class Cube extends BaseObject {
                 return getColorFromGrid(localIntersection);
             case TEXTURE:
                 return getColorFromTexture(localIntersection);
+            case NOISE:
+                return getColorFromNoise(localIntersection);
             default:
                 return colors.get(0);
         }
@@ -219,6 +232,18 @@ public class Cube extends BaseObject {
         int rgb = bufferedImage.getRGB(xImage, yImage);
         java.awt.Color color = new java.awt.Color(rgb, true);
         return new Color((double)color.getRed() / 255, (double)color.getGreen() / 255, (double)color.getBlue() / 255, (double)color.getAlpha() / 255);
+    }
+
+    private Color getColorFromNoise(Point3D localIntersection) {
+        double x, y, z;
+        x = (localIntersection.getX() + size) / (2 * size);
+        y = (localIntersection.getY() + size) / (2 * size);
+        z = (localIntersection.getZ() + size) / (2 * size);
+        x = Math.min(x, 0.9999);
+        y = Math.min(y, 0.9999);
+        z = Math.min(z, 0.9999);
+        double tmp = noise.getValue(x, y, z);
+        return colors.get(0).reduceOf(Math.abs(tmp));
     }
 
     /* * * * * * * * * * * * * * * * * * * * *

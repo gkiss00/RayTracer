@@ -1,7 +1,6 @@
 package rayTracer;
 
 import rayTracer.objects.Obj;
-import rayTracer.objects.blackObjects.BlackObject;
 import rayTracer.lights.Light;
 import rayTracer.objects.baseObjects.*;
 import rayTracer.utils.*;
@@ -13,9 +12,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class RayTracer {
-
+    private static int index = 0;
     private static Camera cam;
     private final static List<Obj> objects = new ArrayList<>();
     private final static List<Obj> blackObjects = new ArrayList<>();
@@ -41,9 +41,24 @@ public class RayTracer {
         File image = new File("Image.png");
         try {
             ImageIO.write(buffer, "PNG", image);
-            /*Random rand = new Random();
+            Random rand = new Random();
             File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
-            ImageIO.write(buffer, "PNG", savedImage);*/
+            ImageIO.write(buffer, "PNG", savedImage);
+//            ImageIO.write(buffer, "PNG", image);
+//            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/torus/" + "fractal" + index + ".png");
+//            ImageIO.write(buffer, "PNG", savedImage);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void saveImageForVideo(BufferedImage buffer) {
+        File image = new File("Image.png");
+        try {
+            ImageIO.write(buffer, "PNG", image);
+            Random rand = new Random();
+            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
+            ImageIO.write(buffer, "PNG", savedImage);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -78,10 +93,41 @@ public class RayTracer {
         saveImage(buffer);
     }
 
-    public static void main(String[] args) {
-        rayTracer.config.Config config = new rayTracer.config.Config();
+    private static void video() {
+        long totalStart = System.nanoTime();
+        int nbImages = 1440;
+        double angle = 360.0;
+        for(int i = 0; i < nbImages; ++i) {
+            double alpha = (angle / nbImages) * i;
+            rayTracer.config.Config config = new rayTracer.config.Config();
+            cam = SceneMaker.getSimpleTorus(objects, lights, blackObjects, alpha);
+            cam.update(config.height, config.width);
 
-        cam = SceneMaker.getSimpleTetrahedronFractal(objects, lights, blackObjects);
+            config.objects = objects;
+            config.backObjects = blackObjects;
+            config.lights = lights;
+            config.cam = cam;
+            long start = System.nanoTime();
+            runViaThread(config);
+            long end = System.nanoTime();
+            System.out.println(index + " :: Time taken: " + ((double)(end - start) / 1000000000D));
+            objects.clear();
+            blackObjects.clear();
+            lights.clear();
+            threads.clear();
+            ++index;
+        }
+        long end = System.nanoTime();
+        System.out.println("Total time taken: " + ((double)(end - totalStart) / 1000000000D));
+        String imgPath="/Users/kissgautier/Desktop/RayTracerSavedPictures/torus/";
+        String vidPath="/Users/kissgautier/Desktop/RayTracerSavedPictures/movie/test.mp4";
+        VideoMaker.createMp4File(imgPath, vidPath);
+        System.out.println("Video has been created at "+vidPath);
+    }
+
+    public static void image() {
+        rayTracer.config.Config config = new rayTracer.config.Config();
+        cam = SceneMaker.getSimpleBlackSphereOnCube(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;
@@ -92,5 +138,11 @@ public class RayTracer {
         runViaThread(config);
         long end = System.nanoTime();
         System.out.println("Time taken: " + ((double)(end - start) / 1000000000D));
+    }
+
+
+    public static void main(String[] args) {
+        //video();
+        image();
     }
 }

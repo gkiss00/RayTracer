@@ -2,6 +2,7 @@ package rayTracer.objects.baseObjects;
 
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
+import rayTracer.enums.NoiseDimensionEnum;
 import rayTracer.enums.PatternTypeEnum;
 import rayTracer.math.Point3D;
 import rayTracer.noiser.Noise;
@@ -82,6 +83,14 @@ public abstract class BaseObject extends Obj {
 
     public void setPattern(PatternTypeEnum pattern) {
         this.pattern = pattern;
+    }
+
+    public NoiseDimensionEnum getNoiseDimension() {
+        return noise.getDimension();
+    }
+
+    public Color getColorAt(Point3D realIntersection) {
+        return null;
     }
     abstract protected Color getColor(Point3D localIntersection);
 }

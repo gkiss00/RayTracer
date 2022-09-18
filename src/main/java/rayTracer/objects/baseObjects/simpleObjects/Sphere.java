@@ -201,7 +201,7 @@ public class Sphere extends BaseObject {
 
     private Color getColorFromNoise(Point3D localIntersection) {
         // 2D noise
-        if(noise.dimension == NoiseDimensionEnum.DIMENSION_2D)
+        if(noise.getDimension() == NoiseDimensionEnum.DIMENSION_2D)
             return getColorFrom2DNoise(localIntersection);
         // 3D noise
         return getColorFrom3DNoise(localIntersection);

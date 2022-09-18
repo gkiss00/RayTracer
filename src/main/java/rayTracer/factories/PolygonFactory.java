@@ -182,7 +182,7 @@ public class PolygonFactory {
             triangles.add(new Triangle(bottom.get(0), bottom.get(1), bottom.get(2)));
         }
 
-        return new Polygon(triangles);
+        return new Polygon(PolygonTypeEnum.TETRAHEDRON_FRACTAL, values, triangles);
     }
 
     private static double addPoint(int currentLevel, int maxLevel, double r, List<Point3D> currentPoints) {

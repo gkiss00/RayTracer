@@ -5,17 +5,32 @@ import rayTracer.enums.NoiseRangeEnum;
 import rayTracer.math.Vector3D;
 
 public abstract class Noise {
-    public Noise noise;
+    protected Noise noise;
     protected int scale;
-    public double amplitude;
-    public NoiseDimensionEnum dimension;
+    protected double amplitude;
+    private NoiseDimensionEnum dimension;
+    protected NoiseRangeEnum range = NoiseRangeEnum.BOUNDARY;
 
     protected Noise(int scale, NoiseDimensionEnum dimension) {
         this.scale = scale;
         this.dimension = dimension;
     }
 
-    public NoiseRangeEnum range = NoiseRangeEnum.BOUNDARY;
+    public NoiseDimensionEnum getDimension() {
+        return dimension;
+    }
+
+    public void setNoise(Noise noise) {
+        this.noise = noise;
+    }
+
+    public void setRange(NoiseRangeEnum range) {
+        this.range = range;
+    }
+
+    public void setAmplitude(double amplitude) {
+        this.amplitude = amplitude;
+    }
 
     public long xorShift64(long a) {
         a ^= (a << 21);

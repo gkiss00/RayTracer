@@ -1,9 +1,11 @@
 package rayTracer.utils;
 
 import rayTracer.enums.CapacityTypeEnum;
+import rayTracer.enums.NoiseDimensionEnum;
 import rayTracer.enums.ObjectTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.objects.Obj;
+import rayTracer.objects.baseObjects.BaseObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,6 +118,11 @@ public class IntersectionManager {
                 } else {
                     inBlack = true;
                     inter.setColor(base.get(baseI).getColor());//TODO if object.noise 3D get new color at this point
+                    BaseObject baseObject = (BaseObject)base.get(baseI).getObject();
+                    if(baseObject.getNoiseDimension() == NoiseDimensionEnum.DIMENSION_3D) {
+                        Color c = baseObject.getColorAt(inter.getPointOfIntersection());
+                        inter.setColor(c);
+                    }
                     inter.setObject(base.get(baseI).getObject());
                     res.add(inter);
                 }
@@ -131,6 +138,11 @@ public class IntersectionManager {
                 } else {
                     inBlack = false;
                     inter.setColor(base.get(baseI).getColor()); //TODO if object.noise 3D get new color at this point
+                    BaseObject baseObject = (BaseObject)base.get(baseI).getObject();
+                    if(baseObject.getNoiseDimension() == NoiseDimensionEnum.DIMENSION_3D) {
+                        Color c = baseObject.getColorAt(inter.getPointOfIntersection());
+                        inter.setColor(c);
+                    }
                     inter.setObject(base.get(baseI).getObject());
                     res.add(inter);
                 }
