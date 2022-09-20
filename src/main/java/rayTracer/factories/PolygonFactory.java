@@ -63,7 +63,7 @@ public class PolygonFactory {
             triangles.add(new Triangle(inf_points.get(i), sup_points.get((int)((i + 1) % branch)), bottom));
         }
 
-        return new Polygon(triangles);
+        return new Polygon(PolygonTypeEnum.STAR, values, triangles);
     }
 
     /**

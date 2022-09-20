@@ -193,11 +193,14 @@ public class Calculator implements Runnable{
         IntersectionManager.getIntersections(ray, config.backObjects, blackIntersections);
         IntersectionManager.preProcessIntersections(intersections, blackIntersections);
 
+        double DIST = 1000000000;
         // COMPUTE COLOR
         Color res = new Color(0, 0, 0, 0);
         int size = intersections.size();
         for(int i = 0; i < size; ++i) {
             Intersection intersection = intersections.get(i);
+            if(i == 0)
+                DIST = intersection.getDistanceFromCamera();
             Color tmp = intersection.getColor();
             // REFLECTION
             if(intersection.getReflectionRatio() != 0 && reflectionDeepness < config.REFLECTION_MAX) {
@@ -250,6 +253,13 @@ public class Calculator implements Runnable{
             if(res.getAlpha() > 1.0 - config.EPSILON) {
                 break;
             }
+        }
+        if(config.MIST) {
+            double ratio = Math.min(DIST / config.MAX_MIST_DIST, 0.999);
+            List<Color> colors = new ArrayList<>();
+            colors.add(res);
+            colors.add(new Color(1, 1, 1));
+            res = Color.nextColor(colors, ratio);
         }
         return res;
     }

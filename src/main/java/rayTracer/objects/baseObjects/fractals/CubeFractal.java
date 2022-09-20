@@ -18,6 +18,9 @@ import java.util.List;
 
 public class CubeFractal extends Cube {
     private int deepness;
+    private static final int X = 1;
+    private static final int Y = 2;
+    private static final int Z = 3;
     private final List<BlackSpace> zCylinders = new ArrayList<>();
     private final List<BlackSpace> yCylinders = new ArrayList<>();
     private final List<BlackSpace> xCylinders = new ArrayList<>();
@@ -195,7 +198,7 @@ public class CubeFractal extends Cube {
 
                 if (y >= -size && y <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    addIntersection(ray, tmp, localIntersection, realUpNormal, realDownNormal);
+                    addIntersection(ray, tmp, localIntersection, realUpNormal, realDownNormal, Z);
                 }
             }
             // DOWN
@@ -207,7 +210,7 @@ public class CubeFractal extends Cube {
 
                 if (y >= -size && y <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    addIntersection(ray, tmp, localIntersection, realDownNormal, realUpNormal);
+                    addIntersection(ray, tmp, localIntersection, realDownNormal, realUpNormal, Z);
                 }
             }
         }
@@ -221,7 +224,7 @@ public class CubeFractal extends Cube {
 
                 if (z >= -size && z <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    addIntersection(ray, tmp, localIntersection, realLeftNormal , realRightNormal);
+                    addIntersection(ray, tmp, localIntersection, realLeftNormal , realRightNormal, Y);
                 }
             }
             // RIGHT
@@ -233,7 +236,7 @@ public class CubeFractal extends Cube {
 
                 if (z >= -size && z <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    addIntersection(ray, tmp, localIntersection, realRightNormal , realLeftNormal);
+                    addIntersection(ray, tmp, localIntersection, realRightNormal , realLeftNormal, Y);
                 }
             }
         }
@@ -247,7 +250,7 @@ public class CubeFractal extends Cube {
 
                 if (z >= -size && z <= size && y >= -size && y <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    addIntersection(ray, tmp, localIntersection, realBackNormal , realFrontNormal);
+                    addIntersection(ray, tmp, localIntersection, realBackNormal , realFrontNormal, X);
                 }
             }
             // FRONT
@@ -259,7 +262,7 @@ public class CubeFractal extends Cube {
 
                 if (z >= -size && z <= size && y >= -size && y <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    addIntersection(ray, tmp, localIntersection, realFrontNormal, realBackNormal);
+                    addIntersection(ray, tmp, localIntersection, realFrontNormal, realBackNormal, X);
                 }
             }
         }
@@ -269,8 +272,26 @@ public class CubeFractal extends Cube {
         intersections.addAll(tmp);
     }
 
-    private void addIntersection(Line3D ray, List<Intersection> tmp, Point3D localIntersection, Vector3D n1, Vector3D n2) throws Exception {
-        if(!Cutter.cut(localIntersection, cuts) && !zBlackCylindersContain(localIntersection)) {
+    private void addIntersection(Line3D ray, List<Intersection> tmp, Point3D localIntersection, Vector3D n1, Vector3D n2, int type) throws Exception {
+        if(type == X && !Cutter.cut(localIntersection, cuts) && !xBlackCylindersContain(localIntersection)) {
+            Color color = getColor(localIntersection);
+            Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
+            double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
+            Vector3D realNormal = n1;
+            if (Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
+                realNormal = n2;
+            tmp.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
+        }
+        if(type == Y && !Cutter.cut(localIntersection, cuts) && !yBlackCylindersContain(localIntersection)) {
+            Color color = getColor(localIntersection);
+            Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
+            double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
+            Vector3D realNormal = n1;
+            if (Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
+                realNormal = n2;
+            tmp.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
+        }
+        if(type == Z && !Cutter.cut(localIntersection, cuts) && !zBlackCylindersContain(localIntersection)) {
             Color color = getColor(localIntersection);
             Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
             double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());

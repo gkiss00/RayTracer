@@ -1084,63 +1084,101 @@ public class SceneMaker {
         return new Camera(new Point3D(-80, 80, 80), new Vector3D(1, -1, -1), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getAll(List<Obj> objects, List<Light> lights) {
-        // Spheres
-        Sphere sphere1 = new Sphere(40, PatternTypeEnum.GRID, new Color(0, 0, 0), new Color(1, 1, 0));
-        sphere1.updateMatrices(0, 45, 0, 1, 1, 1, 500, -150, 100);
-        Sphere sphere2 = new Sphere(40, PatternTypeEnum.GRADIENT, new Color(0, 1, 0), new Color(0, 0, 1), new Color(1, 0, 0));
-        sphere2.updateMatrices(0, 0, 0, 1, 1, 1, 500, 0, 100);
-        Sphere sphere3 = new Sphere(40, new Color(0, 0, 1));
-        sphere3.updateMatrices(0, 0, 0, 1, 1, 2, 500, 150, 100);
-        objects.add(sphere1);
-        objects.add(sphere2);
-        objects.add(sphere3);
+    public static Camera getAll(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+        Random rand = new Random();
 
-        // Plane
-        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
-        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 200, 0, -20);
-        plane1.setNormal();
-        plane1.setReflectionRatio(0.9);
-        objects.add(plane1);
+        GradientNoise gradientNoise1 = new GradientNoise(4);
+        gradientNoise1.setAmplitude(4);
 
-        // Cylinder
-        Cylinder cylinder1 = new Cylinder(30, PatternTypeEnum.UNIFORM, new Color(1, 0, 0), new Color(0, 0, 0));
-        cylinder1.updateMatrices(45, 0, 0, 1, 1, 1, 650, -75, 0);
-        cylinder1.setReflectionRatio(0.8);
-        Cylinder cylinder2 = new Cylinder(30, PatternTypeEnum.HORIZONTAL_LINED, new Color(0.75, 1, 0.2), new Color(0.28, .34, 0.58));
-        cylinder2.updateMatrices(90, 0, 0, 1, 1, 1, 650, 75, 50);
-        objects.add(cylinder1);
-        objects.add(cylinder2);
+        GradientNoise gradientNoise2 = new GradientNoise(8);
+        gradientNoise1.setAmplitude(2);
+
+        gradientNoise1.setNoise(gradientNoise2);
+        // SIMPLE OBJECTS
+
+        // Sphere
+        Sphere sphere = new Sphere(40, PatternTypeEnum.GRID, new Color(), new Color());
+        sphere.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, 0, 0, 0);
+        objects.add(sphere);
+
+        sphere = new Sphere(60);
+        sphere.updateMatrices(0, 0, 0, 1, 1, 0.75, 300, 200, 0);
+        sphere.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(sphere);
+
+        sphere = new Sphere(60);
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1.5, 300, 200, 200);
+        sphere.setCapacity(CapacityTypeEnum.FULL);
+        sphere.setTexture("./src/main/resources/textures/planets/earthNight.jpeg");
+        objects.add(sphere);
 
         // Cone
-        Cone cone1 = new Cone(30, PatternTypeEnum.HORIZONTAL_LINED, new Color(0.5, 0, 0.7, 0.5), new Color(0.7, 0.2, 0.6, 0.4));
-        cone1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
-        cone1.setReflectionRatio(0.5);
-        objects.add(cone1);
+        Cone cone = new Cone(30);
+        cone.updateMatrices(0, 0, 0, 1, 1, 1, 300, -200, 0);
+        cone.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(cone);
 
-        //Disk
-        Disk disk1 = new Disk(20, 60, PatternTypeEnum.GRID, new Color(0.1, 0.54, 0.36, 1), new Color(0.54, 0.25, 0.87, 1));
-        disk1.updateMatrices(0, 0, 0, 1, 1, 1, -50, 0, 0);
-        disk1.setNormal();
-        objects.add(disk1);
+        BlackCylinder blackCylinder = new BlackCylinder(100);
+        blackCylinder.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 200);
+        cone.addBlackObject(blackCylinder);
 
-        // Square
-        Square square1 = new Square(70, PatternTypeEnum.GRADIENT, new Color(0.5, 0.5, 0.5), new Color(0.2, 0.5, 0.1, 0));
-        square1.updateMatrices(90, 0, 0, 1, 1, 1, -120, 70, -20);
-        square1.setNormal();
-        square1.setReflectionRatio(0);
-        objects.add(square1);
+        // Cube
+        Cube cube = new Cube(50, new Color(0, 0, 1, 0.1));
+        cube.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, -200, -100, 0);
+        cube.setNormals();
+        cube.setCapacity(CapacityTypeEnum.FULL);
+        objects.add(cube);
+
+        // Cylinder
+        Cylinder cylinder = new Cylinder(40, PatternTypeEnum.HORIZONTAL_LINED, new Color(), new Color(), new Color());
+        cylinder.updateMatrices(0, 0, 0, 1, 1, 1, 300, 200, 0);
+        objects.add(cylinder);
 
         // Torus
-        Torus torus1 = new Torus(50, 10);
-        torus1.updateMatrices(90, 0, 0, 1, 1, 1, 0, -100, 30);
-        objects.add(torus1);
+        Torus torus = new Torus(70, 15, PatternTypeEnum.GRADIENT, new Color(), new Color(), new Color(), new Color(), new Color());
+        torus.updateMatrices(90, 0, 0, 1, 1, 1, -200, -150, 0);
+        objects.add(torus);
+
+        // PLANE SURFACES
+
+        // Disk
+        Disk disk = new Disk(50, 70);
+        disk.updateMatrices(-30, -20, 0, 1, 1, 1, 0, 0, 0);
+        disk.setNormal();
+        objects.add(disk);
+
+        // Plane
+        Plane plane = new Plane();
+        plane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -100);
+        plane.setNormal();
+        objects.add(plane);
+
+        // Square
+        Square square = new Square(120, PatternTypeEnum.NOISE, new Color(), new Color());
+        square.updateMatrices(0, 0, 0, 1, 1, 1, -163, 0, -99);
+        square.setNormal();
+        square.noise = gradientNoise1;
+        objects.add(square);
+
+        // FRACTALS
+
+        // Cube fractal
+        CubeFractal cubeFractal = new CubeFractal(3, 120);
+        cubeFractal.updateMatrices(0, 0, 30, 1, 1, 1, 300, 340, -39);
+        cubeFractal.setNormals();
+        objects.add(cubeFractal);
+
+        // COMPOSED OBJECTS
+
+        // Star
+        Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.STAR, 5, 40, 90, 30);
+        star.updateMatrices(0, -90, 0, 1, 1, 1, 300, -200, 200);
+        objects.add(star);
 
 
-        Light light1 = new Light(new Point3D(-300, 0, 100), new Color(1, 1, 1));
-        lights.add(light1);
+        lights.add(new Light(new Point3D(-450, 20, 100), new Color(1, 1, 1)));
 
-        return new Camera(new Point3D(-300, 0, 120), new Vector3D(1, 0, -0.25), new Vector3D(0, 0, 1), 90);
+        return new Camera(new Point3D(-600, 0, 150), new Vector3D(1, 0, -0.25), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getMoon(List<Obj> objects, List<Light> lights) {

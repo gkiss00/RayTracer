@@ -134,7 +134,7 @@ public class RayTracer {
 
     public static void image() {
         rayTracer.config.Config config = new rayTracer.config.Config();
-        cam = SceneMaker.getSimpleBlackSphereOnSphere(objects, lights, blackObjects);
+        cam = SceneMaker.getAll(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;

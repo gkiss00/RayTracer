@@ -161,7 +161,7 @@ public class Square extends BaseObject {
 
         double tmp = noise.getValue(widthRatio, heightRatio);
 
-        return colors.get(0).reduceOf(tmp);
+        return colors.get(0).reduceOf(Math.abs(tmp));
     }
 
     /* * * * * * * * * * * * * * * * * * * * *
