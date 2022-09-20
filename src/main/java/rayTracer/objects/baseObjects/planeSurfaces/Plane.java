@@ -9,11 +9,13 @@ import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
+import rayTracer.utils.IntersectionManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Plane extends BaseObject {
@@ -21,7 +23,8 @@ public class Plane extends BaseObject {
     private Raster normalMap = null;
     private double textureWidth = 100;
     private static final Vector3D localNormal = new Vector3D(0, 0, 1);
-    private Vector3D realNormal;
+    private Vector3D upNormal;
+    private Vector3D downNormal;
 
     /* * * * * * * * * * * * * * * * * * * * *
 
@@ -50,7 +53,8 @@ public class Plane extends BaseObject {
 
     public void setNormal() {
         try {
-            this.realNormal = transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
+            this.upNormal = transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
+            this.downNormal = Vector3D.inverse(upNormal);
         } catch (Exception e) {
 
         }
@@ -187,7 +191,9 @@ public class Plane extends BaseObject {
         if ((localRay.getVZ() < EPSILON && localRay.getVZ() > -EPSILON) || (localRay.getPZ() < EPSILON && localRay.getPZ() > -EPSILON))
             return;
         double s = -localRay.getPZ() / localRay.getVZ();
+
         if(s > EPSILON) {
+            List<Intersection> tmp = new ArrayList<>();
             Point3D localIntersection = new Point3D(
                     localRay.getPX() + s * localRay.getVX(),
                     localRay.getPY() + s * localRay.getVY(),
@@ -200,8 +206,12 @@ public class Plane extends BaseObject {
                 if (Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                     realNormal.inverse();
                 realNormal.normalize();
-                intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                tmp.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
             }
+            List<Intersection> blackIntersections = new ArrayList<>();
+            IntersectionManager.getIntersections(localRay, blackObjects, blackIntersections);
+            IntersectionManager.preProcessIntersections(tmp, blackIntersections);
+            intersections.addAll(tmp);
         }
     }
 

@@ -35,19 +35,17 @@ public class BlackCylinder extends BlackObject{
 
         List<Double> solutions = Solver.solve(a, b, c);
         for (int i = 0; i < solutions.size(); ++i) {
-            if (solutions.get(i) > EPSILON) {
-                Point3D localIntersection = new Point3D(
-                        localRay.getPX() + localRay.getVX() * solutions.get(i),
-                        localRay.getPY() + localRay.getVY() * solutions.get(i),
-                        localRay.getPZ() + localRay.getVZ() * solutions.get(i)
-                );
-                Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
-                Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
-                    realNormal.inverse();
-                intersections.add(new Intersection(realIntersection, realNormal, null, Point3D.distanceBetween(ray.getPoint(), realIntersection), 0, this));
-            }
+            Point3D localIntersection = new Point3D(
+                    localRay.getPX() + localRay.getVX() * solutions.get(i),
+                    localRay.getPY() + localRay.getVY() * solutions.get(i),
+                    localRay.getPZ() + localRay.getVZ() * solutions.get(i)
+            );
+            Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
+            Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
+            Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
+            if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
+                realNormal.inverse();
+            intersections.add(new Intersection(realIntersection, realNormal, null, Point3D.distanceBetween(ray.getPoint(), realIntersection), 0, this));
         }
     }
 }

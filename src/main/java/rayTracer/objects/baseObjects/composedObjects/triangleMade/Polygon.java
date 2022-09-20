@@ -10,10 +10,12 @@ import rayTracer.math.Vector3D;
 import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Intersection;
+import rayTracer.utils.IntersectionManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Polygon extends BaseObject {
@@ -281,6 +283,7 @@ public class Polygon extends BaseObject {
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {
         Line3D localRay = transform.apply(ray, MatrixTransformEnum.TO_LOCAL);
 
+        List<Intersection> tmp = new ArrayList<>();
         for (Triangle tr: triangles) {
             Point3D localIntersection = tr.hit(localRay);
             if(localIntersection != null) {
@@ -289,7 +292,7 @@ public class Polygon extends BaseObject {
                 if (Vector3D.angleBetween(localRay.getVector(), localNormal) < 90)
                     localNormal = Vector3D.inverse(localNormal);
                 Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                intersections.add(new Intersection(
+                tmp.add(new Intersection(
                         realIntersection,
                         realNormal,
                         getColor(localIntersection),
@@ -299,5 +302,9 @@ public class Polygon extends BaseObject {
                 ));
             }
         }
+        List<Intersection> blackIntersections = new ArrayList<>();
+        IntersectionManager.getIntersections(localRay, blackObjects, blackIntersections);
+        IntersectionManager.preProcessIntersections(tmp, blackIntersections);
+        intersections.addAll(tmp);
     }
 }

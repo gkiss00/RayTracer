@@ -89,6 +89,10 @@ public abstract class BaseObject extends Obj {
         return noise.getDimension();
     }
 
+    public PatternTypeEnum getPattern() {
+        return pattern;
+    }
+
     public Color getColorAt(Point3D realIntersection) {
         return null;
     }

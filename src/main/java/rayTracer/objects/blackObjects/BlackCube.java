@@ -67,12 +67,7 @@ public class BlackCube extends BlackObject{
 
                 if (y >= -size && y <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                    Vector3D realNormal = realUpNormal;
-                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
-                        realNormal = realDownNormal;
-                    intersections.add(new Intersection(realIntersection, realNormal, null, dist, 0, this));
+                    addIntersection(ray, intersections, localIntersection, realUpNormal, realDownNormal);
                 }
             }
             // DOWN
@@ -84,12 +79,7 @@ public class BlackCube extends BlackObject{
 
                 if (y >= -size && y <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                    Vector3D realNormal = realDownNormal;
-                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
-                        realNormal = realUpNormal;
-                    intersections.add(new Intersection(realIntersection, realNormal, null, dist, 0, this));
+                    addIntersection(ray, intersections, localIntersection, realDownNormal, realUpNormal);
                 }
             }
         }
@@ -103,12 +93,7 @@ public class BlackCube extends BlackObject{
 
                 if (z >= -size && z <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                    Vector3D realNormal = realLeftNormal;
-                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
-                        realNormal = realRightNormal;
-                    intersections.add(new Intersection(realIntersection, realNormal, null, dist, 0, this));
+                    addIntersection(ray, intersections, localIntersection, realLeftNormal, realRightNormal);
                 }
             }
             // RIGHT
@@ -120,12 +105,7 @@ public class BlackCube extends BlackObject{
 
                 if (z >= -size && z <= size && x >= -size && x <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                    Vector3D realNormal = realRightNormal;
-                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
-                        realNormal = realLeftNormal;
-                    intersections.add(new Intersection(realIntersection, realNormal, null, dist, 0, this));
+                    addIntersection(ray, intersections, localIntersection, realRightNormal, realLeftNormal);
                 }
             }
         }
@@ -139,12 +119,7 @@ public class BlackCube extends BlackObject{
 
                 if (z >= -size && z <= size && y >= -size && y <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                    Vector3D realNormal = realBackNormal;
-                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
-                        realNormal = realFrontNormal;
-                    intersections.add(new Intersection(realIntersection, realNormal, null, dist, 0, this));
+                    addIntersection(ray, intersections, localIntersection, realBackNormal, realFrontNormal);
                 }
             }
             // FRONT
@@ -156,13 +131,18 @@ public class BlackCube extends BlackObject{
 
                 if (z >= -size && z <= size && y >= -size && y <= size) {
                     Point3D localIntersection = new Point3D(x, y, z);
-                    Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
-                    double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
-                    Vector3D realNormal = realFrontNormal;
-                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
-                        realNormal = realBackNormal;
-                    intersections.add(new Intersection(realIntersection, realNormal, null, dist, 0, this));
+                    addIntersection(ray, intersections, localIntersection, realFrontNormal, realBackNormal);
                 }
             }
         }
-    }}
+    }
+
+    private void addIntersection(Line3D ray, List<Intersection> intersections, Point3D localIntersection, Vector3D n1, Vector3D n2) throws Exception {
+        Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
+        double dist = Point3D.distanceBetween(realIntersection, ray.getPoint());
+        Vector3D realNormal = n1;
+        if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
+            realNormal = n2;
+        intersections.add(new Intersection(realIntersection, realNormal, null, dist, 0, this));
+    }
+}

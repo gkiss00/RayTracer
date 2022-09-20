@@ -10,10 +10,12 @@ import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
+import rayTracer.utils.IntersectionManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Torus extends BaseObject {
@@ -211,6 +213,7 @@ public class Torus extends BaseObject {
         double t0 = (x02 + y02 + z02 - (r2 + R2)) * (x02 + y02 + z02 - (r2 + R2)) - 4*R2*(r2 - y02);
 
         List<Double> solutions = Solver.solve(t4, t3, t2, t1, t0);
+        List<Intersection> tmp = new ArrayList<>();
         for (int i = 0; i < solutions.size(); ++i) {
             if (solutions.get(i) > EPSILON) {
                 Point3D localIntersection = new Point3D(
@@ -224,10 +227,14 @@ public class Torus extends BaseObject {
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
                     if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                         realNormal.inverse();
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                    tmp.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }
+        List<Intersection> blackIntersections = new ArrayList<>();
+        IntersectionManager.getIntersections(localRay, blackObjects, blackIntersections);
+        IntersectionManager.preProcessIntersections(tmp, blackIntersections);
+        intersections.addAll(tmp);
     }
 
     public Vector3D getNormal(Point3D localIntersection) {

@@ -3,6 +3,7 @@ package rayTracer.utils;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.NoiseDimensionEnum;
 import rayTracer.enums.ObjectTypeEnum;
+import rayTracer.enums.PatternTypeEnum;
 import rayTracer.math.Line3D;
 import rayTracer.objects.Obj;
 import rayTracer.objects.baseObjects.BaseObject;
@@ -58,28 +59,6 @@ public class IntersectionManager {
         intersections.addAll(tmp);
     }
 
-    private static void fusionBlackObjects(List<Intersection> intersections) {
-        List<Intersection> tmp = new ArrayList<>();
-        Map<Integer, Integer> map = new HashMap<>();
-        Intersection firstInserted = null;
-        for (Intersection intersection : intersections) {
-            if(map.isEmpty()) {
-                firstInserted = intersection;
-                tmp.add(intersection);
-            }
-            if (map.containsKey(intersection.getObject().getId()))
-                map.remove(intersection.getObject().getId());
-            else
-                map.put(intersection.getObject().getId(), 1);
-            if(map.isEmpty()) {
-                intersection.setObject(firstInserted.getObject());
-                tmp.add(intersection);
-            }
-        }
-        intersections.clear();
-        intersections.addAll(tmp);
-    }
-
     private static void createNewIntersections(List<Intersection> base, List<Intersection> black) {
         List<Intersection> all = new ArrayList<>(base.size() + black.size());
         all.addAll(base);
@@ -103,7 +82,6 @@ public class IntersectionManager {
                 continue;
             }
 
-            //code here
             if(!inBase && !inBlack) {
                 if(inter.getObject().getType() == ObjectTypeEnum.BASE) {
                     inBase = true;
@@ -117,9 +95,9 @@ public class IntersectionManager {
                     res.add(inter);
                 } else {
                     inBlack = true;
-                    inter.setColor(base.get(baseI).getColor());//TODO if object.noise 3D get new color at this point
+                    inter.setColor(base.get(baseI).getColor());
                     BaseObject baseObject = (BaseObject)base.get(baseI).getObject();
-                    if(baseObject.getNoiseDimension() == NoiseDimensionEnum.DIMENSION_3D) {
+                    if(baseObject.getPattern() == PatternTypeEnum.NOISE && baseObject.getNoiseDimension() == NoiseDimensionEnum.DIMENSION_3D) {
                         Color c = baseObject.getColorAt(inter.getPointOfIntersection());
                         inter.setColor(c);
                     }
@@ -137,9 +115,9 @@ public class IntersectionManager {
                     inBase = false;
                 } else {
                     inBlack = false;
-                    inter.setColor(base.get(baseI).getColor()); //TODO if object.noise 3D get new color at this point
+                    inter.setColor(base.get(baseI).getColor());
                     BaseObject baseObject = (BaseObject)base.get(baseI).getObject();
-                    if(baseObject.getNoiseDimension() == NoiseDimensionEnum.DIMENSION_3D) {
+                    if(baseObject.getPattern() == PatternTypeEnum.NOISE && baseObject.getNoiseDimension() == NoiseDimensionEnum.DIMENSION_3D) {
                         Color c = baseObject.getColorAt(inter.getPointOfIntersection());
                         inter.setColor(c);
                     }
@@ -159,12 +137,36 @@ public class IntersectionManager {
         all.clear();
     }
 
+    public static void removeIntersectionInBlackObjects(List<Intersection> base, List<Intersection> black) {
+        List<Intersection> empty = new ArrayList<>(black);
+        List<Intersection> full = new ArrayList<>();
+        for(Intersection intersection: base) {
+            if (intersection.getObject().getCapacity() == CapacityTypeEnum.EMPTY) {
+                empty.add(intersection);
+            } else {
+                full.add(intersection);
+            }
+        }
+        sortIntersections(empty);
+        removeIntersectionsInFullObjects(empty);
+        base.clear();
+        base.addAll(full);
+        for(Intersection intersection: empty) {
+            if (intersection.getObject().getCapacity() == CapacityTypeEnum.EMPTY) {
+                base.add(intersection);
+            }
+        }
+        sortIntersections(base);
+    }
+
     public static void preProcessIntersections(List<Intersection> intersections, List<Intersection> blackIntersections) {
         // 1. Remove intersections of empty objects contained in full objects
         removeIntersectionsInFullObjects(intersections);
         // 2. Fusion consecutive full objects of same color
         fusionFullObjects(intersections);
-        // 3. Remove and create intersections with black objects
+        // 3. Remove empty intersection in black objects
+        removeIntersectionInBlackObjects(intersections, blackIntersections);
+        // 4. Remove and create intersections with black objects
         fusionFullObjects(blackIntersections);
         if(intersections.size() != 0 && blackIntersections.size() != 0)
             createNewIntersections(intersections, blackIntersections);

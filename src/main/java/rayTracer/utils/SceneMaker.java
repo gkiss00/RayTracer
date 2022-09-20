@@ -6,6 +6,7 @@ import rayTracer.noiser.GradientNoise3D;
 import rayTracer.noiser.WorleyNoise;
 import rayTracer.noiser.WorleyNoise3D;
 import rayTracer.objects.Obj;
+import rayTracer.objects.baseObjects.composedObjects.Pipe;
 import rayTracer.objects.blackObjects.*;
 import rayTracer.factories.PolygonFactory;
 import rayTracer.lights.Light;
@@ -1083,106 +1084,6 @@ public class SceneMaker {
         return new Camera(new Point3D(-80, 80, 80), new Vector3D(1, -1, -1), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getTextureScene(List<Obj> objects, List<Light> lights) {
-
-        //Sphere
-        Sphere ball1 = new Sphere(30);
-        ball1.setTexture("./src/main/resources/textures/poolBallSkins/Ball1.jpg");
-        ball1.updateMatrices(0, 0, 270, 1, 1, 1, 200, -80, 160);
-        objects.add(ball1);
-
-        Sphere ball2 = new Sphere(30);
-        ball2.setTexture("./src/main/resources/textures/poolBallSkins/Ball2.jpg");
-        ball2.updateMatrices(0, 0, 270, 1, 1, 1, 200, 0, 160);
-        objects.add(ball2);
-
-        Sphere ball3 = new Sphere(30);
-        ball3.setTexture("./src/main/resources/textures/poolBallSkins/Ball3.jpg");
-        ball3.updateMatrices(0, 0, 270, 1, 1, 1, 200, 80, 160);
-        objects.add(ball3);
-
-        Sphere ball4 = new Sphere(30);
-        ball4.setTexture("./src/main/resources/textures/poolBallSkins/Ball4.jpg");
-        ball4.updateMatrices(0, 0, 270, 1, 1, 1, 200, -80, 80);
-        objects.add(ball4);
-
-        Sphere ball5 = new Sphere(30);
-        ball5.setTexture("./src/main/resources/textures/poolBallSkins/Ball5.jpg");
-        ball5.updateMatrices(0, 0, 270, 1, 1, 1, 200, 0, 80);
-        objects.add(ball5);
-
-        Sphere ball6 = new Sphere(30);
-        ball6.setTexture("./src/main/resources/textures/poolBallSkins/Ball6.jpg");
-        ball6.updateMatrices(0, 0, 270, 1, 1, 1, 200, 80, 80);
-        objects.add(ball6);
-
-        Sphere ball7 = new Sphere(30);
-        ball7.setTexture("./src/main/resources/textures/poolBallSkins/Ball7.jpg");
-        ball7.updateMatrices(0, 0, 270, 1, 1, 1, 200, -80, 0);
-        objects.add(ball7);
-
-        Sphere ball8 = new Sphere(30);
-        ball8.setTexture("./src/main/resources/textures/poolBallSkins/Ball8.jpg");
-        ball8.updateMatrices(0, 0, 270, 1, 1, 1, 200, 0, 0);
-        objects.add(ball8);
-
-        Sphere ball9 = new Sphere(30);
-        ball9.setTexture("./src/main/resources/textures/poolBallSkins/Ball9.jpg");
-        ball9.updateMatrices(0, 0, 270, 1, 1, 1, 200, 80, 0);
-        objects.add(ball9);
-
-        Sphere ball10 = new Sphere(30);
-        ball10.setTexture("./src/main/resources/textures/poolBallSkins/Ball10.jpg");
-        ball10.updateMatrices(0, 0, 270, 1, 1, 1, 200, -80, -80);
-        objects.add(ball10);
-
-        Sphere ball11 = new Sphere(30);
-        ball11.setTexture("./src/main/resources/textures/poolBallSkins/Ball11.jpg");
-        ball11.updateMatrices(0, 0, 270, 1, 1, 1, 200, 0, -80);
-        objects.add(ball11);
-
-        Sphere ball12 = new Sphere(30);
-        ball12.setTexture("./src/main/resources/textures/poolBallSkins/Ball12.jpg");
-        ball12.updateMatrices(0, 0, 270, 1, 1, 1, 200, 80, -80);
-        objects.add(ball12);
-
-        Sphere ball13 = new Sphere(30);
-        ball13.setTexture("./src/main/resources/textures/poolBallSkins/Ball13.jpg");
-        ball13.updateMatrices(0, 0, 270, 1, 1, 1, 200, -80, -160);
-        objects.add(ball13);
-
-        Sphere ball14 = new Sphere(30);
-        ball14.setTexture("./src/main/resources/textures/poolBallSkins/Ball14.jpg");
-        ball14.updateMatrices(0, 0, 270, 1, 1, 1, 200, 0, -160);
-        objects.add(ball14);
-
-        Sphere ball15 = new Sphere(30);
-        ball15.setTexture("./src/main/resources/textures/poolBallSkins/Ball15.jpg");
-        ball15.updateMatrices(0, 0, 270, 1, 1, 1, 200, 80, -160);
-        objects.add(ball15);
-
-        //Cylinder
-        Cylinder cylinder1 = new Cylinder(30);
-        cylinder1.setTexture("./src/main/resources/textures/poolBallSkins/Ball1.jpg");
-        cylinder1.updateMatrices(0, 0, 270, 1, 1, 1, 250, 40, 0);
-        objects.add(cylinder1);
-
-        Cylinder cylinder2 = new Cylinder(30);
-        cylinder2.setTexture("./src/main/resources/textures/poolBallSkins/Ball1.jpg");
-        cylinder2.updateMatrices(0, 0, 270, 1, 1, 1, 250, -40, 0);
-        objects.add(cylinder2);
-
-        //Plane
-        Plane plane = new Plane(new Color(1, 0, 0));
-        plane.setTexture("./src/main/resources/textures/poolBallSkins/Ball2.jpg");
-        plane.setTextureWidth(100);
-        plane.updateMatrices(0, -90, 0, 1, 1, 1, 300, 0, 0);
-        plane.setNormal();
-        objects.add(plane);
-
-        return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
-    }
-
     public static Camera getAll(List<Obj> objects, List<Light> lights) {
         // Spheres
         Sphere sphere1 = new Sphere(40, PatternTypeEnum.GRID, new Color(0, 0, 0), new Color(1, 1, 0));
@@ -1583,14 +1484,15 @@ public class SceneMaker {
         int x = 0;
         int y = 0;
 
+        // TOP
         Pipe pipe = new Pipe(10, 8, 5);
         pipe.setCapacity(CapacityTypeEnum.FULL);
-        pipe.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        pipe.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 10);
         pipe.setNormals();
         objects.add(pipe);
 
         BlackCube blackCube = new BlackCube(5);
-        blackCube.updateMatrices(0, 0, 0, 5, 1, 2, 0, 0, 0);
+        blackCube.updateMatrices(0, 0, 0, 5, 1, 2, 0, 0, 10);
         blackCube.setNormals();
         blacks.add(blackCube);
 
@@ -1598,6 +1500,14 @@ public class SceneMaker {
         blackCube.updateMatrices(0, 0, 0, 1, 5, 2, 0, 0, 0);
         blackCube.setNormals();
         blacks.add(blackCube);
+
+        // CENTER
+        ClosedCylinder closedCylinder = new ClosedCylinder(9, 15);
+        closedCylinder.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        closedCylinder.setNormals();
+        objects.add(closedCylinder);
+
+        // BOTTOM
 
         //lights.add(new Light(new Point3D(-100, 100, 100), new Color(0.2, 0.2, 1)));
 

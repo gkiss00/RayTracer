@@ -1,4 +1,4 @@
-package rayTracer.objects.baseObjects;
+package rayTracer.objects.baseObjects.composedObjects;
 
 import rayTracer.enums.MatrixTransformEnum;
 import rayTracer.enums.PatternTypeEnum;
@@ -6,12 +6,15 @@ import rayTracer.math.Line3D;
 import rayTracer.math.Point3D;
 import rayTracer.math.Solver;
 import rayTracer.math.Vector3D;
+import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Intersection;
+import rayTracer.utils.IntersectionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Pipe extends BaseObject{
+public class Pipe extends BaseObject {
     protected static final Vector3D upNormal = new Vector3D(0, 0, 1);
     protected static final Vector3D downNormal = new Vector3D(0, 0, -1);
     protected  Vector3D realUpNormal;
@@ -94,6 +97,7 @@ public class Pipe extends BaseObject{
 
         // EXTERNAL SURFACE
         List<Double> solutions = Solver.solve(a, b, c);
+        List<Intersection> tmp = new ArrayList<>();
         for (int i = 0; i < solutions.size(); ++i) {
             if (solutions.get(i) > EPSILON) {
                 Point3D localIntersection = new Point3D(
@@ -107,7 +111,7 @@ public class Pipe extends BaseObject{
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
                     if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                         realNormal.inverse();
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                    tmp.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }
@@ -131,7 +135,7 @@ public class Pipe extends BaseObject{
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
                     if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                         realNormal.inverse();
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                    tmp.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }
@@ -163,7 +167,7 @@ public class Pipe extends BaseObject{
                         Vector3D realNormal = realUpNormal;
                         if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                             realNormal = realDownNormal;
-                        intersections.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
+                        tmp.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
@@ -183,10 +187,14 @@ public class Pipe extends BaseObject{
                         Vector3D realNormal = realDownNormal;
                         if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
                             realNormal = realUpNormal;
-                        intersections.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
+                        tmp.add(new Intersection(realIntersection, realNormal, color, dist, reflectionRatio, this));
                     }
                 }
             }
         }
+        List<Intersection> blackIntersections = new ArrayList<>();
+        IntersectionManager.getIntersections(localRay, blackObjects, blackIntersections);
+        IntersectionManager.preProcessIntersections(tmp, blackIntersections);
+        intersections.addAll(tmp);
     }
 }

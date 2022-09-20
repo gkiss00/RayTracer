@@ -10,11 +10,13 @@ import rayTracer.objects.baseObjects.BaseObject;
 import rayTracer.utils.Color;
 import rayTracer.utils.Cutter;
 import rayTracer.utils.Intersection;
+import rayTracer.utils.IntersectionManager;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cylinder extends BaseObject {
@@ -176,6 +178,7 @@ public class Cylinder extends BaseObject {
                 radius * radius;
 
         List<Double> solutions = Solver.solve(a, b, c);
+        List<Intersection> tmp = new ArrayList<>();
         for (int i = 0; i < solutions.size(); ++i) {
             if (solutions.get(i) > EPSILON) {
                 Point3D localIntersection = new Point3D(
@@ -187,9 +190,13 @@ public class Cylinder extends BaseObject {
                 if(!Cutter.cut(localIntersection, cuts)) {
                     Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), 0);
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
-                    intersections.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
+                    tmp.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }
         }
+        List<Intersection> blackIntersections = new ArrayList<>();
+        IntersectionManager.getIntersections(localRay, blackObjects, blackIntersections);
+        IntersectionManager.preProcessIntersections(tmp, blackIntersections);
+        intersections.addAll(tmp);
     }
 }

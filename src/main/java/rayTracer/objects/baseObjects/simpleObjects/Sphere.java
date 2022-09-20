@@ -260,7 +260,7 @@ public class Sphere extends BaseObject {
             }
         }
         List<Intersection> blackIntersections = new ArrayList<>();
-        IntersectionManager.getIntersections(ray, blackObjects, blackIntersections);
+        IntersectionManager.getIntersections(localRay, blackObjects, blackIntersections);
         IntersectionManager.preProcessIntersections(tmp, blackIntersections);
         intersections.addAll(tmp);
     }

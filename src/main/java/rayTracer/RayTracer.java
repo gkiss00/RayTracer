@@ -41,9 +41,9 @@ public class RayTracer {
         File image = new File("Image.png");
         try {
             ImageIO.write(buffer, "PNG", image);
-            Random rand = new Random();
-            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
-            ImageIO.write(buffer, "PNG", savedImage);
+            //Random rand = new Random();
+            //File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
+            //ImageIO.write(buffer, "PNG", savedImage);
 //            ImageIO.write(buffer, "PNG", image);
 //            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/sphere/" + "sphere" + index + ".png");
 //            ImageIO.write(buffer, "PNG", savedImage);
@@ -134,7 +134,7 @@ public class RayTracer {
 
     public static void image() {
         rayTracer.config.Config config = new rayTracer.config.Config();
-        cam = SceneMaker.getFieldOfCube(objects, lights, blackObjects);
+        cam = SceneMaker.getSimpleBlackSphereOnSphere(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;
