@@ -22,7 +22,7 @@ public class VideoMaker {
             out = NIOUtils.writableFileChannel(videoFilename);
 
             // for Android use: AndroidSequenceEncoder
-            AWTSequenceEncoder encoder = new AWTSequenceEncoder(out, Rational.R(23040, 720)); // 25 720
+            AWTSequenceEncoder encoder = new AWTSequenceEncoder(out, Rational.R(250, 0)); // fps den
 
             Path directoryPath = Paths.get(new File(imagesPath).toURI());
 

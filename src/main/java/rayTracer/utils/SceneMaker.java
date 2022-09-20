@@ -41,7 +41,7 @@ public class SceneMaker {
         return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getSimpleCube(List<Obj> objects, List<Light> lights) {
+    public static Camera getSimpleCube(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
         Cube cube = new Cube(30);
         cube.updateMatrices(20, 20, 35, 1, 1, 1, 0, 0, 0);
         cube.setNormals();
@@ -616,42 +616,29 @@ public class SceneMaker {
     }
 
     public static Camera getSimpleSphereNoise(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+        GradientNoise3D gradientNoise3D1 = new GradientNoise3D(16);
+        gradientNoise3D1.setAmplitude(5);
 
-        WorleyNoise worleyNoise1 =  new WorleyNoise(10, 1);
+        GradientNoise3D gradientNoise3D2 = new GradientNoise3D(8);
+        gradientNoise3D2.setAmplitude(10);
 
-        GradientNoise noise1 = new GradientNoise(16);
-        noise1.setAmplitude(4);
-        noise1.setRange(NoiseRangeEnum.INFINITY);
-
-        GradientNoise noise2 = new GradientNoise(16);
-        noise2.setAmplitude(1);
-
-        GradientNoise noise3 = new GradientNoise(256);
-        noise3.setAmplitude(0.2);
-        //noise1.setNoise(noise2);
-        noise2.setNoise(noise3);
-        worleyNoise1.setNoise(noise1);
-
-        GradientNoise gradientNoise = new GradientNoise(5);
-        noise1.setAmplitude(4);
-
-        GradientNoise3D gradientNoise3D1 = new GradientNoise3D(8);
-        gradientNoise3D1.setAmplitude(1);
-
-        GradientNoise3D gradientNoise3D2 = new GradientNoise3D(16);
-        gradientNoise3D2.setAmplitude(1);
-
-        GradientNoise3D gradientNoise3D3 = new GradientNoise3D(32);
+        GradientNoise3D gradientNoise3D3 = new GradientNoise3D(4);
         gradientNoise3D3.setAmplitude(1);
 
-        GradientNoise3D gradientNoise3D4 = new GradientNoise3D(64);
-        gradientNoise3D4.setAmplitude(10);
+        GradientNoise3D gradientNoise3D4 = new GradientNoise3D(2);
+        gradientNoise3D4.setAmplitude(1);
+
+        GradientNoise3D gradientNoise3D5 = new GradientNoise3D(128);
+        gradientNoise3D5.setAmplitude(2);
 
         gradientNoise3D1.setNoise(gradientNoise3D2);
         gradientNoise3D2.setNoise(gradientNoise3D3);
-        gradientNoise3D3.setNoise(gradientNoise3D4);
+        //gradientNoise3D3.setNoise(gradientNoise3D4);
+        //gradientNoise3D4.setNoise(gradientNoise3D5);
 
-        Sphere sphere = new Sphere(25, PatternTypeEnum.GRADIENT, new Color(), new Color());
+        Sphere sphere = new Sphere(25, PatternTypeEnum.NOISE,
+                new Color(1, 0.12, 0.25)
+        );
         sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
         sphere.noise = gradientNoise3D1;
         objects.add(sphere);
@@ -999,6 +986,28 @@ public class SceneMaker {
      *             COMPLEX IMAGES            *
 
      * * * * * * * * * * * * * * * * * * * * */
+
+    public static Camera getFieldOfCube(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+        GradientNoise gradientNoise = new GradientNoise(3);
+        gradientNoise.setAmplitude(10);
+        Random rand = new Random();
+        double cubeSize = 10;
+        double size = 10;
+        for(int i = 0; i < size; ++i) {
+            for(int j = 0; j < size; ++j) {
+                double x = (double)i / size;
+                double y = (double)j / size;
+                double scale = Math.abs(gradientNoise.getValue(x, y));
+                Cube cube = new Cube(cubeSize, new Color(1, 1, 1, 0.1));
+                cube.updateMatrices(0, 0, 0, 1, 1, 1 * scale, i * cubeSize, j * cubeSize, 0);
+                cube.setNormals();
+                objects.add(cube);
+            }
+        }
+
+
+        return new Camera(new Point3D(-100, -100, 100), new Vector3D(1, 1, -1), new Vector3D(0, 0, 1), 90);
+    }
 
     public static Camera getRings(List<Obj> objects, List<Light> lights) {
         Cube cube = new Cube(100, new Color(0.6, 0.8, 0.5, 0.1));

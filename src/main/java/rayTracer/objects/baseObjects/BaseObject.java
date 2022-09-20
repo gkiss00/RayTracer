@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseObject extends Obj {
-    protected List<Color> colors = new ArrayList<>();
+    public List<Color> colors = new ArrayList<>();
     protected List<CutTypeEnum> cuts = new ArrayList<>();
     protected PatternTypeEnum pattern;
     public int lineValue = 10;

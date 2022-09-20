@@ -187,16 +187,30 @@ public class Sphere extends BaseObject {
 
         double tmp = noise.getValue(angle / 360, zRatio);
 
-        return colors.get(0).reduceOf(tmp);
+        return colors.get(0).reduceOf(Math.abs(tmp));
     }
 
     private Color getColorFrom3DNoise(Point3D localIntersection) {
+//        double hypotenuse = Math.hypot(localIntersection.getX(), localIntersection.getY());;
+//        double angle = Math.toDegrees(Math.acos(localIntersection.getY() / hypotenuse));
+//        if(localIntersection.getX() < 0)
+//            angle = 360 - angle;
+//
+//        double zValue = localIntersection.getZ() + radius;
+//        double diameter = 2 * radius;
+//        double zRatio = zValue / diameter;
+//
+//        double tmp = noise.getValue(angle / 360, zRatio, t[0]);
+//
+//        return colors.get(0).reduceOf(Math.abs(tmp));
+
         double x, y, z;
         x = (localIntersection.getY() + radius) / (2 * radius);
         y = (localIntersection.getZ() + radius) / (2 * radius);
         z = (localIntersection.getX() + radius) / (2 * radius);
         double tmp = noise.getValue(x, y, z);
         return colors.get(0).reduceOf(Math.abs(tmp));
+
     }
 
     private Color getColorFromNoise(Point3D localIntersection) {

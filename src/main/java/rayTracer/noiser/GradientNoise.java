@@ -74,9 +74,9 @@ public class GradientNoise extends Noise{
         double t1 = lerp(da, dc, localY);
         double t2 = lerp(db, dd, localY);
 
-        //return amplitude * lerp(t1, t2, localX) + (noise != null ? noise.getValue(x, y) : 0.0);
+        return amplitude * lerp(t1, t2, localX) + (noise != null ? noise.getValue(x, y) : 0.0);
 
-        return Math.abs(Math.sin(4 * Math.PI * ((localX + localY) / 2)) + amplitude * lerp(t1, t2, localX) + (noise != null ? 2.0 * noise.getValue(x, y) : 0.0));
+        //return Math.abs(Math.sin(4 * Math.PI * ((localX + localY) / 2)) + amplitude * lerp(t1, t2, localX) + (noise != null ? 2.0 * noise.getValue(x, y) : 0.0));
     }
 
     @Override

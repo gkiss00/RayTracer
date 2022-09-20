@@ -15,12 +15,9 @@ public class GradientNoise3D extends Noise{
     }
 
     private void generateGrid() {
-        Point3D p = new Point3D(scale / 2, scale / 2, scale / 2);
         for(int z = 0; z <= scale; ++z) {
             for (int y = 0; y <= scale; ++y) {
                 for (int x = 0; x <= scale; ++x) {
-                    Point3D c = new Point3D(x, y, z);
-                    //grid[z][y][x] = new Vector3D(c, p);
                     grid[z][y][x] = Vector3D.generateRandom3DVector();
                 }
             }

@@ -1,5 +1,6 @@
 package rayTracer.utils;
 
+import java.util.List;
 import java.util.Random;
 
 public class Color {
@@ -174,6 +175,21 @@ public class Color {
         blue = color1.blue + (color2.blue - color1.blue) * factor;
         alpha = color1.alpha;
         return new Color(red, green, blue, alpha);
+    }
+
+    public static Color nextColor(List<Color> colors, double ratio) {
+        // ratio 0 -> 1
+        double colorRatio = 1.0 / (colors.size() - 1);
+        int previousColor = (int)(ratio / colorRatio);
+        int nextColor = previousColor + 1;
+        ratio %= colorRatio;
+        ratio /= colorRatio;
+        return new Color(
+                colors.get(previousColor).getRed() + (colors.get(nextColor).getRed() - colors.get(previousColor).getRed()) * ratio,
+                colors.get(previousColor).getGreen() + (colors.get(nextColor).getGreen() - colors.get(previousColor).getGreen()) * ratio,
+                colors.get(previousColor).getBlue() + (colors.get(nextColor).getBlue() - colors.get(previousColor).getBlue()) * ratio,
+                colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
+        );
     }
 
     @Override

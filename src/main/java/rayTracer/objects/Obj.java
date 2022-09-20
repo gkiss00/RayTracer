@@ -20,6 +20,7 @@ public abstract class Obj {
     protected ObjectTypeEnum type = ObjectTypeEnum.BASE;
     public double density = 1;
     protected List<Obj> blackObjects = new ArrayList<>();
+    public double[] t;
 
     public Obj() {
         this.id = ++_id;

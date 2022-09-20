@@ -18,7 +18,7 @@ public class Config {
     public final Color ambientLight = new Color(1, 1, 1, 1);
     public int height = 900;
     public int width = 900;
-    public int ANTI_ALIASING = 9;
+    public int ANTI_ALIASING = 5;
     public double MAX_DIST = 60;
     public double SHADOW_DEEPNESS = 0.3;
 
