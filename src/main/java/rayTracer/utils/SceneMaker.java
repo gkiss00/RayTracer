@@ -375,7 +375,7 @@ public class SceneMaker {
         sphere.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
         sphere.setCapacity(CapacityTypeEnum.FULL);
         //sphere.setReflectionRatio(1);
-        sphere.density = 2;
+        sphere.density = 1.0000001;
         objects.add(sphere);
 
         Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
@@ -1085,7 +1085,6 @@ public class SceneMaker {
     }
 
     public static Camera getAll(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
-        Random rand = new Random();
 
         GradientNoise gradientNoise1 = new GradientNoise(4);
         gradientNoise1.setAmplitude(4);
@@ -1097,11 +1096,11 @@ public class SceneMaker {
         // SIMPLE OBJECTS
 
         // Sphere
-        Sphere sphere = new Sphere(40, PatternTypeEnum.GRID, new Color(), new Color());
-        sphere.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, 0, 0, 0);
+        Sphere sphere = new Sphere(40, PatternTypeEnum.GRID, new Color(0.977074, 0.524043, 0.985372), new Color(0.494861, 0.479416, 0.412559));
+        sphere.updateMatrices(25, 210, 100, 1, 1, 1, 0, 0, 0);
         objects.add(sphere);
 
-        sphere = new Sphere(60);
+        sphere = new Sphere(60, new Color(0.013436, 0.119706, 0.325974));
         sphere.updateMatrices(0, 0, 0, 1, 1, 0.75, 300, 200, 0);
         sphere.setCapacity(CapacityTypeEnum.FULL);
         objects.add(sphere);
@@ -1113,7 +1112,7 @@ public class SceneMaker {
         objects.add(sphere);
 
         // Cone
-        Cone cone = new Cone(30);
+        Cone cone = new Cone(30, new Color(0.007845, 0.038946, 0.221346));
         cone.updateMatrices(0, 0, 0, 1, 1, 1, 300, -200, 0);
         cone.setCapacity(CapacityTypeEnum.FULL);
         objects.add(cone);
@@ -1123,38 +1122,38 @@ public class SceneMaker {
         cone.addBlackObject(blackCylinder);
 
         // Cube
-        Cube cube = new Cube(50, new Color(0, 0, 1, 0.1));
-        cube.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, -200, -100, 0);
+        Cube cube = new Cube(50, new Color(0.5478, 0.367, 1, 0.1));
+        cube.updateMatrices(78, 159, 12, 1, 1, 1, -200, -100, 0);
         cube.setNormals();
         cube.setCapacity(CapacityTypeEnum.FULL);
         objects.add(cube);
 
         // Cylinder
-        Cylinder cylinder = new Cylinder(40, PatternTypeEnum.HORIZONTAL_LINED, new Color(), new Color(), new Color());
+        Cylinder cylinder = new Cylinder(40, PatternTypeEnum.HORIZONTAL_LINED, new Color(0.270390, 0.819424, 0.743335), new Color(0.383270, 0.560625, 0.790191));
         cylinder.updateMatrices(0, 0, 0, 1, 1, 1, 300, 200, 0);
         objects.add(cylinder);
 
         // Torus
-        Torus torus = new Torus(70, 15, PatternTypeEnum.GRADIENT, new Color(), new Color(), new Color(), new Color(), new Color());
+        Torus torus = new Torus(70, 15, PatternTypeEnum.GRADIENT, new Color("#5EB1BF"), new Color("#CDEDF6"), new Color("#AB81CD"), new Color("#E2ADF2"));
         torus.updateMatrices(90, 0, 0, 1, 1, 1, -200, -150, 0);
         objects.add(torus);
 
         // PLANE SURFACES
 
         // Disk
-        Disk disk = new Disk(50, 70);
+        Disk disk = new Disk(50, 70, new Color(0.578585, 0.618446, 0.976605));
         disk.updateMatrices(-30, -20, 0, 1, 1, 1, 0, 0, 0);
         disk.setNormal();
         objects.add(disk);
 
         // Plane
-        Plane plane = new Plane();
+        Plane plane = new Plane(new Color("#17183B"));
         plane.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -100);
         plane.setNormal();
         objects.add(plane);
 
         // Square
-        Square square = new Square(120, PatternTypeEnum.NOISE, new Color(), new Color());
+        Square square = new Square(120, PatternTypeEnum.NOISE, new Color(0.622888, 0.487868, 0.943172), new Color());
         square.updateMatrices(0, 0, 0, 1, 1, 1, -163, 0, -99);
         square.setNormal();
         square.noise = gradientNoise1;
@@ -1163,7 +1162,7 @@ public class SceneMaker {
         // FRACTALS
 
         // Cube fractal
-        CubeFractal cubeFractal = new CubeFractal(3, 120);
+        CubeFractal cubeFractal = new CubeFractal(3, 120, new Color(0.608065, 0.108303, 0.947895));
         cubeFractal.updateMatrices(0, 0, 30, 1, 1, 1, 300, 340, -39);
         cubeFractal.setNormals();
         objects.add(cubeFractal);
@@ -1174,6 +1173,9 @@ public class SceneMaker {
         Polygon star = PolygonFactory.createPolygon(PolygonTypeEnum.STAR, 5, 40, 90, 30);
         star.updateMatrices(0, -90, 0, 1, 1, 1, 300, -200, 200);
         objects.add(star);
+
+        star.clearColors();
+        star.addColor(new Color("#2274A5"));
 
 
         lights.add(new Light(new Point3D(-450, 20, 100), new Color(1, 1, 1)));

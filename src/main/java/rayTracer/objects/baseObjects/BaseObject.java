@@ -93,6 +93,13 @@ public abstract class BaseObject extends Obj {
         return pattern;
     }
 
+    @Override
+    public String toString() {
+        String res = "";
+        res += colors.toString();
+        return res;
+    }
+
     public Color getColorAt(Point3D realIntersection) {
         return null;
     }

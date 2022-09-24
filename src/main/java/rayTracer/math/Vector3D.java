@@ -178,7 +178,7 @@ public class Vector3D {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (o instanceof Vector3D == false)
+        if (!(o instanceof Vector3D))
             return false;
         Vector3D vector = (Vector3D) o;
         return (

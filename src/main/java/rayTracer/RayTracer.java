@@ -44,9 +44,9 @@ public class RayTracer {
             //Random rand = new Random();
             //File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
             //ImageIO.write(buffer, "PNG", savedImage);
-//            ImageIO.write(buffer, "PNG", image);
-//            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/sphere/" + "sphere" + index + ".png");
-//            ImageIO.write(buffer, "PNG", savedImage);
+            ImageIO.write(buffer, "PNG", image);
+            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/mist/" + "mist" + index + ".png");
+            ImageIO.write(buffer, "PNG", savedImage);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -93,40 +93,28 @@ public class RayTracer {
     }
 
     private static void video() {
-        List<Color> colors = new ArrayList<>() {{
-            add(new Color(1, 0.12, 0.25));
-            add(new Color(0.12, 1, 0.25));
-            add(new Color(0.25, 0.12, 1));
-            add(new Color(0.12, 1, 0.25));
-            add(new Color(1, 0.12, 0.25));
-        }};
         long totalStart = System.nanoTime();
-        int nbImages = 1000;
+        int nbImages = 300;
         rayTracer.config.Config config = new rayTracer.config.Config();
-        cam = SceneMaker.getSimpleSphereNoise(objects, lights, blackObjects);
+        cam = SceneMaker.getAll(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;
         config.backObjects = blackObjects;
         config.lights = lights;
         config.cam = cam;
-        double[] t = new double[1];
-        t[0] = 0.0;
-        objects.get(0).t = t;
         for(int i = 0; i < nbImages; ++i) {
-            BaseObject baseObject = (BaseObject)objects.get(0);
-            baseObject.colors.set(0, Color.nextColor(colors, (double)i / nbImages));
             long start = System.nanoTime();
             runViaThread(config);
             long end = System.nanoTime();
             System.out.println(index + " :: Time taken: " + ((double)(end - start) / 1000000000D));
             threads.clear();
-            t[0] += 0.001;
+            config.MAX_MIST_DIST -= 10;
             ++index;
         }
         long end = System.nanoTime();
         System.out.println("Total time taken: " + ((double)(end - totalStart) / 1000000000D));
-        String imgPath="/Users/kissgautier/Desktop/RayTracerSavedPictures/sphere/";
+        String imgPath="/Users/kissgautier/Desktop/RayTracerSavedPictures/mist/";
         String vidPath="/Users/kissgautier/Desktop/RayTracerSavedPictures/movie/test.mp4";
         VideoMaker.createMp4File(imgPath, vidPath);
         System.out.println("Video has been created at " + vidPath);
@@ -144,12 +132,13 @@ public class RayTracer {
         long start = System.nanoTime();
         runViaThread(config);
         long end = System.nanoTime();
+        System.out.println(config);
         System.out.println("Time taken: " + ((double)(end - start) / 1000000000D));
     }
 
 
     public static void main(String[] args) {
-        //video();
-        image();
+        video();
+        //image();
     }
 }
