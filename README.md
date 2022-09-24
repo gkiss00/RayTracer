@@ -1,6 +1,6 @@
 # RayTracer
 
-![alt text](./Image.png)
+![alt text](./images//all.png)
 
 ![alt text](./images/mobiusTape1.png)
 
