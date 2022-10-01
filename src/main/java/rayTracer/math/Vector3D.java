@@ -1,5 +1,7 @@
 package rayTracer.math;
 
+import java.util.Random;
+
 public class Vector3D {
     private double x;
     private double y;
@@ -82,6 +84,25 @@ public class Vector3D {
         z *= -1;
     }
 
+    public static Vector3D generateRandom2DVector() {
+        Random rand = new Random();
+        Vector3D v = new Vector3D(0, 0, 0);
+        v.x = rand.nextDouble() - 0.5;
+        v.y = rand.nextDouble() - 0.5;
+        v.normalize();
+        return v;
+    }
+
+    public static Vector3D generateRandom3DVector() {
+        Random rand = new Random();
+        Vector3D v = new Vector3D(0, 0, 0);
+        v.x = rand.nextDouble() - 0.5;
+        v.y = rand.nextDouble() - 0.5;
+        v.z = rand.nextDouble() - 0.5;
+        v.normalize();
+        return v;
+    }
+
     // return a vector perpendicular to the two others
     public static Vector3D inverse(Vector3D v) {
         return new Vector3D(
@@ -130,20 +151,19 @@ public class Vector3D {
             θ2: angle entre la normal et le rayon refracte
      */
     public static Vector3D refractedRay(Vector3D incident, Vector3D normal, double n1, double n2) {
-        double n = n1 / n2;
-        double cosI = - Vector3D.dotProduct(incident, normal);
-        double sinT2 = n * n * (1.0 - cosI * cosI);
-        if(sinT2 > 1.0){
-            //INVALID
-            return new Vector3D(incident);
-        } else {
-            double cosT = Math.sqrt(1.0 - sinT2);
-            Vector3D incidentTmp = new Vector3D(incident);
-            Vector3D normalTmp = new Vector3D(normal);
-            incidentTmp.times(n);
-            normalTmp.times(n * cosI - cosT);
-            return Vector3D.sum(incidentTmp, normalTmp);
+        Vector3D incidentTmp = new Vector3D(incident);
+        incidentTmp.normalize();
+        Vector3D normalTmp = new Vector3D(normal);
+        normalTmp.normalize();
+        double r = n1 / n2;
+        double c = -Vector3D.dotProduct(normalTmp, incidentTmp);
+        if(c < 0.0) {
+            normalTmp = Vector3D.inverse(normalTmp);
+            c = -Vector3D.dotProduct(normalTmp, incidentTmp);
         }
+        incidentTmp.times(r);
+        normalTmp.times(r * c - Math.sqrt(1.0 - r * r * (1.0 - c * c)));
+        return Vector3D.sum(incidentTmp, normalTmp);
     }
 
     public static Vector3D sum(Vector3D... vectors) {
@@ -162,7 +182,7 @@ public class Vector3D {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (o instanceof Vector3D == false)
+        if (!(o instanceof Vector3D))
             return false;
         Vector3D vector = (Vector3D) o;
         return (

@@ -1,17 +1,15 @@
 package server.utils;
 
 import rayTracer.math.Point3D;
-import rayTracer.objects.BaseObject;
-import rayTracer.objects.planeSurfaces.Plane;
-import rayTracer.objects.simpleObjects.Cube;
-import rayTracer.objects.simpleObjects.Cylinder;
-import rayTracer.objects.simpleObjects.Sphere;
+import rayTracer.objects.baseObjects.BaseObject;
+import rayTracer.objects.baseObjects.planeSurfaces.Plane;
+import rayTracer.objects.baseObjects.simpleObjects.Cube;
+import rayTracer.objects.baseObjects.simpleObjects.Cylinder;
+import rayTracer.objects.baseObjects.simpleObjects.Sphere;
 import server.model.Camera;
 import server.model.Light;
 import server.model.Object;
-import server.model.enums.PatternTypeEnum;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

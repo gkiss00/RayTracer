@@ -1,8 +1,5 @@
 package rayTracer.math;
 
-import rayTracer.objects.planeSurfaces.Plane;
-import rayTracer.utils.Intersection;
-
 public class Triangle {
     private Point3D p1;
     private Point3D p2;

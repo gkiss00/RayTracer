@@ -1,5 +1,6 @@
 package rayTracer.utils;
 
+import java.util.List;
 import java.util.Random;
 
 public class Color {
@@ -110,6 +111,12 @@ public class Color {
         this.blue /= d;
     }
 
+    public void mult(double d) {
+        this.red *= d;
+        this.green *= d;
+        this.blue *= d;
+    }
+
     public void unit() {
         double max = Math.max(red, Math.max(green, blue));
         if(max > 1.0) {
@@ -138,6 +145,16 @@ public class Color {
         return (int)(intRed * Math.pow(16, 4) + intGreen * Math.pow(16, 2) + intBlue);
     }
 
+    public String toHex() {
+        int intRed = Math.min((int) (red * 255.0), 255);
+        intRed = Math.max(intRed, 0);
+        int intGreen = Math.min((int) (green * 255.0), 255);
+        intGreen = Math.max(intGreen, 0);
+        int intBlue = Math.min((int) (blue * 255.0), 255);
+        intBlue = Math.max(intBlue, 0);
+        return "#" + Integer.toHexString(intRed) + Integer.toHexString(intGreen) + Integer.toHexString(intBlue);
+    }
+
     public static Color alphaBlending(Color color1, Color color2) {
         if(color1.getAlpha() == 0 && color2.getAlpha() == 0)
             return new Color(color1);
@@ -158,6 +175,21 @@ public class Color {
         blue = color1.blue + (color2.blue - color1.blue) * factor;
         alpha = color1.alpha;
         return new Color(red, green, blue, alpha);
+    }
+
+    public static Color nextColor(List<Color> colors, double ratio) {
+        // ratio 0 -> 1
+        double colorRatio = 1.0 / (colors.size() - 1);
+        int previousColor = (int)(ratio / colorRatio);
+        int nextColor = previousColor + 1;
+        ratio %= colorRatio;
+        ratio /= colorRatio;
+        return new Color(
+                colors.get(previousColor).getRed() + (colors.get(nextColor).getRed() - colors.get(previousColor).getRed()) * ratio,
+                colors.get(previousColor).getGreen() + (colors.get(nextColor).getGreen() - colors.get(previousColor).getGreen()) * ratio,
+                colors.get(previousColor).getBlue() + (colors.get(nextColor).getBlue() - colors.get(previousColor).getBlue()) * ratio,
+                colors.get(previousColor).getAlpha() + (colors.get(nextColor).getAlpha() - colors.get(previousColor).getAlpha()) * ratio
+        );
     }
 
     @Override
