@@ -94,7 +94,7 @@ public class RayTracer {
 
     private static void video() {
         long totalStart = System.nanoTime();
-        int nbImages = 300;
+        int nbImages = 400;
         rayTracer.config.Config config = new rayTracer.config.Config();
         cam = SceneMaker.getAll(objects, lights, blackObjects);
         cam.update(config.height, config.width);
@@ -122,7 +122,7 @@ public class RayTracer {
 
     public static void image() {
         rayTracer.config.Config config = new rayTracer.config.Config();
-        cam = SceneMaker.getAll(objects, lights, blackObjects);
+        cam = SceneMaker.test(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;
@@ -138,7 +138,11 @@ public class RayTracer {
 
 
     public static void main(String[] args) {
-        video();
-        //image();
+        //video();
+        image();
+//        String imgPath="/Users/kissgautier/Desktop/RayTracerSavedPictures/mist/";
+//        String vidPath="/Users/kissgautier/Desktop/RayTracerSavedPictures/movie/test.mp4";
+//        VideoMaker.createMp4File(imgPath, vidPath);
+//        System.out.println("Video has been created at " + vidPath);
     }
 }

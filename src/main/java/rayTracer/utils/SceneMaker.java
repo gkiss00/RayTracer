@@ -371,12 +371,19 @@ public class SceneMaker {
      * * * * * * * * * * * * * * * * * * * * */
 
     public static Camera getRefractedSphere(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
-        Torus sphere = new Torus(30, 10, new Color(1, 1, 1, 1));
-        sphere.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
-        sphere.setCapacity(CapacityTypeEnum.FULL);
-        //sphere.setReflectionRatio(1);
-        sphere.density = 1.0000001;
+        Random rand = new Random();
+        Sphere sphere = new Sphere(30, new Color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble(), 0.9));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 30, 0, 0);
+        //sphere.setCapacity(CapacityTypeEnum.FULL);
+        sphere.setReflectionRatio(0.6);
         objects.add(sphere);
+
+        Torus torus = new Torus(30, 10, new Color(1, 0, 0, 0.4));
+        torus.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+        torus.setCapacity(CapacityTypeEnum.FULL);
+        //sphere.setReflectionRatio(1);
+        torus.density = 2;
+        objects.add(torus);
 
         Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
         plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -60);
@@ -484,36 +491,33 @@ public class SceneMaker {
         return new Camera(new Point3D(-150, 0, 20), new Vector3D(1, 0, -(20.0 / 150.0)), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera test(List<Obj> objects, List<Light> lights) {
+    public static Camera test(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
         Random rand = new Random();
-
-        Torus torus1 = new Torus(20, 1, PatternTypeEnum.UNIFORM);
-        torus1.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, 0, 0, 0);
-        objects.add(torus1);
-
-        Torus torus2 = new Torus(25, 1, PatternTypeEnum.UNIFORM);
-        torus2.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, 0, 0, 0);
-        objects.add(torus2);
-
-        Torus torus3 = new Torus(30, 1, PatternTypeEnum.UNIFORM);
-        torus3.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, 0, 0, 0);
-        objects.add(torus3);
-
-        Torus torus4 = new Torus(35, 1, PatternTypeEnum.UNIFORM);
-        torus4.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, 0, 0, 0);
-        objects.add(torus4);
-
-        Torus torus5 = new Torus(40, 1, PatternTypeEnum.UNIFORM);
-        torus5.updateMatrices(rand.nextInt(360), rand.nextInt(360), rand.nextInt(360), 1, 1, 1, 0, 0, 0);
-        objects.add(torus5);
-
-        Sphere sphere = new Sphere(10);
-        sphere.updateMatrices(0, 90, 0, 1, 1, 1, 0, 0, 0);
+        Sphere sphere = new Sphere(30, new Color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble(), 0.5));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, 40, 0);
+        sphere.setCapacity(CapacityTypeEnum.FULL);
+        sphere.density = 0.5;
         objects.add(sphere);
 
-        lights.add(new Light(new Point3D(-100, 0, 0)));
+        sphere = new Sphere(30);
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 0, -40, 0);
+        sphere.setReflectionRatio(0.6);
+        objects.add(sphere);
 
-        return new Camera(new Point3D(-100, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+        Polygon polygon = PolygonFactory.createPolygon(PolygonTypeEnum.DIAMOND, 3, 30, 50, 15, 50);
+        polygon.updateMatrices(0, -30, 0, 1, 1, 1, 50, 0, -30);
+        polygon.setCapacity(CapacityTypeEnum.FULL);
+        polygon.clearColors();
+        polygon.addColor(new Color(rand.nextDouble(), rand.nextDouble(), rand.nextDouble(), 0.5));
+        polygon.density = 2.5;
+        //objects.add(polygon);
+
+        Plane plane1 = new Plane(PatternTypeEnum.GRID, new Color(1, 1, 1), new Color(0, 0, 0));
+        plane1.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -70);
+        plane1.setNormal();
+        objects.add(plane1);
+
+        return new Camera(new Point3D(-120, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getSimpleMobiusTape(List<Obj> objects, List<Light> lights) {

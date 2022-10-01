@@ -185,6 +185,29 @@ public class Calculator implements Runnable{
 
      * * * * * * * * * * * * * * * * * * * * */
 
+    private Color refraction(Line3D ray, int reflectionDeepness, Intersection intersection) {
+        // get refracted ray
+        Vector3D refracted1 = Vector3D.refractedRay(ray.getVector(), intersection.getNormal(), 1, intersection.getObject().getDensity());
+        Point3D interTmp1 = new Point3D(intersection.getPointOfIntersection());
+        refracted1.times(0.01);
+        interTmp1.add(refracted1);
+        refracted1.normalize();
+        Line3D newRay1 = new Line3D(interTmp1, refracted1);
+        // get intersection with the same object on refracted
+        List<Intersection> intersections = new ArrayList<>();
+        IntersectionManager.getIntersections(newRay1, config.objects, intersections);
+        if(intersections.size() != 0 && intersections.get(0).getObject().equals(intersection.getObject())) {
+            Vector3D refracted2 = Vector3D.refractedRay(newRay1.getVector(), intersections.get(0).getNormal(), intersection.getObject().getDensity(), 1);
+            Point3D interTmp2 = new Point3D(intersections.get(0).getPointOfIntersection());
+            refracted2.times(0.01);
+            interTmp2.add(refracted2);
+            Line3D newRay2 = new Line3D(interTmp2, refracted2);
+            return getPixelColor(newRay2, reflectionDeepness);
+        } else {
+            return getPixelColor(newRay1, reflectionDeepness);
+        }
+    }
+
     private Color getPixelColor(Line3D ray, int reflectionDeepness) {
         // FIND INTERSECTIONS
         List<Intersection> intersections = new ArrayList<>();
@@ -207,13 +230,8 @@ public class Calculator implements Runnable{
                 Line3D reflectedRay = new Line3D(intersection.getPointOfIntersection(), Vector3D.reflectedRay(ray.getVector(), intersection.getNormal()));
                 tmp = Color.colorReflection(tmp, getPixelColor(reflectedRay, reflectionDeepness + 1), intersection.getReflectionRatio());
             } else if (intersection.getObject().getCapacity() == CapacityTypeEnum.FULL && intersection.getObject().getDensity() != 1) {
-                Vector3D refracted1 = Vector3D.refractedRay(ray.getVector(), intersection.getNormal(), 1, intersection.getObject().getDensity());
-                Line3D newRay1 = new Line3D(intersection.getPointOfIntersection(), refracted1);
-                List<Intersection> xxx = new ArrayList<>();
-                IntersectionManager.getIntersections(newRay1, config.objects, xxx);
-                Vector3D refracted2 = Vector3D.refractedRay(newRay1.getVector(), xxx.get(0).getNormal(), intersection.getObject().getDensity(), 1);
-                Line3D newRay2 = new Line3D(xxx.get(0).getPointOfIntersection(), refracted2);
-                tmp =getPixelColor(newRay2, reflectionDeepness + 1);
+                tmp = refraction(ray, reflectionDeepness, intersection);
+                tmp = Color.alphaBlending(intersection.getColor(), tmp);
             }
             // TRANSPARENCY FULL OBJECT
             if(intersection.getColor().getAlpha() != 1 && intersection.getObject().getCapacity() == CapacityTypeEnum.FULL && intersection.getObject().getDensity() == 1) {

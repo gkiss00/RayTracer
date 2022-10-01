@@ -156,7 +156,11 @@ public class Vector3D {
         Vector3D normalTmp = new Vector3D(normal);
         normalTmp.normalize();
         double r = n1 / n2;
-        double c = Math.cos(Math.toRadians(angleBetween(incident, normal)));
+        double c = -Vector3D.dotProduct(normalTmp, incidentTmp);
+        if(c < 0.0) {
+            normalTmp = Vector3D.inverse(normalTmp);
+            c = -Vector3D.dotProduct(normalTmp, incidentTmp);
+        }
         incidentTmp.times(r);
         normalTmp.times(r * c - Math.sqrt(1.0 - r * r * (1.0 - c * c)));
         return Vector3D.sum(incidentTmp, normalTmp);

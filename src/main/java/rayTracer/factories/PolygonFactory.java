@@ -90,7 +90,7 @@ public class PolygonFactory {
         triangles.add(new Triangle(p1, p3, top));
         triangles.add(new Triangle(p2, p3, top));
 
-        return new Polygon(triangles);
+        return new Polygon(PolygonTypeEnum.TETRAHEDRON, values, triangles);
     }
 
     /**
@@ -131,7 +131,7 @@ public class PolygonFactory {
             triangles.add(new Triangle(inferiorPoints.get(i), inferiorPoints.get((i + 1) % nbFaces), superiorPoints.get((i + 1) % nbFaces)));
         }
 
-        return new Polygon(triangles);
+        return new Polygon(PolygonTypeEnum.DIAMOND, values, triangles);
     }
 
     /**
@@ -258,6 +258,6 @@ public class PolygonFactory {
         triangles.add(new Triangle(sup_points.get(0), inf_points.get(0), inf_points.get(precision - 1)));
         triangles.add(new Triangle(inf_points.get(precision - 1), sup_points.get(precision - 1), inf_points.get(0)));
 
-        return new Polygon(triangles);
+        return new Polygon(PolygonTypeEnum.MOBIUS_TAPE, values, triangles);
     }
 }

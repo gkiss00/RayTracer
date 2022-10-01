@@ -21,8 +21,8 @@ public class Config {
     public int ANTI_ALIASING = 5;
     public double MAX_DIST = 60;
     public double SHADOW_DEEPNESS = 0.3;
-    public boolean MIST = true;
-    public double MAX_MIST_DIST = 3010;
+    public boolean MIST = false;
+    public double MAX_MIST_DIST = 4010;
     public Camera cam;
     public List<Obj> objects = new ArrayList<>();
     public List<Obj> backObjects = new ArrayList<>();
