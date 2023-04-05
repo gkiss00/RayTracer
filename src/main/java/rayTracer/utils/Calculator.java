@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 public class Calculator implements Runnable{
+    private final Vector3D test = new Vector3D(0, 0, 1);
+    private final double RADIUS = 4;
     private final int totalThread;
     private final Config config;
     private final BufferedImage buffer;
@@ -87,10 +89,32 @@ public class Calculator implements Runnable{
             for (int w = 0; w < config.ANTI_ALIASING; ++w) {
                 double heightRatio = ((y - ((double)config.height / 2) + 0.5) / config.height) + ((1.0 / config.height / config.ANTI_ALIASING) * h);
                 double widthRatio = ((x - ((double)config.width / 2) + 0.5) / config.width) + ((1.0 / config.width / config.ANTI_ALIASING) * w);
-                Line3D ray = new Line3D(config.cam.getPointOfVue(), config.cam.getPoint(heightRatio, widthRatio));
+                Line3D ray = getRay(heightRatio, widthRatio);
                 ray.normalize();
                 pixelColor.add(getPixelColor(ray, 0));
             }
+        }
+    }
+
+    public Line3D getRay(double heightRatio, double widthRatio) {
+        if(config.FOCUS) {
+            // blurry ray
+            Vector3D direction = new Vector3D(config.cam.direction);
+            Vector3D v1 = Vector3D.crossProduct(test, direction);
+            Vector3D v2 = Vector3D.crossProduct(v1, direction);
+            v1.normalize();
+            v2.normalize();
+            double d1 = (Math.random() * RADIUS) - (RADIUS / 2);
+            double d2 = (Math.random() * RADIUS) - (RADIUS / 2);
+            v1.times(d1);
+            v2.times(d2);
+            Point3D tmp = new Point3D(config.cam.getPointOfVue());
+            tmp.add(v1);
+            tmp.add(v2);
+            return new Line3D(tmp, config.cam.getPoint(heightRatio, widthRatio));
+        } else {
+            // normal ray
+            return new Line3D(config.cam.getPointOfVue(), config.cam.getPoint(heightRatio, widthRatio));
         }
     }
 
@@ -104,14 +128,19 @@ public class Calculator implements Runnable{
         Color tmp = new Color(color);
         Line3D ray = new Line3D(config.cam.getPointOfVue(), intersection.getPointOfIntersection());
         double angle = Vector3D.angleBetween(ray.getVector(), intersection.getNormal());
+        if(angle <= 90)
+            angle = 180 - angle;
+        // BRIGHT
         if (angle >= 135) {
             // 1.0 -> 0 of ambient 180 135
             double rest = (angle - 135) * 2;
             tmp.add(config.ambientLight.reduceOf(Math.cos(Math.toRadians(rest))).reduceOf(0.75));
-        } else if(angle >= 90) {
+        }
+        // SHADOW
+        else if(angle >= 90) {
             // 0 -> 1 of shadow 135 -> 90
             double rest = (angle - 90) * 2;
-            tmp = tmp.reduceOf(1.0 - Math.sin(Math.toRadians(rest)));
+            tmp = tmp.reduceOf((1.0 - Math.sin(Math.toRadians(rest))));
         }
         return tmp;
     }

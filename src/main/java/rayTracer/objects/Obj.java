@@ -1,5 +1,6 @@
 package rayTracer.objects;
 
+import lombok.ToString;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.ObjectTypeEnum;
 import rayTracer.math.Line3D;
@@ -11,6 +12,7 @@ import rayTracer.utils.Transform;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 public abstract class Obj {
     protected  static int _id = 0;
     protected int id = 0;
@@ -22,6 +24,12 @@ public abstract class Obj {
     protected List<Obj> blackObjects = new ArrayList<>();
     public double[] t;
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public Obj() {
         this.id = ++_id;
         try {
@@ -30,6 +38,12 @@ public abstract class Obj {
             System.out.println(e.getMessage());
         }
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                UTILS                  *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public int getId() {
         return id;
@@ -66,6 +80,12 @@ public abstract class Obj {
         } catch (Exception e) {}
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                EQUALS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     @Override
     public boolean equals(Object o) {
         if (o == null)
@@ -75,6 +95,12 @@ public abstract class Obj {
         BaseObject object = (BaseObject) o;
         return this.id == object.id;
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               ABSTRACT                *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     abstract public void hit(Line3D ray, List<Intersection> intersections) throws Exception;
 }

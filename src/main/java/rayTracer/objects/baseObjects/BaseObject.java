@@ -1,5 +1,6 @@
 package rayTracer.objects.baseObjects;
 
+import lombok.ToString;
 import rayTracer.enums.CapacityTypeEnum;
 import rayTracer.enums.CutTypeEnum;
 import rayTracer.enums.NoiseDimensionEnum;
@@ -13,6 +14,7 @@ import rayTracer.utils.Cutter;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 public abstract class BaseObject extends Obj {
     public List<Color> colors = new ArrayList<>();
     protected List<CutTypeEnum> cuts = new ArrayList<>();
@@ -21,6 +23,12 @@ public abstract class BaseObject extends Obj {
     public int columnValue = 10;
     protected double reflectionRatio = 0;
     public Noise noise;
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *             CONSTRUCTORS              *
+
+     * * * * * * * * * * * * * * * * * * * * */
 
     public BaseObject() {
         super();
@@ -45,6 +53,12 @@ public abstract class BaseObject extends Obj {
         this.pattern = PatternTypeEnum.UNIFORM;
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                COLORS                 *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public void clearColors(){
         colors.clear();
     }
@@ -59,6 +73,16 @@ public abstract class BaseObject extends Obj {
         }
     }
 
+    public Color getColorAt(Point3D realIntersection) {
+        return null;
+    }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                 CUTS                  *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public void addCut(CutTypeEnum cut) {
         if(!cuts.contains(cut)) {
             cuts.add(cut);
@@ -69,6 +93,12 @@ public abstract class BaseObject extends Obj {
         return Cutter.cut(point, cuts);
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *           REFLECTION RATIO            *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public double getReflectionRatio() {
         return this.reflectionRatio;
     }
@@ -77,31 +107,40 @@ public abstract class BaseObject extends Obj {
         this.reflectionRatio = reflectionRatio < 0 ? 0 : reflectionRatio > 1 ? 1 : reflectionRatio;
     }
 
-    public void setCapacity(CapacityTypeEnum capacity) {
-        this.capacity = capacity;
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *                PATTERN                *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
+    public PatternTypeEnum getPattern() {
+        return pattern;
     }
 
     public void setPattern(PatternTypeEnum pattern) {
         this.pattern = pattern;
     }
 
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *          NOISE AND CAPACITY           *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     public NoiseDimensionEnum getNoiseDimension() {
         return noise.getDimension();
     }
 
-    public PatternTypeEnum getPattern() {
-        return pattern;
+    public void setCapacity(CapacityTypeEnum capacity) {
+        this.capacity = capacity;
     }
 
-    @Override
-    public String toString() {
-        String res = "";
-        res += colors.toString();
-        return res;
-    }
 
-    public Color getColorAt(Point3D realIntersection) {
-        return null;
-    }
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *               ABSTRACT                *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
     abstract protected Color getColor(Point3D localIntersection);
 }

@@ -41,12 +41,12 @@ public class RayTracer {
         File image = new File("Image.png");
         try {
             ImageIO.write(buffer, "PNG", image);
-            //Random rand = new Random();
-            //File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
-            //ImageIO.write(buffer, "PNG", savedImage);
-            ImageIO.write(buffer, "PNG", image);
-            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/mist/" + "mist" + index + ".png");
+            Random rand = new Random();
+            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/" + "savedImage_" + rand.nextInt(Integer.MAX_VALUE) + "" + rand.nextInt(Integer.MAX_VALUE) + ".png");
             ImageIO.write(buffer, "PNG", savedImage);
+//            ImageIO.write(buffer, "PNG", image);
+//            File savedImage = new File("/Users/kissgautier/Desktop/RayTracerSavedPictures/mist/" + "mist" + index + ".png");
+//            ImageIO.write(buffer, "PNG", savedImage);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -122,7 +122,7 @@ public class RayTracer {
 
     public static void image() {
         rayTracer.config.Config config = new rayTracer.config.Config();
-        cam = SceneMaker.test(objects, lights, blackObjects);
+        cam = SceneMaker.getMirrorBox(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;

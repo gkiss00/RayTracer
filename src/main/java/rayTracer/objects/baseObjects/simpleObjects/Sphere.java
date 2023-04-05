@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Sphere extends BaseObject {
-    public boolean x = true;
     private final double radius;
     private BufferedImage bufferedImage;
 
@@ -90,22 +89,15 @@ public class Sphere extends BaseObject {
 
     @Override
     protected Color getColor(Point3D localIntersection) {
-        switch (pattern) {
-            case VERTICAL_LINED:
-                return getColorFromVerticalLined(localIntersection);
-            case HORIZONTAL_LINED:
-                return getColorFromHorizontalLined(localIntersection);
-            case GRID:
-                return getColorFromGrid(localIntersection);
-            case GRADIENT:
-                return getColorFromGradient(localIntersection);
-            case TEXTURE:
-                return getColorFromTexture(localIntersection);
-            case NOISE:
-                return getColorFromNoise(localIntersection);
-            default:
-                return colors.get(0);
-        }
+        return switch (pattern) {
+            case VERTICAL_LINED -> getColorFromVerticalLined(localIntersection);
+            case HORIZONTAL_LINED -> getColorFromHorizontalLined(localIntersection);
+            case GRID -> getColorFromGrid(localIntersection);
+            case GRADIENT -> getColorFromGradient(localIntersection);
+            case TEXTURE -> getColorFromTexture(localIntersection);
+            case NOISE -> getColorFromNoise(localIntersection);
+            default -> colors.get(0);
+        };
     }
 
     private Color getColorFromVerticalLined(Point3D localIntersection) {
@@ -255,6 +247,8 @@ public class Sphere extends BaseObject {
                     Point3D realIntersection = this.transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                     Vector3D localNormal = new Vector3D(localIntersection.getX(), localIntersection.getY(), localIntersection.getZ());
                     Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
+                    if(Vector3D.angleBetween(realNormal, ray.getVector()) < 90)
+                        realNormal.inverse();
                     tmp.add(new Intersection(realIntersection, realNormal, getColor(localIntersection), Point3D.distanceBetween(ray.getPoint(), realIntersection), reflectionRatio, this));
                 }
             }

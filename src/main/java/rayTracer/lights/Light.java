@@ -1,8 +1,10 @@
 package rayTracer.lights;
 
+import lombok.Data;
 import rayTracer.math.Point3D;
 import rayTracer.utils.Color;
 
+@Data
 public class Light {
     private Point3D point;
     private Color color;
@@ -15,13 +17,5 @@ public class Light {
     public Light(Point3D point, Color color) {
         this.point = new Point3D(point);
         this.color = new Color(color);
-    }
-
-    public Point3D getPoint() {
-        return point;
-    }
-
-    public Color getColor() {
-        return color;
     }
 }

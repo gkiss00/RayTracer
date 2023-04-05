@@ -1,8 +1,11 @@
 package rayTracer.utils;
 
+import lombok.ToString;
+
 import java.util.List;
 import java.util.Random;
 
+@ToString
 public class Color {
     private double red;
     private double green;
@@ -196,14 +199,9 @@ public class Color {
     public boolean equals(Object o) {
         if (o == null)
             return false;
-        if (o instanceof Color == false)
+        if (!(o instanceof Color))
             return false;
         Color c = (Color)o;
         return ((red == c.red) && (green == c.green) && (blue == c.blue));
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Color: { r: %f, g: %f, b: %f, alpha: %f}", red, green, blue, alpha);
     }
 }

@@ -1,12 +1,14 @@
 package rayTracer.utils;
 
 import rayTracer.enums.*;
+import rayTracer.factories.ChessPieceFactory;
 import rayTracer.noiser.GradientNoise;
 import rayTracer.noiser.GradientNoise3D;
 import rayTracer.noiser.WorleyNoise;
 import rayTracer.noiser.WorleyNoise3D;
 import rayTracer.objects.Obj;
 import rayTracer.objects.baseObjects.composedObjects.Pipe;
+import rayTracer.objects.baseObjects.composedObjects.objectMade.Assembly;
 import rayTracer.objects.blackObjects.*;
 import rayTracer.factories.PolygonFactory;
 import rayTracer.lights.Light;
@@ -1039,7 +1041,7 @@ public class SceneMaker {
         return new Camera(new Point3D(-200, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getMirrorBox(List<Obj> objects, List<Light> lights) {
+    public static Camera getMirrorBox(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
         Cube cube = new Cube(100, new Color(120.0 / 255, 120.0 / 255, 120.0 / 255));
         cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
         cube.setNormals();
@@ -1051,9 +1053,37 @@ public class SceneMaker {
         sphere.setReflectionRatio(0.75);
         objects.add(sphere);
 
-        lights.add(new Light(new Point3D(-45, 45, 45)));
-
         return new Camera(new Point3D(-45, 0, 20), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getMirrorBox2(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+        Cube cube = new Cube(100, new Color(120.0 / 255, 120.0 / 255, 120.0 / 255));
+        cube.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, 0);
+        cube.setNormals();
+        cube.setReflectionRatio(0.9);
+        objects.add(cube);
+
+        Sphere sphere = new Sphere(8, new Color(1, 0, 0));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 15, -15, 15);
+        sphere.setReflectionRatio(0.25);
+        objects.add(sphere);
+
+        sphere = new Sphere(8, new Color(1, 0, 0));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 15, 15, 15);
+        sphere.setReflectionRatio(0.50);
+        objects.add(sphere);
+
+        sphere = new Sphere(8, new Color(1, 0, 0));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 15, -15, -15);
+        sphere.setReflectionRatio(0.75);
+        objects.add(sphere);
+
+        sphere = new Sphere(8, new Color(1, 0, 0));
+        sphere.updateMatrices(0, 0, 0, 1, 1, 1, 15, 15, -15);
+        sphere.setReflectionRatio(0.99);
+        objects.add(sphere);
+
+        return new Camera(new Point3D(-45, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 
     public static Camera getTripleTorus(List<Obj> objects, List<Light> lights) {
@@ -1161,6 +1191,7 @@ public class SceneMaker {
         square.updateMatrices(0, 0, 0, 1, 1, 1, -163, 0, -99);
         square.setNormal();
         square.noise = gradientNoise1;
+        square.setReflectionRatio(0.25);
         objects.add(square);
 
         // FRACTALS
@@ -1457,11 +1488,6 @@ public class SceneMaker {
             torus1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 0);
             objects.add(torus1);
 
-            /*OpenCylinder cylinder = new OpenCylinder(3.5, 15, new Color(0.1, 0.1, 0.2));
-            cylinder.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -7.5);
-            objects.add(cylinder);
-
-             */
             QuadraticSurface s = new QuadraticSurface(1, 1, -0.075, 0, 0, 0, 0, 0, 0, -5, new Color(0.1, 0.1, 0.2));
             s.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -3);
             s.maxHeight = 3;
@@ -1487,36 +1513,33 @@ public class SceneMaker {
         return new Camera(new Point3D(-150, 0, 150), new Vector3D(1, 0, -1), new Vector3D(0, 0, 1), 90);
     }
 
-    public static Camera getPawn(List<Obj> objects, List<Light> lights) {
+    public static Camera getPawn(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
 
-        int x = 0;
-        int y = 0;
-        QuadraticSurface s = new QuadraticSurface(1, 1, -0.075, 0, 0, 0, 0, 0, 0, -5, new Color(0.1, 0.1, 0.2));
-        s.updateMatrices(0, 0, 0, 1, 1, 1, 0, 0, -3);
-        s.maxHeight = 3;
-        s.minHeight = -16.5;
+        Assembly assembly = ChessPieceFactory.createPiece(ChessPieceEnum.PAWN, 0.0);
+        assembly.updateMatrices(0, -10, 0, 1, 1, 1, 0, 0, 0);
+        objects.add(assembly);
+
+        assembly = ChessPieceFactory.createPiece(ChessPieceEnum.PAWN, 0.0);
+        assembly.updateMatrices(0, -10, 0, 1, 1, 1, 20, -30, 0);
+        objects.add(assembly);
+
+        assembly = ChessPieceFactory.createPiece(ChessPieceEnum.PAWN, 0.0);
+        assembly.updateMatrices(0, -10, 0, 1, 1, 1, 20, 30, 0);
+        objects.add(assembly);
+
+        lights.add(new Light(new Point3D(-100, 100, 100), new Color(0.2, 0.2, 1)));
+
+        return new Camera(new Point3D(-70, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera getHyperboloid(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+
+        Hyperboloid s = new Hyperboloid(0.5, 0.5, 1, 5);
+        s.updateMatrices(90, 0, 0, 1, 1, 1, 0, 0, 0);
+        s.isLimited = true;
+        s.upperLimit = 3;
+        s.lowerLimit = -16.5;
         objects.add(s);
-
-        Sphere sp1 = new Sphere(5, new Color(0.1, 0.1, 0.2));
-        sp1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 3);
-        objects.add(sp1);
-
-        Torus torus1 = new Torus(3.5, 2, new Color(0.1, 0.1, 0.2));
-        torus1.updateMatrices(0, 0, 0, 1, 1, 1, x, y, 0);
-        objects.add(torus1);
-
-        OpenCylinder cylinder = new OpenCylinder(3.5, 15, new Color(0.1, 0.1, 0.2));
-        cylinder.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -7.5);
-        //objects.add(cylinder);
-
-        Torus torus2 = new Torus(3.5, 2, new Color(0.1, 0.1, 0.2));
-        torus2.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -15);
-        objects.add(torus2);
-
-        Torus torus3 = new Torus(4, 2.2, new Color(0.1, 0.1, 0.2));
-        torus3.updateMatrices(0, 0, 0, 1, 1, 1, x, y, -16.5);
-        torus3.addCut(CutTypeEnum.BOTTOM);
-        objects.add(torus3);
 
         lights.add(new Light(new Point3D(-100, 100, 100), new Color(0.2, 0.2, 1)));
 
@@ -1556,5 +1579,27 @@ public class SceneMaker {
         //lights.add(new Light(new Point3D(-100, 100, 100), new Color(0.2, 0.2, 1)));
 
         return new Camera(new Point3D(-60, 0, 20), new Vector3D(1, 0, -0.30), new Vector3D(0, 0, 1), 90);
+    }
+
+    public static Camera test2(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+
+        Sphere sphere1 = new Sphere(75);
+        sphere1.updateMatrices(0, 0, 0, 1, 1, 1, 450, 0, 0);
+        objects.add(sphere1);
+
+        sphere1 = new Sphere(120);
+        sphere1.updateMatrices(0, 0, 0, 1, 1, 1, 1200, 300, 0);
+        objects.add(sphere1);
+
+        sphere1 = new Sphere(10);
+        sphere1.updateMatrices(0, 0, 0, 1, 1, 1, 100, -30, 0);
+        objects.add(sphere1);
+
+        Plane plane = new Plane(PatternTypeEnum.GRID, new Color(), new Color());
+        plane.updateMatrices(0, 0, 0, 1, 1, 1,0, 0, -100);
+        plane.setNormal();
+        objects.add(plane);
+
+        return new Camera(new Point3D(0, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
 }

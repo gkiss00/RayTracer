@@ -1,10 +1,12 @@
 package rayTracer.visual;
 
+import lombok.ToString;
 import rayTracer.math.*;
 
+@ToString
 public class Camera {
     private Point3D pointOfVue;
-    private Vector3D direction;
+    public Vector3D direction;
     private Vector3D up;
     private double angle;
     private int height;
@@ -26,8 +28,8 @@ public class Camera {
     }
 
     public void update(int height, int width) {
-        this.height = height;
-        this.width = width;
+        this.height = height / 2;
+        this.width = width / 2;
 
         direction.normalize();
         U = Vector3D.crossProduct(up, direction);
@@ -35,10 +37,10 @@ public class Camera {
         V = Vector3D.crossProduct(U, direction);
         V.normalize();
 
-        U.times(width);
-        V.times(height);
+        U.times(this.width);
+        V.times(this.height);
 
-        double L = width / Math.tan(Math.toRadians(angle / 2));
+        double L = this.width / Math.tan(Math.toRadians(angle / 2));
         screenCenter = new Point3D(pointOfVue);
         Vector3D tmp = new Vector3D(direction);
         tmp.times(L);
@@ -46,7 +48,7 @@ public class Camera {
     }
 
     public Point3D getPoint(int h, int w) {
-        return getPoint((double)(h - ((double)height / 2)) / height, (double)(w - ((double)width / 2)) / width);
+        return getPoint((h - ((double)height / 2)) / height, (w - ((double)width / 2)) / width);
     }
 
     public Point3D getPoint(double h, double w) {
@@ -58,18 +60,5 @@ public class Camera {
         res.add(UTmp);
         res.add(VTmp);
         return res;
-    }
-
-    @Override
-    public String toString() {
-        String str = "";
-        str += pointOfVue.toString();
-        str += "\n";
-        str += direction.toString();
-        str += "\n";
-        str += up.toString();
-        str += "\n";
-        str += angle;
-        return str;
     }
 }
