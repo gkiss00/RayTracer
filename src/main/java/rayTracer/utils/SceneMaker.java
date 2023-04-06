@@ -1602,4 +1602,31 @@ public class SceneMaker {
 
         return new Camera(new Point3D(0, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
     }
+
+    /* * * * * * * * * * * * * * * * * * * * *
+
+     *            BLENDER IMAGES             *
+
+     * * * * * * * * * * * * * * * * * * * * */
+
+    public static Camera blender(List<Obj> objects, List<Light> lights, List<Obj> blacks) {
+
+        Polygon polygon = ObjectFileReader.read("./src/main/resources/blender/tower.obj");
+        polygon.updateMatrices(0, -37, 0, 1, 1, 1, 0, 0, -0);
+        polygon.clearColors();
+        //polygon.addColor(new Color(.09, .12, .89, 0.4));
+        polygon.addColor(new Color("#ffc500", 0.4));
+        polygon.setCapacity(CapacityTypeEnum.FULL);
+        polygon.density = 2.0;
+        objects.add(polygon);
+
+        Plane plane2 = new Plane(new Color(0.9, 0.1, 0));
+        plane2.updateMatrices(0, -90, 0, 1, 1, 1, 450, 0, 0);
+        plane2.setNormal();
+        plane2.setTexture("./src/main/resources/textures/random/numbers.png");
+        plane2.setTextureWidth(500);
+        objects.add(plane2);
+
+        return new Camera(new Point3D(-300, 0, 0), new Vector3D(1, 0, 0), new Vector3D(0, 0, 1), 90);
+    }
 }

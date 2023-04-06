@@ -5,5 +5,6 @@ public enum PolygonTypeEnum {
     TETRAHEDRON,
     DIAMOND,
     TETRAHEDRON_FRACTAL,
-    MOBIUS_TAPE
+    MOBIUS_TAPE,
+    BLENDER_OBJECT
 }

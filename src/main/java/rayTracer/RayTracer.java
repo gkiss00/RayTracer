@@ -122,7 +122,7 @@ public class RayTracer {
 
     public static void image() {
         rayTracer.config.Config config = new rayTracer.config.Config();
-        cam = SceneMaker.getMirrorBox(objects, lights, blackObjects);
+        cam = SceneMaker.blender(objects, lights, blackObjects);
         cam.update(config.height, config.width);
 
         config.objects = objects;
