@@ -1,20 +1,21 @@
 package rayTracer.math;
 
+import lombok.Getter;
+
+@Getter
 public class Triangle {
     private Point3D p1;
     private Point3D p2;
     private Point3D p3;
     private Vector3D normal;
+    private Vector3D invertNormal;
 
     public Triangle(Point3D p1, Point3D p2, Point3D p3) {
         this.p1 = new Point3D(p1);
         this.p2 = new Point3D(p2);
         this.p3 = new Point3D(p3);
         this.normal = Vector3D.crossProduct(new Vector3D(p1, p2), new Vector3D(p1, p3));
-    }
-
-    public Vector3D getNormal() {
-        return this.normal;
+        this.invertNormal = Vector3D.inverse(normal);
     }
 
     public Point3D hit(Line3D ray) {

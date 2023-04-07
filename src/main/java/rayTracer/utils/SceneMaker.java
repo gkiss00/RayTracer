@@ -1614,10 +1614,11 @@ public class SceneMaker {
         Polygon polygon = ObjectFileReader.read("./src/main/resources/blender/tower.obj");
         polygon.updateMatrices(0, -37, 0, 1, 1, 1, 0, 0, -0);
         polygon.clearColors();
-        //polygon.addColor(new Color(.09, .12, .89, 0.4));
-        polygon.addColor(new Color("#ffc500", 0.4));
+        polygon.addColor(new Color(.09, .12, .89, 0.4));
+        //polygon.addColor(new Color("#ffc500", 0.4));
         polygon.setCapacity(CapacityTypeEnum.FULL);
         polygon.density = 2.0;
+        polygon.createBoundingBox();
         objects.add(polygon);
 
         Plane plane2 = new Plane(new Color(0.9, 0.1, 0));

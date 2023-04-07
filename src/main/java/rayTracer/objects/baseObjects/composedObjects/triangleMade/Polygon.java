@@ -8,6 +8,7 @@ import rayTracer.math.Point3D;
 import rayTracer.math.Triangle;
 import rayTracer.math.Vector3D;
 import rayTracer.objects.baseObjects.BaseObject;
+import rayTracer.utils.BoundingBox;
 import rayTracer.utils.Color;
 import rayTracer.utils.Intersection;
 import rayTracer.utils.IntersectionManager;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Polygon extends BaseObject {
+    private BoundingBox boundingBox;
     private PolygonTypeEnum type;
     private double[] values;
     private final List<Triangle> triangles;
@@ -283,6 +285,8 @@ public class Polygon extends BaseObject {
     public void hit(Line3D ray, List<Intersection> intersections) throws Exception {
         Line3D localRay = transform.apply(ray, MatrixTransformEnum.TO_LOCAL);
 
+        if(boundingBox != null && !boundingBox.hit(localRay)) { return; }
+
         List<Intersection> tmp = new ArrayList<>();
         for (Triangle tr: triangles) {
             Point3D localIntersection = tr.hit(localRay);
@@ -290,7 +294,7 @@ public class Polygon extends BaseObject {
                 Point3D realIntersection = transform.apply(localIntersection, MatrixTransformEnum.TO_REAL);
                 Vector3D localNormal = tr.getNormal();
                 if (Vector3D.angleBetween(localRay.getVector(), localNormal) < 90)
-                    localNormal = Vector3D.inverse(localNormal);
+                    localNormal = tr.getInvertNormal();
                 Vector3D realNormal = this.transform.apply(localNormal, MatrixTransformEnum.TO_REAL);
                 tmp.add(new Intersection(
                         realIntersection,
@@ -306,5 +310,23 @@ public class Polygon extends BaseObject {
         IntersectionManager.getIntersections(localRay, blackObjects, blackIntersections);
         IntersectionManager.preProcessIntersections(tmp, blackIntersections);
         intersections.addAll(tmp);
+    }
+
+    public void createBoundingBox() {
+        double front = 10000000;
+        double back = -10000000;
+        double right = -10000000;
+        double left = 10000000;
+        double top = -10000000;
+        double bottom = 10000000;
+        for(Triangle triangle: triangles) {
+            front = Math.min(front, Math.min(triangle.getP1().getX(), Math.min(triangle.getP2().getX(), triangle.getP3().getX())));
+            back = Math.max(back, Math.max(triangle.getP1().getX(), Math.max(triangle.getP2().getX(), triangle.getP3().getX())));
+            right = Math.max(right, Math.max(triangle.getP1().getY(), Math.max(triangle.getP2().getY(), triangle.getP3().getY())));
+            left = Math.min(left, Math.min(triangle.getP1().getY(), Math.min(triangle.getP2().getY(), triangle.getP3().getY())));
+            top = Math.max(top, Math.max(triangle.getP1().getZ(), Math.max(triangle.getP2().getZ(), triangle.getP3().getZ())));
+            bottom = Math.min(bottom, Math.min(triangle.getP1().getZ(), Math.min(triangle.getP2().getZ(), triangle.getP3().getZ())));
+        }
+        this.boundingBox = new BoundingBox(front, back, right, left, top, bottom);
     }
 }
